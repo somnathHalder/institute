@@ -82,7 +82,10 @@ $toyear			=trim($_POST['toyear']); */
 	$res			= mysqli_query($conn,  $sql);
 	$slno			= mysqli_insert_id($conn);
 	if ($res) {
-		$pursuing_id = addStudentToPursuingTable($course, $stid, $session, $fees, $date, $sessioncode, $coursecode, $serialno, $courseday, $time);
+		$sql3="SELECT * FROM courses WHERE course_id='$course'";
+		$res=$conn->query($sql3);
+		$course=$res->fetch_assoc();
+		$pursuing_id = addStudentToPursuingTable($course['id'], $stid, $session, $fees, $date, $sessioncode, $coursecode, $serialno, $courseday, $time);
 		$success_msg = 'Addmission Successfull. Student Unique ID Is : <b>' . $stid . '</b> And Registration Number  : <b>' . $regno . '</b> </div>';
 	} else {
 
@@ -147,6 +150,9 @@ function addStudentToPursuingTable($course, $studentID, $session, $fees, $date, 
 	/* 	$frommonth		= trim($_POST['frommonth']);
 	$tomonth		= trim($_POST['tomonth']);
 	$toyear			= trim($_POST['toyear']); */
+
+
+
 	$courseday		= implode(',', $courseday);
 	$sql = "INSERT INTO `pursuing_course`(`session`,`date`,`student_id`, `course_id`,`course_code`, `session_code`, `serial_no`, `course_fee`, `course_days` ,`time`
 		 ,`starting_year`, `starting_month`, `complete_year`, `complete_month` )
