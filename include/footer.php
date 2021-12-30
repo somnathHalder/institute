@@ -50,7 +50,7 @@
 <script type="text/javascript" src="docs/js/prettify.js"></script>
 <script type="text/javascript" src="dist/js/bootstrap-multiselect.js"></script>
 <!-- CK Editor -->
-<script src="ckeditor/ckeditor.js"></script>
+<!-- <script src="ckeditor/ckeditor.js"></script> -->
 <!--End-->
 <script src="dist/js/sb-admin-2.js"></script>
 <!-- Tables Edit-->

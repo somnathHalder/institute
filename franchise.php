@@ -66,41 +66,46 @@ function fetchRecords()
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
             <h4 class="modal-title" id="myModalLabel">New Franchise</h4>
           </div>
-		  <form method="post" id="createForm" class="form-horizontal" action="userCreate.php">
+		  <form method="post" id="createForm" class="form-horizontal" action="franchiseCreate.php" autocomplete="off">
           <div class="modal-body">
 		  <div class="messages"></div>
             <div id="testmodal" style="padding: 5px 20px;">
 				<div class="form-group">
-					 <label class="col-sm-4 control-label">Franchise Name</label>
+					<label class="col-sm-4 control-label">Franchise Name</label>
+					<div class="col-sm-6">
+						<input type="text" name="franchiseName" id="franchiseName" class="form-control" required>
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-4 control-label">Franchise Code</label>
+					<div class="col-sm-6">
+						<input type="text" name="franchiseCode" id="franchiseCode" class="form-control" required>
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-4 control-label">Contact</label>
+					<div class="col-sm-6">
+						<input type="text" name="contact" id="contact" class="form-control" required>
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-4 control-label">Address</label>
+					<div class="col-sm-6">
+						<input type="text" name="address" id="address" class="form-control" >
+					</div>
+				</div>
+				<div class="form-group">
+					 <label class="col-sm-4 control-label">User Name</label>
 					 <div class="col-sm-6">
 						<input type="text" name="userName" id="userName" class="form-control" required>
 
 					</div>
-					
-				</div>
-				<div class="form-group">
-					 <label class="col-sm-4 control-label">Contact</label>
-					 <div class="col-sm-6">
-						<input type="text" name="userName" id="userName" class="form-control" required>
-
-					</div>
-					
-				</div>
-				<div class="form-group">
-					 <label class="col-sm-4 control-label">User Id</label>
-					 <div class="col-sm-6">
-						<input type="text" name="userId" id="userId" class="form-control" required>
-
-					</div>
-					
 				</div>
 				<div class="form-group">
 					 <label class="col-sm-4 control-label">Password</label>
 					 <div class="col-sm-6">
-						<input type="password" name="pass" id="pass" class="form-control" required>
-
+						<input type="text" name="password" id="password" class="form-control" required>
 					</div>
-					
 				</div>
 			
             </div>
@@ -122,7 +127,7 @@ function fetchRecords()
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
             <h4 class="modal-title" id="myModalLabel">Edit Franchise</h4>
           </div>
-		  <form method="post" id="updateMemberForm" class="form-horizontal" action="updateUser.php">
+		  <form method="post" id="updateMemberForm" class="form-horizontal" action="updateFranchise.php">
           <div class="modal-body">
 		  <div class="editMessage"></div>
             <div id="testmodal" style="padding: 5px 20px;">
@@ -139,9 +144,17 @@ function fetchRecords()
 					</div>
 				</div>
 				<div class="form-group">
-					 <label class="col-sm-4 control-label">User Id</label>
+					<label class="col-sm-4 control-label">Address</label>
+					<div class="col-sm-6">
+						<input type="text" name="editAddress" id="editAddress" class="form-control" >
+					</div>
+				</div>
+				<div class="form-group">
+					 <label class="col-sm-4 control-label">User Name</label>
 					 <div class="col-sm-6">
-						<input type="text" name="editUserId" id="editUserId" class="form-control" required>
+						<input type="text" name="editUserName" id="editUserName" class="form-control" required>
+						<input type="hidden" name="editUserId" id="editUserId" class="form-control">
+						<input type="hidden" name="editMemberId" id="editMemberId" class="form-control">
 					</div>
 				</div>
 				<div class="form-group">
@@ -293,21 +306,24 @@ $('#editMessage').html("");
     if(id) {
 
         $.ajax({
-            url: 'getSelectedUser.php',
+            url: 'getSelectedFranchise.php',
             type: 'post',
             data: {member_id : id},
             dataType: 'json',
             success:function(response) {
                 $("#editUserId").val(response.description);
-                $("#editName").val(response.name);
-                $("#editUserId").val(response.user_name);
-                $("#editType").val(response.type);
-                $("#memberId").val(response.user_id);
+                $("#editName").val(response.franchise_name);
+                $("#editUserName").val(response.user_name);
+                $("#editUserId").val(response.user_id);
+                $("#editAddress").val(response.address);
+                $("#editContact").val(response.contact);
+                $("#editMemberId").val(response.member_id);
+                $("#editPassword").val(response.password);
+               
                 $("#updateMemberForm").unbind('submit').bind('submit', function() {
                  
                     var form = $(this);
- 
-                       $.ajax({
+					   $.ajax({
                             url: form.attr('action'),
                             type: form.attr('method'),
                             data: form.serialize(),
@@ -352,7 +368,7 @@ function removeMember(id=null)
 		{
 
 			 $.ajax({
-                url: 'removeQuestion.php',
+                url: 'removeFranchise.php',
                 type: 'post',
                 data: {member_id : id},
                 dataType: 'json',

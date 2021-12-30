@@ -27,7 +27,7 @@ include('include/menu.php');?>
 	<div id="page-wrapper">
 		<div class="container-fluid">
 			<div class="row">
-			   <div class="col-sm-6 col-md-6 col-xs-12 col-md-offset-3 col-sm-offset-3 ">
+			   <div class="col-sm-10 col-md-10 col-xs-12">
                         <h3 class="page-header">Add New Course</h3>
 				<form class="form-horizontal" method="post" id="createTeacherForm" action="<?php echo $_SERVER['PHP_SELF'];?>" enctype="multipart/form-data">
 				<div id="add-course-messages"></div>
@@ -38,7 +38,7 @@ include('include/menu.php');?>
 					    </div>
 					</div>
 					<div class="form-group">
-						<label for="fname" class="col-sm-4 control-label">Course ID : </label>
+						<label for="fname" class="col-sm-4 control-label">Course Code : </label>
 					   	<div class="col-sm-8">
 					      <input type="text" required class="form-control" id="courseid" name="courseid" placeholder="Course Id" />
 					    </div>
@@ -46,7 +46,7 @@ include('include/menu.php');?>
 					<div class="form-group">
 					    <label for="lname" class="col-sm-4 control-label">Description: </label>
 					    <div class="col-sm-8">
-					      <input type="text" class="form-control" id="description" name="description" placeholder="Description"/>
+					      <textarea class="form-control" id="description" name="description" ></textarea>
 					    </div>
 					</div>
 					<div class="form-group">
@@ -115,8 +115,10 @@ include('include/menu.php');?>
  
 </body>
 </html>
+<script src="https://cdn.ckeditor.com/4.17.1/standard/ckeditor.js"></script>
    <script>
 $(document).ready(function() {
+	CKEDITOR.replace( 'description' );
     var table = $('#example').DataTable( {
         lengthChange: false,
         buttons: [ 'copy', 'excel', 'pdf', 'colvis' ]
