@@ -166,7 +166,7 @@ include('include/check-login.php');
 
 						<li>
 
-							<a href="studentmanagement.php"><i class="fa fa-paper-plane"></i> Student Management</a>
+							<a href="studentmanagement.php"><i class="fa fa-plus-circle"></i> Student Management</a>
 
 						</li>
 

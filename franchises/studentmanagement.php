@@ -29,7 +29,7 @@ function fetchRecords()
     <div class="container-fluid">
         <div class="row">
             <h3 class="page-header">Student Management Setting</h3>
-            <button id="addMember" class="btn btn-default pull-right" data-toggle="modal" data-target="#myModal"><i class="fa fa-plus-circle"></i> Add New</button><br />
+            <a href="newstudentadd.php" class="btn btn-default pull-right"><i class="fa fa-plus-circle"></i> Add New</a><br>
             <p>&nbsp;</p>
             <div class="clearfix"></div>
             <div class="table-responsive">
@@ -60,62 +60,8 @@ function fetchRecords()
         <!-- Modal-->
 
     </div>
-    <div id="myModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
 
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                    <h4 class="modal-title" id="myModalLabel">New Franchise</h4>
-                </div>
-                <form method="post" id="createForm" class="form-horizontal" action="userCreate.php">
-                    <div class="modal-body">
-                        <div class="messages"></div>
-                        <div id="testmodal" style="padding: 5px 20px;">
-                            <div class="form-group">
-                                <label class="col-sm-4 control-label">Student Name</label>
-                                <div class="col-sm-6">
-                                    <input type="text" name="userName" id="userName" class="form-control" required>
 
-                                </div>
-
-                            </div>
-                            <div class="form-group">
-                                <label class="col-sm-4 control-label">Contact</label>
-                                <div class="col-sm-6">
-                                    <input type="text" name="userName" id="userName" class="form-control" required>
-
-                                </div>
-
-                            </div>
-                            <div class="form-group">
-                                <label class="col-sm-4 control-label">User Id</label>
-                                <div class="col-sm-6">
-                                    <input type="text" name="userId" id="userId" class="form-control" required>
-
-                                </div>
-
-                            </div>
-                            <div class="form-group">
-                                <label class="col-sm-4 control-label">Password</label>
-                                <div class="col-sm-6">
-                                    <input type="password" name="pass" id="pass" class="form-control" required>
-
-                                </div>
-
-                            </div>
-
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-default antoclose" data-dismiss="modal">Close</button>
-                        <button type="submit" id="modalSave" class="btn btn-primary antosubmit">Save changes</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-
-    </div>
     <div id="editMemberModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">

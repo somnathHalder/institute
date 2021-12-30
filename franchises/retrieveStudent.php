@@ -3,7 +3,7 @@ session_start();
 include "include/dbconfig.php";
 $output = array('data' => array());
 
-$sql="SELECT *  FROM `student_info`";
+$sql="SELECT *  FROM `student_info` where franchises_id='{$_SESSION['franchises_id']}' ";
 	
 	
 $res=mysqli_query($conn, $sql);
