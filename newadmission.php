@@ -18,33 +18,34 @@ if (isset($_POST['formid']) && isset($_SESSION['formid']) && $_POST['formid'] ==
 	$querystudent	= trim(isset($_POST['querystudent']) ? $_POST['querystudent'] : "");
 	$dob			= strtoupper(trim($_POST['dob']));
 	$nationality	= strtoupper(trim($_POST['nationality']));
-	$mstatus		= strtoupper(trim($_POST['mstatus']));
+	//$mstatus		= strtoupper(trim($_POST['mstatus']));
 	$religion		= strtoupper(trim($_POST['religion']));
 	$caste			= strtoupper(trim($_POST['caste']));
 	$pin			= strtoupper(trim($_POST['pin']));
 	$contact		= strtoupper(trim($_POST['contact']));
 	$contact1		= strtoupper(trim($_POST['mobile1']));
 	$aadhar			= strtoupper(trim($_POST['aadhar']));
-	$occupation		= strtoupper(trim($_POST['occupation']));
-	$foccupation	= strtoupper(trim($_POST['foccupation']));
+	//$occupation		= strtoupper(trim($_POST['occupation']));
+	//$foccupation	= strtoupper(trim($_POST['foccupation']));
 	$session		= strtoupper(trim($_POST['yoa']));
 	$qualification	= strtoupper(trim($_POST['qualification']));
 	$course			= strtoupper(trim($_POST['course']));
 	$fees			= strtoupper(trim($_POST['fees']));
 	$date			= strtoupper(trim($_POST['date']));
-	$paidamt		= strtoupper(trim($_POST['paidamt']));
+	//$paidamt		= strtoupper(trim($_POST['paidamt']));
 	/* $regno1			=strtoupper(trim($_POST['regno'])); */
-	$chequeno		= strtoupper(trim($_POST['chequeno']));
+	//$chequeno		= strtoupper(trim($_POST['chequeno']));
 	$prevcourse		= strtoupper(trim($_POST['prevcourse']));
-	$previnstitute	= strtoupper(trim($_POST['previnstitute']));
+	//$previnstitute	= strtoupper(trim($_POST['previnstitute']));
 	$refname		= strtoupper(trim($_POST['refname']));
-	$refaddress		= strtoupper(trim($_POST['refaddress']));
-	$refcontact		= strtoupper(trim($_POST['refcontact']));
+	//$refaddress		= strtoupper(trim($_POST['refaddress']));
+	//$refcontact		= strtoupper(trim($_POST['refcontact']));
 	$time			= strtoupper(trim($_POST['time']));
 	$admissionType	= strtoupper(trim($_POST['admissionType']));
 
 	$stid			= findMaxID($session);
 	$value = '';
+	$courseday=array();
 	if (isset($_POST['courseday'])) {
 
 		foreach ($_POST["courseday"] as $row) {
@@ -57,7 +58,7 @@ if (isset($_POST['formid']) && isset($_SESSION['formid']) && $_POST['formid'] ==
 		$courseday = explode(',', $value);
 	}
 
-	$payby			= strtoupper(trim($_POST['payby']));
+	//$payby			= strtoupper(trim($_POST['payby']));
 	/* $frommonth		=trim($_POST['frommonth']);
 $tomonth		=trim($_POST['tomonth']);
 $toyear			=trim($_POST['toyear']); */
