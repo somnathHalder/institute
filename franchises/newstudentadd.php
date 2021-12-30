@@ -82,10 +82,10 @@ $toyear			=trim($_POST['toyear']); */
 	$res			= mysqli_query($conn,  $sql);
 	$slno			= mysqli_insert_id($conn);
 	if ($res) {
-		$sql3="SELECT * FROM courses WHERE course_id='$course'";
+		$sql3="SELECT * FROM courses WHERE id='$course'";
 		$res=$conn->query($sql3);
-		$course=$res->fetch_assoc();
-		$pursuing_id = addStudentToPursuingTable($course['id'], $stid, $session, $fees, $date, $sessioncode, $coursecode, $serialno, $courseday, $time);
+		$coursecode=$res->fetch_assoc();
+		$pursuing_id = addStudentToPursuingTable($course, $stid, $session, $fees, $date, $sessioncode, $coursecode['course_id'], $serialno, $courseday, $time);
 		$success_msg = 'Addmission Successfull. Student Unique ID Is : <b>' . $stid . '</b> And Registration Number  : <b>' . $regno . '</b> </div>';
 	} else {
 
@@ -138,7 +138,7 @@ function getCourses()
 	$option = '';
 	if (mysqli_num_rows($res) > 0) {
 		while ($row = mysqli_fetch_assoc($res)) {
-			$option .= '<option value="' . $row['course_id'] . '">' . $row['course_name'] . '-' . $row['description'] . '</option>';
+			$option .= '<option value="' . $row['id'] . '">' . $row['course_name'] . '-' . $row['description'] . '</option>';
 		}
 		echo $option;
 	}
@@ -627,12 +627,12 @@ function findQuesryListStudents()
 			});
 		});
 		$('#course').on('change', function(e) {
-			var courseid = $('#course').val();
+			var id = $('#course').val();
 			$.ajax({
 				url: "../findCourseFees.php",
 				method: "post",
 				data: {
-					'courseid': courseid
+					'id': id
 				},
 				success: function(data) {
 					$('#fees').val(data);

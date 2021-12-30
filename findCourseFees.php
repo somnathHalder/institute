@@ -1,7 +1,7 @@
 <?php 
 include "include/dbconfig.php";
-$courseid=trim(isset($_POST['courseid']) ? $_POST['courseid'] : "") ;
-$sql 		 ="SELECT * FROM `courses` WHERE `course_id`='$courseid'";
+$id=trim(isset($_POST['id']) ? $_POST['id'] : "") ;
+$sql 		 ="SELECT * FROM `courses` WHERE `id`='$id'";
 $res 		=mysqli_query($conn,  $sql);
 if(mysqli_num_rows($res) > 0)
 {

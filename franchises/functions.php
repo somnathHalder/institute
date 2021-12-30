@@ -14,10 +14,11 @@ function checkYear($fromyear)
 	}
 	
 }
-function findCourseName($courseID)
+
+function findCourseName($ID)
 {
 	include "include/dbconfig.php" ;
-	$sql 		="SELECT * FROM `courses` WHERE `course_id`='$courseID'";
+	$sql 		="SELECT * FROM `courses` WHERE `id`='$ID'";
 	$res 		=mysqli_query($conn,  $sql);
 	$row 		=mysqli_fetch_assoc($res);
 	$courseinfo =$row['course_name']."-".$row['description'] ;

@@ -2,9 +2,15 @@
 	include "include/dbconfig.php" ;
 	if($_POST)
 	{
-		$coursecode	=trim($_POST['course']);
+		$id	=trim($_POST['course']);
+
+		$sql2="SELECT * FROM courses WHERE id='$id'";
+		$res2=mysqli_query($conn,$sql2);
+		$row=mysqli_fetch_assoc($res2);
+		$coursecode=$row['course_id'];
+
 		$sessioncode	=trim($_POST['sessionCode']);
-		$sql 		="SELECT MAX(`serial_no`) AS `slno` FROM `pursuing_course` WHERE `course_code`='$coursecode' AND `session_code`='$sessioncode'";
+		$sql 		="SELECT MAX(`serial_no`) AS `slno` FROM `pursuing_course` WHERE `course_code`='{$coursecode}' AND `session_code`='$sessioncode'";
 		$res 		=mysqli_query($conn,  $sql);
 		$row 		=mysqli_fetch_assoc($res);
 		if($row['slno']!=null)
