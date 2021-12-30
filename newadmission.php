@@ -80,7 +80,10 @@ $toyear			=trim($_POST['toyear']); */
 	$res			= mysqli_query($conn,  $sql);
 	$slno			= mysqli_insert_id($conn);
 	if ($res) {
-		$pursuing_id = addStudentToPursuingTable($course, $stid, $session, $fees, $date, $sessioncode, $coursecode, $serialno, $courseday, $time);
+		$sql3="SELECT * FROM courses WHERE course_id='$course'";
+		$res=$conn->query($sql3);
+		$course=$res->fetch_assoc();
+		$pursuing_id = addStudentToPursuingTable($course['id'], $stid, $session, $fees, $date, $sessioncode, $coursecode, $serialno, $courseday, $time);
 		$success_msg = 'Addmission Successfull. Student Unique ID Is : <b>' . $stid . '</b> And Registration Number  : <b>' . $regno . '</b> </div>';
 	} else {
 
