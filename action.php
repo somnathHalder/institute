@@ -6,7 +6,6 @@ $description =trim($input["description"]);
 $duration	 =trim($input["duration"]);
 $course_fee	 =trim($input["course_fee"]);
 $fee_type	 =trim($input["fee_type"]);
-
 /* Action Edit */
 if($input["action"] === 'edit')
 {
