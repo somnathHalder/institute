@@ -38,6 +38,7 @@ if (isset($_POST['formid']) && isset($_SESSION['formid']) && $_POST['formid'] ==
 	$prevcourse		= strtoupper(trim($_POST['prevcourse']));
 	//$previnstitute	= strtoupper(trim($_POST['previnstitute']));
 	$refname		= strtoupper(trim($_POST['refname']));
+	$note		= strtoupper(trim($_POST['note']));
 	//$refaddress		= strtoupper(trim($_POST['refaddress']));
 	//$refcontact		= strtoupper(trim($_POST['refcontact']));
 	$time			= strtoupper(trim($_POST['time']));
@@ -73,10 +74,10 @@ $toyear			=trim($_POST['toyear']); */
 	move_uploaded_file($sourcePath, $targetPath);
 	$sql    		= "INSERT INTO `student_info`(`Student_Id`, `St_Name`, `Fathers_Name`, `DOB`, `Gender`, `Cust`, `Religion`, 
 				 `Mother_Trong`, `Session1`,`session_month`,`session_code`, `Roll`, `DOA`, `Mothers_Name`, `adminslno`, `Vill`, `Post`, `PS`, `Dist`, `Pin`, 
-				 `Contact_no`,`contact2`,`aadhar`, `qualification`, `regno`,`image_name`,`previous_course`,`ref_name`,`admission_type`)
+				 `Contact_no`,`contact2`,`aadhar`, `qualification`, `regno`,`image_name`,`previous_course`,`ref_name`,`admission_type`,note)
 				  VALUES ('$stid','$sname','$fname','$dob','$gender','$caste','$religion','','$session','','$sessioncode','',
 				 '$date','$mname','','$address','$po','$ps','$district','$pin','$contact','$contact1','$aadhar',
-				 '$qualification','$regno','$imagename','$prevcourse','$refname','$admissionType')";
+				 '$qualification','$regno','$imagename','$prevcourse','$refname','$admissionType','$note')";
 
 	$res			= mysqli_query($conn,  $sql);
 	$slno			= mysqli_insert_id($conn);
@@ -519,7 +520,7 @@ function findQuesryListStudents()
 					<label class="control-label col-md-2 col-sm-2 col-xs-12" for="caddress">Note<span class=""></span>
 					</label>
 					<div class="col-md-4 col-sm-4 col-xs-12">
-						<input type="text" id="refname" name="refname" class="form-control">
+						<input type="text" id="note" name="note" class="form-control">
 					</div>
 					<label class="control-label col-md-2 col-sm-2 col-xs-12" for="caddress">Referer Name<span class=""></span>
 					</label>
