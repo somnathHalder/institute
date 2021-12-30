@@ -73,10 +73,10 @@ $toyear			=trim($_POST['toyear']); */
 	move_uploaded_file($sourcePath, $targetPath);
 	$sql    		= "INSERT INTO `student_info`(`Student_Id`, `St_Name`, `Fathers_Name`, `DOB`, `Gender`, `Cust`, `Religion`, 
 				 `Mother_Trong`, `Session1`,`session_month`,`session_code`, `Roll`, `DOA`, `Mothers_Name`, `adminslno`, `Vill`, `Post`, `PS`, `Dist`, `Pin`, 
-				 `Contact_no`,`contact2`,`aadhar`, `qualification`, `regno`,`image_name`,`previous_course`,`previous_inst`,`ref_name`,`admission_type`)
+				 `Contact_no`,`contact2`,`aadhar`, `qualification`, `regno`,`image_name`,`previous_course`,`ref_name`,`admission_type`)
 				  VALUES ('$stid','$sname','$fname','$dob','$gender','$caste','$religion','','$session','','$sessioncode','',
 				 '$date','$mname','','$address','$po','$ps','$district','$pin','$contact','$contact1','$aadhar',
-				 '$qualification','$regno','$imagename','$prevcourse','$previnstitute','$refname','$admissionType')";
+				 '$qualification','$regno','$imagename','$prevcourse','$refname','$admissionType')";
 
 	$res			= mysqli_query($conn,  $sql);
 	$slno			= mysqli_insert_id($conn);
