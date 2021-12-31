@@ -20,6 +20,18 @@ function  getCandidates()
 	}
 	echo $option;
 }
+function  getFranchise()
+{
+	include('include/dbconfig.php'); 
+	$option='';
+	$sql="SELECT * FROM `franchises`";
+	$res=mysqli_query($conn, $sql) ;
+	while($row=mysqli_fetch_assoc($res))
+	{
+		$option.='<option value="'.$row['id'].'">'.$row['franchise_name'].'</option>';
+	}
+	echo $option;
+}
 ?>
 <?php include('include/menu.php');?>
 <!-- Page Content -->
@@ -28,12 +40,20 @@ function  getCandidates()
 		<div class="row">
 			<div class="col-md-6 col-sm-6 col-md-offset-3">
 	          <h3 class="page-header">Fees Collection</h3>
-				<form method="REQUEST" id="createTeacherForm" action="feecollect.php?id=<?php echo base64_encode($_REQUEST['studentid']);?>&course=<?php echo $_REQUEST['pursuingcourse'];?>" enctype="multipart/form-data">
+				<form method="GET" id="createTeacherForm" action="feecollect.php" enctype="multipart/form-data">
+					<div class="form-group">
+						<label for="product" class="control-label">Franchise Name<span class="required"></span></label>
+						<select name="franchise"  id="franchise" class="selectpicker form-control"  data-live-search="true" required>
+							<option value="">Select Franchise</option>
+							<?php  getFranchise();?>
+						</select>
+					</div>
+				<form method="GET" id="createTeacherForm" action="feecollect.php" enctype="multipart/form-data">
 					<div class="form-group">
 						<label for="product" class="control-label">Candidate Name<span class="required"></span></label>
 						<select name="studentid"  id="studentid" class="selectpicker form-control"  data-live-search="true" required>
-							<option value="">--Select--</option>
-							<?php getCandidates();?>
+							<option value="">Select Candidate</option>
+							<?php // getCandidates();?>
 						</select>
 					</div>
 					<div class="form-group">
@@ -76,6 +96,30 @@ $(document).ready(function(e){
 			success:function(data)
 			{
 				$('#pursuingcourse').html(data);
+			}
+			
+		});
+	
+	});
+	$('#franchise').on('change',function(e)
+	{
+		var franchiseId = $(this).val();
+		$.ajax({
+			url:"loadStudentByFranchise.php",
+			method:"post",
+			data:{'franchiseId': franchiseId},
+			dataType:"json",
+			success:function(data)
+			{
+				let option='<option value="">Select Candidate </option>';
+				if(data.success){
+					
+					for(i=0; i<data.records.length; i++){
+						option += '<option value="'+data.records[i].Student_Id+'">'+data.records[i].St_Name+'-'+data.records[i].Contact_no+'</option>'
+					}
+				}
+				$('#studentid').html(option);
+				$('#studentid').selectpicker('refresh');
 			}
 			
 		});
