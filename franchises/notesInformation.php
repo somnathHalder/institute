@@ -7,11 +7,14 @@ function fetchRecords()
 {
 	include   'include/dbconfig.php';	
 	$sql		="SELECT `note_info`.* ,payment.receipt_no,student_info.regno,payment.collect_by,payment.date,student_info.St_Name,student_info.Contact_no,pursuing_course.regno as regno FROM note_info INNER JOIN payment
-	ON note_info.recpt_no=payment.receipt_no INNER JOIN student_info ON student_info.slno=note_info.student_id INNER JOIN pursuing_course ON pursuing_course.student_id=student_info.slno GROUP BY payment.receipt_no";
+	ON note_info.recpt_no=payment.receipt_no INNER JOIN student_info ON student_info.slno=note_info.student_id INNER JOIN pursuing_course ON pursuing_course.student_id=student_info.slno WHERE payment.collect_by='{$_SESSION['franchises_id']}' GROUP BY payment.receipt_no";
 	/* ECHO $sql; */
 	$res	   = mysqli_query($conn,  $sql);
 	if(mysqli_num_rows($res) > 0)
 	{
+		$sql1 = "SELECT * FROM franchises WHERE  id='$_SESSION[franchises_id]'";
+		$res1 = mysqli_query($conn, $sql1);
+		$row1 = mysqli_fetch_assoc($res1);
 		
 		while($row= mysqli_fetch_assoc($res))
 		{
@@ -23,7 +26,7 @@ function fetchRecords()
 					<td style="text-align:center;">'.$row['St_Name'].'</td>
 					<td style="text-align:center;">'.$row['regno'].'</td>
 					<td style="text-align:center;">'.$row['Contact_no'].'</td>
-					<td style="text-align:center;">'.$row['collect_by'].'</td>
+					<td style="text-align:center;">'.$row1['franchise_name'].'</td>
 				
 				</tr>';
 				$admission += $row['ADMISSION'];

@@ -1,7 +1,8 @@
 <?php 
 session_start();
+error_reporting(0);
 include('include/no-cache.php');
-include('include/dbconfig.php'); 
+include('include/dbconfig.php');
 include('include/check-login.php');
 if(isset($_POST['submit']))
 {
@@ -38,7 +39,7 @@ function  getReceipts()
 {
 	include('include/dbconfig.php'); 
 	$option='';
-	$sql="SELECT * FROM `payment` GROUP BY `receipt_no`";
+	$sql="SELECT * FROM `payment` WHERE collect_by='{$_SESSION['franchises_id']}' GROUP BY `receipt_no`";
 	$res=mysqli_query($conn,  $sql)        ;
 	while($row=mysqli_fetch_assoc($res))
 	{

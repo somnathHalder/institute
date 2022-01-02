@@ -7,15 +7,18 @@ include('include/check-login.php');
 include('include/menu.php');
 $error_msg = NULL;
 $success_msg = NULL;
+
 if (isset($_POST['formid']) && isset($_SESSION['formid']) && $_POST['formid'] == $_SESSION['formid']) {
 	extract($_POST);
+
+	
 
 	$arr = array('Admission', 'Installment', 'Fine', 'Prospectus', 'Exam Fees');
 	$receiptNo = maxReceiptNo();
 	for ($i = 0; $i < count($arr); $i++) {
 		$amount	= $_POST['amount'][$i];
 		$sql = "INSERT INTO `payment`(`receipt_no`,`date`, `course_id`, `student_id`,`payment_type`,`payment_amt`,`collect_by`)
-			   VALUES ('$receiptNo','$date','$_GET[pursuingcourse]','$_GET[studentid]','$arr[$i]','$amount','$_SESSION[userid]')";
+			   VALUES ('$receiptNo','$date','$_GET[pursuingcourse]','$_GET[studentid]','$arr[$i]','$amount','{$_SESSION['franchises_id']}')";
 		/* echo $sql."<BR/>"; */
 		$res = mysqli_query($conn,  $sql);
 	}

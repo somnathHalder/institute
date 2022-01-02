@@ -1,7 +1,9 @@
 <?php 
 session_start();
+include('include/no-cache.php');
 include "include/dbconfig.php";
 include "../instituteinfo.php";
+include('include/check-login.php');
 
 $id=isset($_GET['id']) ? $_GET['id'] : "";
 if($id!="")

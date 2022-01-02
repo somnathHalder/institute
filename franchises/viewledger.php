@@ -1,14 +1,16 @@
 <?php
 session_start();
 error_reporting(0);
+include('include/no-cache.php');
 include('include/menu.php');
 include('include/dbconfig.php');
+include('include/check-login.php');
 function fetchRecords()
 {
 	include   'include/dbconfig.php';
 	$from		= trim($_POST['from']);
 	$to			= trim($_POST['to']);
-	 $sql		= "SELECT St_Name,P.*,courses.course_name,pursuing_course.regno FROM student_info
+	$sql		= "SELECT St_Name,P.*,courses.course_name,pursuing_course.regno FROM student_info
 				INNER JOIN
 				(SELECT `date`,`receipt_no`,`course_id`,`student_id`,collect_by,
 				SUM(CASE WHEN TRIM(`payment_type`) = 'Admission' THEN `payment_amt` ELSE 0 END) AS 'ADMISSION',
@@ -23,7 +25,7 @@ function fetchRecords()
 				ON student_info.slno=P.`student_id`
 				INNER JOIN courses
 				ON courses.course_id=P.`course_id`
-				INNER JOIN pursuing_course ON pursuing_course.student_id=student_info.slno
+				INNER JOIN pursuing_course ON pursuing_course.student_id=student_info.slno WHERE p.collect_by='{$_SESSION['franchises_id']}'
 				ORDER BY receipt_no
 				";
 	/* ECHO $sql; */
@@ -36,6 +38,11 @@ function fetchRecords()
 		$prospectus = 0;
 		$exam = 0;
 		$total = 0;
+
+		$sql1 = "SELECT * FROM franchises WHERE  id='$_SESSION[franchises_id]'";
+		$res1 = mysqli_query($conn, $sql1);
+		$row1 = mysqli_fetch_assoc($res1);
+
 		while ($row = mysqli_fetch_assoc($res)) {
 			echo '<tr>
 				<td style="text-align:center;">' . $row['receipt_no'] . '</td>
@@ -49,7 +56,7 @@ function fetchRecords()
 				<td style="text-align:center;">' . printIt($row['PROSPECTUS']) . '</td>
 				<td style="text-align:center;">' . printIt($row['EXAM FEES']) . '</td>
 				<td style="text-align:center;">' . printIt($row['TOTAL']) . '</td>
-				<td style="text-align:center;">' . $row['collect_by'] . '</td>
+				<td style="text-align:center;">' . $row1['franchise_name'] . '</td>
 			</tr>';
 			$admission += $row['ADMISSION'];
 			$fine += $row['FINE'];
