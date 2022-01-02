@@ -63,16 +63,27 @@ function addIncomeToDayBook($studentID,$fees,$course,$particulars,$date,$payby)
 function findStudentRegistraionNo($sessioncode,$coursecode)
 {
 	include "include/dbconfig.php" ;
-	$sql 		="SELECT MAX(`serial_no`) AS `slno` FROM `pursuing_course` WHERE `course_code`='$coursecode' AND `session_code`='$sessioncode'";
+	$sql2="SELECT * FROM courses WHERE id='$coursecode'  ";
+	$res2=mysqli_query($conn,$sql2);
+	$row2=mysqli_fetch_assoc($res2);
+	$course_code=$row2['course_id'];
+
+
+	$sql3="SELECT * FROM franchises WHERE id='{$_SESSION['franchises_id']}'  ";
+	$res3=mysqli_query($conn,$sql3);
+	$row3=mysqli_fetch_assoc($res3);
+	$institutecode =$row3['code'];
+		
+	$sql 		="SELECT MAX(`serial_no`) AS `slno` FROM `pursuing_course` WHERE `course_code`='$course_code' AND `session_code`='$sessioncode' AND franchises_id='{$_SESSION['franchises_id']}'";
 	$res 		=mysqli_query($conn,  $sql);
 	$row 		=mysqli_fetch_assoc($res);
 	if($row['slno']!=null)
 	{
-		$regno=$coursecode.$sessioncode.sprintf('%0' . 4 . 's',($row['slno']+1));
+		$regno=$institutecode.$sessioncode.$course_code.sprintf('%0' . 4 . 's',($row['slno']+1));
 		return $regno;
 	}
 	else{
-		$regno=$coursecode.$sessioncode."0001";
+		$regno=$institutecode.$sessioncode.$course_code."0001";
 		return $regno;
 	}
 	
@@ -260,4 +271,3 @@ function generateSessionCode($fromyear,$frommonth)
 		}
 	}
 }
-?>

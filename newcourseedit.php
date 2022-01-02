@@ -1,5 +1,6 @@
 <?php
 session_start();
+
 function getItems()
 {
 	include('include/dbconfig.php');
@@ -20,55 +21,71 @@ function getItems()
 		}
 	}
 }
+
+include('include/dbconfig.php');
+$data=isset($_GET['id'])?$_GET['id']:"";
+$sql="SELECT * FROM courses WHERE id='$data' GROUP BY id";
+$res=mysqli_query($conn,$sql);
+
+if(mysqli_num_rows($res)>0)
+{
+    $row=mysqli_fetch_assoc($res);
+}
+else{
+    $row=array('id'=>"",'course_name'=>"",'course_id'=>"",'description'=>"",'duration'=>"",'eligibility'=>"",'unit'=>"",'course_fee'=>"");
+}
+
+
 include('include/menu.php'); ?>
 <!-- Page Content -->
 <div id="page-wrapper">
 	<div class="container-fluid">
 		<div class="row">
 			<div class="col-sm-10 col-md-10 col-xs-12">
-				<h3 class="page-header">Add New Course</h3>
+				<h3 class="page-header">Edit Course</h3>
 				<form class="form-horizontal" method="post" id="createTeacherForm" action="<?php echo $_SERVER['PHP_SELF']; ?>" enctype="multipart/form-data">
 					<div id="add-course-messages"></div>
+                    <input type="hidden" id="id" name="id" value="<?php echo $row['id'];?>">
 					<div class="form-group">
 						<label for="fname" class="col-sm-4 control-label">Course Name : </label>
 						<div class="col-sm-8">
-							<input type="text" required class="form-control" id="coursename" name="coursename" placeholder="Course Name" />
+							<input type="text" required class="form-control" id="coursename" name="coursename" placeholder="Course Name" value="<?php echo $row['course_name'];?>" />
 						</div>
 					</div>
 					<div class="form-group">
 						<label for="fname" class="col-sm-4 control-label">Course Code : </label>
 						<div class="col-sm-8">
-							<input type="text" required class="form-control" id="courseid" name="courseid" placeholder="Course Id" />
+							<input type="text" readonly class="form-control" id="courseid" name="courseid" placeholder="Course Id" value="<?php echo $row['course_id'];?>" />
 						</div>
 					</div>
 					<div class="form-group">
 						<label for="lname" class="col-sm-4 control-label">Description: </label>
 						<div class="col-sm-8">
-							<textarea class="form-control" id="description" name="description"></textarea>
+							<textarea class="form-control" id="description" name="description"><?php echo $row['description'];?></textarea>
 						</div>
 					</div>
 					<div class="form-group">
 						<label for="dob" class="col-sm-4 control-label">Duration: </label>
 						<div class="col-sm-8">
-							<input type="text" required class="form-control" id="cdescription" name="cdescription" placeholder="Duration" />
+							<input type="text" required class="form-control" id="cdescription" name="cdescription" placeholder="Duration" value="<?php echo $row['duration'];?>" />
 						</div>
 					</div>
 					<div class="form-group">
 						<label for="dob" class="col-sm-4 control-label">Eligibility: </label>
 						<div class="col-sm-8">
-							<input type="text" required class="form-control" id="eligibility" name="eligibility" placeholder="Eligibility" />
+							<input type="text" required class="form-control" id="eligibility" name="eligibility" placeholder="Eligibility" value="<?php echo $row['eligibility'];?>" />
 						</div>
 					</div>
 					<div class="form-group">
 						<label for="age" class="col-sm-4 control-label">Duration Unit: </label>
 						<div class="col-sm-8">
-							<input type="text" required class="form-control" id="unit" name="unit" placeholder="Month/Year" />
+							<input type="text" readonly class="form-control" id="unit" name="unit" placeholder="Month/Year" value="<?php echo $row['unit'];?>" />
 						</div>
 					</div>
 					<div class="form-group">
 						<label for="contact" class="col-sm-4 control-label">Course Fee: </label>
 						<div class="col-sm-8">
-							<input type="text" required class="form-control" id="fees" name="fees" />
+							<input type="text" required class="form-control" id="fees" name="fees" value="<?php echo $row['course_fee'];?>" />
 						</div>
 					</div>
 					<!-- <div class="form-group">
@@ -79,7 +96,7 @@ include('include/menu.php'); ?>
 					</div> -->
 
 					<div class="form-group">
-						<button type="submit" name="submit" id="submit" class="btn btn-primary btn-md btn-block">Submit</button>
+						<button type="submit" name="submit" id="submit" class="btn btn-primary btn-md btn-block">Update</button>
 					</div>
 					<!-- /col-md-6 -->
 
@@ -136,19 +153,17 @@ include('include/menu.php'); ?>
 
 		$('form').on('submit', function(e) {
 			$.ajax({
-				url: "insertCourse.php",
+				url: "updateCourse.php",
 				method: "post",
 				data: $("#createTeacherForm").serialize(),
 				dataType: 'json',
 				success: function(data) {
 					if (data) {
-						$("#add-course-messages").html('<div class="alert alert-success alert-dismissible" role="alert">' +
-							'<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>Successfully Course Added</div>');
-						clearForm();
+						alert("Successfully Course Update");
+                        window.location = "viewcourses.php";
 
 					} else {
-						$("#add-course-messages").html('<div class="alert alert-danger alert-dismissible" role="alert">' +
-							'<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>Error : Unable To Save ! </div>');
+						 alert("Error : Unable To Save ! ");
 
 					}
 

@@ -28,6 +28,7 @@ function fetchRecords()
 <div id="page-wrapper">
     <div class="container-fluid">
         <div class="row">
+            <div class="removeMessages"></div>
             <h3 class="page-header">Student Management Setting</h3>
             <a href="newstudentadd.php" class="btn btn-default pull-right"><i class="fa fa-plus-circle"></i> Add New</a><br>
             <p>&nbsp;</p>
@@ -62,54 +63,7 @@ function fetchRecords()
     </div>
 
 
-    <div id="editMemberModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                    <h4 class="modal-title" id="myModalLabel">Edit Franchise</h4>
-                </div>
-                <form method="post" id="updateMemberForm" class="form-horizontal" action="updateUser.php">
-                    <div class="modal-body">
-                        <div class="editMessage"></div>
-                        <div id="testmodal" style="padding: 5px 20px;">
-                            <div class="form-group">
-                                <label class="col-sm-4 control-label">Student Name</label>
-                                <div class="col-sm-6">
-                                    <input type="text" name="editName" id="editName" class="form-control" required>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="col-sm-4 control-label">Father Name</label>
-                                <div class="col-sm-6">
-                                    <input type="text" name="editFatherName" id="editFatherName" class="form-control" required>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="col-sm-4 control-label">Religion</label>
-                                <div class="col-sm-6">
-                                    <input type="text" name="editCust" id="editCust" class="form-control" required>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="col-sm-4 control-label">Registration No</label>
-                                <div class="col-sm-6">
-                                    <input type="text" name="memberRegno" id="memberRegno" class="form-control" required>
-                                </div>
-                            </div>
-
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-default antoclose" data-dismiss="modal">Close</button>
-                        <button type="submit" id="modalSave" class="btn btn-primary antosubmit">Save changes</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-
-    </div>
+     <!-- remove modal -->
     <div class="modal fade" tabindex="-1" role="dialog" id="removeMemberModal">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -238,54 +192,7 @@ function fetchRecords()
         $('#editMessage').html("");
         if (id) {
 
-            $.ajax({
-                url: 'editStudent.php',
-                type: 'post',
-                data: {
-                    member_id: id
-                },
-                dataType: 'json',
-                success: function(response) {
-                    $("#editUserId").val(response.Student_Id);
-                    $("#editName").val(response.St_Name);
-                    $("#editFatherName").val(response.Fathers_Name);
-                    $("#editCust").val(response.Cust);
-                    $("#memberRegno").val(response.regno);
-                    $("#updateMemberForm").unbind('submit').bind('submit', function() {
-
-                        var form = $(this);
-
-                        $.ajax({
-                            url: form.attr('action'),
-                            type: form.attr('method'),
-                            data: form.serialize(),
-                            dataType: 'json',
-                            success: function(response) {
-                                if (response.success == true) {
-                                    $(".editMessage").html('<div class="alert alert-success alert-dismissible" role="alert">' +
-                                        '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>' +
-                                        '<strong> <span class="glyphicon glyphicon-ok-sign"></span> </strong>' + response.messages +
-                                        '</div>');
-
-
-                                    table.ajax.reload(null, false);
-
-
-                                } else {
-                                    $(".editMessage").html('<div class="alert alert-warning alert-dismissible" role="alert">' +
-                                        '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>' +
-                                        '<strong> <span class="glyphicon glyphicon-exclamation-sign"></span> </strong>' + response.messages +
-                                        '</div>')
-                                }
-                            } // /success
-                        }); // /ajax
-
-
-                        return false;
-                    });
-
-                }
-            });
+            window.location="newAdmitionEdit.php?id="+id;
 
         } else {
             alert("Error : Refresh the page again");
@@ -295,12 +202,12 @@ function fetchRecords()
     function removeMember(id = null) {
         if (id) {
             $('#removeBtn').unbind('click').bind('click', function() {
-
+            
                 $.ajax({
-                    url: 'removeQuestion.php',
+                    url: 'newAdmitionDelete.php',
                     type: 'post',
                     data: {
-                        member_id: id
+                        id: id
                     },
                     dataType: 'json',
                     success: function(response) {

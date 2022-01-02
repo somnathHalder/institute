@@ -6,6 +6,21 @@ include('include/check-login.php');
 include "functions.php";
 $success_msg = null;
 $error_msg = null;
+
+function getStudentData()
+{
+	include('include/dbconfig.php');
+	$std_id = isset($_GET['id']) ? $_GET['id'] : "";
+	$sql = "SELECT * FROM student_info WHERE slno='$std_id'";
+	$res = mysqli_query($conn, $sql);
+	if (mysqli_num_rows($res) > 0) {
+		$std_row = mysqli_fetch_assoc($res);
+	}
+	return $std_row;
+}
+
+
+
 if (isset($_POST['formid']) && isset($_SESSION['formid']) && $_POST['formid'] == $_SESSION['formid']) {
 	$sname			= strtoupper(trim($_POST['sname']));
 	$fname			= strtoupper(trim($_POST['fname']));
@@ -74,21 +89,20 @@ $toyear			=trim($_POST['toyear']); */
 	move_uploaded_file($sourcePath, $targetPath);
 	$sql    		= "INSERT INTO `student_info`(franchises_id,`Student_Id`, `St_Name`, `Fathers_Name`, `DOB`, `Gender`, `Cust`, `Religion`, 
 				 `Mother_Trong`, `Session1`,`session_month`,`session_code`, `Roll`, `DOA`, `Mothers_Name`, `adminslno`, `Vill`, `Post`, `PS`, `Dist`, `Pin`, 
-				 `Contact_no`,`contact2`,`aadhar`, `qualification`,`image_name`,`previous_course`,`ref_name`,`admission_type`,note)
+				 `Contact_no`,`contact2`,`aadhar`, `qualification`, `regno`,`image_name`,`previous_course`,`ref_name`,`admission_type`,note)
 				  VALUES ('{$_SESSION['franchises_id']}','$stid','$sname','$fname','$dob','$gender','$caste','$religion','','$session','','$sessioncode','',
 				 '$date','$mname','','$address','$po','$ps','$district','$pin','$contact','$contact1','$aadhar',
-				 '$qualification','$imagename','$prevcourse','$refname','$admissionType','$note')";
+				 '$qualification','$regno','$imagename','$prevcourse','$refname','$admissionType','$note')";
 
 	$res			= mysqli_query($conn,  $sql);
-	$std_id=mysqli_insert_id($conn);
+	$std_id = mysqli_insert_id($conn);
 	$slno			= mysqli_insert_id($conn);
 	if ($res) {
 		$sql3 = "SELECT * FROM courses WHERE id='$course'";
 		$res = $conn->query($sql3);
 		$coursecode = $res->fetch_assoc();
-		$pursuing_id = addStudentToPursuingTable($course, $std_id, $session, $fees, $date, $sessioncode, $coursecode['course_id'], $serialno, $courseday, $time,$regno);
+		$pursuing_id = addStudentToPursuingTable($course, $std_id, $session, $fees, $date, $sessioncode, $coursecode['course_id'], $serialno, $courseday, $time);
 		$success_msg = 'Addmission Successfull. Student Unique ID Is : <b>' . $stid . '</b> And Registration Number  : <b>' . $regno . '</b> </div>';
-
 	} else {
 
 		$error_msg = 'Error : Unable To Save ! ';
@@ -144,7 +158,7 @@ function getCourses()
 		echo $option;
 	}
 }
-function addStudentToPursuingTable($course, $studentID, $session, $fees, $date, $sessioncode, $coursecode, $serialno, $courseday, $time,$regno)
+function addStudentToPursuingTable($course, $studentID, $session, $fees, $date, $sessioncode, $coursecode, $serialno, $courseday, $time)
 {
 	include "include/dbconfig.php";
 
@@ -156,8 +170,8 @@ function addStudentToPursuingTable($course, $studentID, $session, $fees, $date, 
 
 	$courseday		= implode(',', $courseday);
 	$sql = "INSERT INTO `pursuing_course`(`session`,`date`,`student_id`, `course_id`,`course_code`, `session_code`, `serial_no`, `course_fee`, `course_days` ,`time`
-		 ,`starting_year`, `starting_month`, `complete_year`, `complete_month`,regno )
-		  VALUES ('$session','$date','$studentID','$course','$coursecode','$sessioncode','$serialno','$fees','$courseday','$time','$session','','','','$regno')";
+		 ,`starting_year`, `starting_month`, `complete_year`, `complete_month` )
+		  VALUES ('$session','$date','$studentID','$course','$coursecode','$sessioncode','$serialno','$fees','$courseday','$time','$session','','','')";
 	$res = mysqli_query($conn,  $sql);
 	$pursuing_id = mysqli_insert_id($conn);
 	if ($res) {
@@ -234,27 +248,29 @@ function findQuesryListStudents()
 		</div>
 		<div class="row">
 			<div class="col-sm-12 col-md-12 col-xs-12">
-				<h4 class="page-header" style="border-color:black;">New Admission</h4>
+				<h4 class="page-header" style="border-color:black;">Edit Admission</h4>
 			</div>
 		</div>
 		<form method="post" action="<?php echo $_SERVER['PHP_SELF']; ?>" id="admissionForm" name="admissionForm" enctype="multipart/form-data">
+			<?php $std_row = getStudentData(); ?>
 			<input type="hidden" name="formid" id="formid" value="<?php echo htmlspecialchars($_SESSION['formid']); ?>">
+			<input type="hidden" name="id" id="id" value="<?php echo $std_row['slno']; ?>">
 			<div class="row">
 				<div class="form-group">
 					<label class="control-label col-md-1 col-sm-1 col-xs-12">Student's Name: <span class=""></span>
 					</label>
 					<div class="col-md-3 col-sm-3 col-xs-12 ">
-						<input type="text" id="sname" name="sname" class="form-control col-md-7 col-xs-12" required style="border-color:red">
+						<input type="text" id="sname" name="sname" class="form-control col-md-7 col-xs-12" required style="border-color:red" value="<?php echo $std_row['St_Name']; ?>">
 					</div>
 					<label class="control-label col-md-1 col-sm-1 col-xs-12" for="caddress">Father's Name<span class=""></span>
 					</label>
 					<div class="col-md-3 col-sm-3 col-xs-12">
-						<input type="text" id="fname" name="fname" class="form-control col-md-7 col-xs-12" />
+						<input type="text" id="fname" name="fname" class="form-control col-md-7 col-xs-12" value="<?php echo $std_row['Fathers_Name']; ?>" />
 					</div>
 					<label class="control-label col-md-1 col-sm-1 col-xs-12" for="mname">Mother's Name: <span class=""></span>
 					</label>
 					<div class="col-md-3 col-sm-3 col-xs-12">
-						<input type="text" id="mname" name="mname" class="form-control col-md-7 col-xs-12" />
+						<input type="text" id="mname" name="mname" class="form-control col-md-7 col-xs-12" value="<?php echo $std_row['Mothers_Name']; ?>" />
 					</div>
 				</div>
 			</div>
@@ -265,18 +281,21 @@ function findQuesryListStudents()
 					<div class="col-md-3 col-sm-3 col-xs-12 ">
 						<select id="address" name="address" class="form-control col-md-7 col-xs-12" required style="border-color:red">
 							<option value="">--Select--</option>
+							<?php $option = '<option selected value="' . $std_row['Vill'] . '">' . $std_row['Vill'] . '</option>';
+							echo $option;
+							?>
 							<?php getAddress(); ?>
 						</select>
 					</div>
 					<label class="control-label col-md-1 col-sm-1 col-xs-12" for="po">P.O:<span class=""></span>
 					</label>
 					<div class="col-md-3 col-sm-3 col-xs-12">
-						<input type="text" id="po" name="po" class="form-control col-md-7 col-xs-12" />
+						<input type="text" id="po" name="po" class="form-control col-md-7 col-xs-12" value="<?php echo $std_row['Post']; ?>" />
 					</div>
 					<label class="control-label col-md-1 col-sm-1 col-xs-12" for="ps">P.S: <span class=""></span>
 					</label>
 					<div class="col-md-3 col-sm-3 col-xs-12">
-						<input type="text" id="ps" name="ps" class="form-control col-md-7 col-xs-12" />
+						<input type="text" id="ps" name="ps" class="form-control col-md-7 col-xs-12" value="<?php echo $std_row['PS']; ?>" />
 					</div>
 				</div>
 			</div>
@@ -286,12 +305,12 @@ function findQuesryListStudents()
 					<label class="control-label col-md-1 col-sm-1 col-xs-12" for="customer">District: <span class=""></span>
 					</label>
 					<div class="col-md-3 col-sm-3 col-xs-12 ">
-						<input type="text" id="district" name="district" class="form-control col-md-7 col-xs-12">
+						<input type="text" id="district" name="district" class="form-control col-md-7 col-xs-12" value="<?php echo $std_row['Dist']; ?>">
 					</div>
 					<label class="control-label col-md-1 col-sm-1 col-xs-12" for="caddress">PIN<span class=""></span>
 					</label>
 					<div class="col-md-3 col-sm-3 col-xs-12">
-						<input type="text" id="pin" name="pin" class="form-control col-md-7 col-xs-12" />
+						<input type="text" id="pin" name="pin" class="form-control col-md-7 col-xs-12" value="<?php echo $std_row['Pin']; ?>" />
 
 
 					</div>
@@ -299,7 +318,7 @@ function findQuesryListStudents()
 					</label>
 					<div class="col-md-3 col-sm-3 col-xs-12">
 						<select id="gender" name="gender" class="form-control col-md-7 col-xs-12" required style="border-color:red">
-							<option value="">--Select--</option>
+							<?php echo '<option selected value="' . $std_row['Gender'] . '">' . $std_row['Gender'] . '</option>'; ?>
 							<option value="MALE"> MALE</option>
 							<option value="FEMALE">FEMALE</option>
 						</select>
@@ -314,7 +333,7 @@ function findQuesryListStudents()
 					</label>
 					<div class="col-md-3 col-sm-3 col-xs-12 required">
 						<div class="input-group date form_date col-md-16" data-date="" data-date-format="yyyy-mm-dd" data-link-field="dtp_input3" data-link-format="yyyy-mm-dd">
-							<input class="form-control" type="text" name="dob" id="dob" autocomplete="off" required style="border-color:red">
+							<input class="form-control" type="text" name="dob" id="dob" autocomplete="off" required style="border-color:red" value="<?php echo $std_row['DOB']; ?>">
 							<span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
 							<span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
 						</div>
@@ -322,7 +341,7 @@ function findQuesryListStudents()
 					<label class="control-label col-md-1 col-sm-1 col-xs-12" for="caddress">Nationality:<span class=""></span>
 					</label>
 					<div class="col-md-3 col-sm-3 col-xs-12">
-						<input type="text" id="nationality" name="nationality" value="INDIAN" class="form-control col-md-7 col-xs-12" />
+						<input type="text" id="nationality" name="nationality" value="INDIAN" class="form-control col-md-7 col-xs-12" value="<?php echo $std_row['DOB']; ?>" />
 					</div>
 					<div class="clearfix"></div>
 				</div>
@@ -333,7 +352,7 @@ function findQuesryListStudents()
 					</label>
 					<div class="col-md-3 col-sm-3 col-xs-12">
 						<select id="religion" name="religion" class="form-control col-md-7 col-xs-12 ">
-							<option value="">--Select--</option>
+							<?php echo '<option selected value="' . $std_row['Religion'] . '">' . $std_row['Religion'] . '</option>'; ?>
 							<option value="CHIRSTIAN">CHIRSTIAN</option>
 							<option value="ISLAM">ISLAM</option>
 							<option value="HINDUISM">HINDUISM</option>
@@ -345,7 +364,7 @@ function findQuesryListStudents()
 					</label>
 					<div class="col-md-3 col-sm-3 col-xs-12">
 						<select id="caste" name="caste" class="form-control col-md-7 col-xs-12">
-							<option value="">--Select--</option>
+							<?php echo '<option selected value="' . $std_row['Cust'] . '">' . $std_row['Cust'] . '</option>'; ?>
 							<option value="GENERAL">General</option>
 							<option value="SC">SC</option>
 							<option value="ST">ST</option>
@@ -356,7 +375,7 @@ function findQuesryListStudents()
 						<font size="2" color="red"></font><span class=""></span>
 					</label>
 					<div class="col-md-3 col-sm-3 col-xs-12">
-						<input type="text" id="aadhar" name="aadhar" class="form-control col-md-7 col-xs-12" autocomplete="off" />
+						<input type="text" id="aadhar" name="aadhar" class="form-control col-md-7 col-xs-12" autocomplete="off" value="<?php echo $std_row['aadhar']; ?>" />
 					</div>
 
 				</div>
@@ -367,21 +386,31 @@ function findQuesryListStudents()
 					<label class="control-label col-md-1 col-sm-1 col-xs-12" for="customer">Mobile No: <span class="required"></span>
 					</label>
 					<div class="col-md-3 col-sm-3 col-xs-12 required">
-						<input type="text" id="contact" name="contact" class="form-control col-md-7 col-xs-12 required" maxlength="10">
+						<input type="text" id="contact" name="contact" class="form-control col-md-7 col-xs-12 required" maxlength="10" value="<?php echo $std_row['Contact_no']; ?>">
 					</div>
 					<label class="control-label col-md-1 col-sm-1 col-xs-12" for="caddress">Alternate No:<br />
 						<font size="2" color="red"></font><span class=""></span>
 					</label>
 					<div class="col-md-3 col-sm-3 col-xs-12">
-						<input type="text" id="mobile1" name="mobile1" class="form-control col-md-7 col-xs-12" />
+						<input type="text" id="mobile1" name="mobile1" class="form-control col-md-7 col-xs-12" value="<?php echo $std_row['contact2']; ?>" />
 					</div>
 					<label class="control-label col-md-1 col-sm-1 col-xs-12" for="caddress">Direct Diploma<br />
 						<font size="2" color="red"></font><span class=""></span>
 					</label>
 					<div class="col-md-3 col-sm-3 col-xs-12">
 						<select name="admissionType" id="admissionType" class="form-control">
+							<?php
+
+							if ($std_row['admission_type'] == "DIRECT DIPLOMA") {
+
+								echo '<option selected value="' . $std_row['admission_type'] . '">YES</option>';
+							} else {
+								echo '<option selected value="' . $std_row['admission_type'] . '">NO</option>';
+							}
+
+							?>
 							<option value="DIRECT DIPLOMA">YES</option>
-							<option value="" selected="selected">NO</option>
+							<option value="">NO</option>
 						</select>
 					</div>
 				</div>
@@ -398,7 +427,15 @@ function findQuesryListStudents()
 					</label>
 					<div class="col-md-3 col-sm-3 col-xs-12">
 						<select id="sessionCode" name="sessionCode" class="form-control col-md-7 col-xs-12" required style="border-color:red">
-							<option value="">Select</option>
+							<?php
+							$sql = "SELECT * FROM `session` WHERE session_code={$std_row['session_code']} AND `status`='ACTIVE'";
+							$res = mysqli_query($conn,  $sql);
+							if (mysqli_num_rows($res) > 0) {
+								$row = mysqli_fetch_assoc($res);
+
+								echo '<option selected value="' . $row['session_code'] . '">' . $row['session_code'] . "-" . $row['description'] . '</option>';
+							}
+								?>
 							<?php getSession(); ?>
 						</select>
 					</div>
@@ -406,14 +443,36 @@ function findQuesryListStudents()
 					</label>
 					<div class="col-md-3 col-sm-3 col-xs-12">
 						<select id="course" name="course" class="form-control col-md-7 col-xs-12" required style="border-color:red">
-							<option value="">--Select--</option>
+							<?php
+
+							$sqll="SELECT * FROM pursuing_course WHERE student_id={$std_row['slno']}";
+							$ress = mysqli_query($conn,  $sqll);
+							$roww=mysqli_fetch_assoc($ress);
+
+							 $sqll2 = "SELECT * FROM `courses` WHERE id={$roww['course_id']}  ORDER BY `course_name`";
+							$res22 = mysqli_query($conn,  $sqll2);
+							
+							if (mysqli_num_rows($res22) > 0) {
+								$row22 = mysqli_fetch_assoc($res22);
+									
+								echo '<option selected value="' . $row22['id'] . '">' . $row22['course_name'] . "-" . $row22['description'] . '</option>';
+								
+							}
+
+							?>
 							<?php getCourses(); ?>
 						</select>
 					</div>
 					<label class="control-label col-md-2 col-sm-2 col-xs-12" for="caddress">Registration No<span class=""></span>
 					</label>
 					<div class="col-md-2 col-sm-2 col-xs-12">
-						<input type="text" class="form-control" name="registrationNo" id="registrationNo" readonly>
+						<input type="text" class="form-control" name="registrationNo" id="registrationNo" readonly value="<?php 
+						 $sql="SELECT * FROM pursuing_course WHERE student_id='{$std_row['slno']}'";
+						$res=mysqli_query($conn,$sql);
+						$row=mysqli_fetch_assoc($res);
+						echo $row['regno'];
+						
+						?>">
 					</div>
 					<DIV CLASS="clearfix"></div>
 				</div>
@@ -424,12 +483,18 @@ function findQuesryListStudents()
 					<label class="control-label col-md-2 col-sm-2 col-xs-12" for="customer">Qualification(Last Exam): <span class="required"></span>
 					</label>
 					<div class="col-md-4 col-sm-4 col-xs-12 required">
-						<input type="text" id="qualification" name="qualification" class="form-control col-md-7 col-xs-12 required">
+						<input type="text" id="qualification" name="qualification" class="form-control col-md-7 col-xs-12 required" value="<?php echo $std_row['qualification']; ?>">
 					</div>
 					<label class="control-label col-md-2 col-sm-2 col-xs-12" for="customer">Course Fees: <span class="required"></span>
 					</label>
 					<div class="col-md-4 col-sm-4 col-xs-12 required">
-						<input type="text" id="fees" name="fees" required="required" class="form-control col-md-7 col-xs-12 required" required style="border-color:red">
+						<input type="text" id="fees" name="fees" required="required" class="form-control col-md-7 col-xs-12 required" required style="border-color:red" value="<?php 
+						 $sql="SELECT * FROM pursuing_course WHERE student_id='{$std_row['slno']}'";
+						$res=mysqli_query($conn,$sql);
+						$row=mysqli_fetch_assoc($res);
+						echo $row['course_fee'];
+						
+						?>">
 					</div>
 				</div>
 			</div>
@@ -440,7 +505,7 @@ function findQuesryListStudents()
 					</label>
 					<div class="col-md-4 col-sm-4 col-xs-12 required">
 						<div class="input-group date form_date col-md-16" data-date="" data-date-format="yyyy-mm-dd" data-link-field="dtp_input3" data-link-format="yyyy-mm-dd">
-							<input class="form-control" type="text" name="date" id="date" value="<?php echo date('Y-m-d'); ?>" autocomplete="off" required style="border-color:red">
+							<input class="form-control" type="text" name="date" id="date" value="<?php echo $std_row['DOA']; ?>" autocomplete="off" required style="border-color:red">
 							<span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
 							<span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
 						</div>
@@ -448,7 +513,7 @@ function findQuesryListStudents()
 					<label class="control-label col-md-2 col-sm-2 col-xs-12" for="customer">Year of Addmission <span class="required"></span>
 					</label>
 					<div class="col-md-4 col-sm-4 col-xs-12 required">
-						<input type="text" id="yoa" name="yoa" required="required" class="form-control col-md-7 col-xs-12 required" value="<?php echo date('Y'); ?>" readonly>
+						<input type="text" id="yoa" name="yoa" required="required" class="form-control col-md-7 col-xs-12 required" readonly value="<?php echo $std_row['Session1']; ?>">
 					</div>
 
 				</div>
@@ -463,7 +528,17 @@ function findQuesryListStudents()
 					</label>
 					<div class="col-md-4 col-sm-4 col-xs-12">
 						<select id="time" name="time" class="form-control">
-							<option value="">--Select--</option>
+						<?php 
+						
+						 $sql="SELECT * FROM pursuing_course WHERE student_id='{$std_row['slno']}'";
+						$res=mysqli_query($conn,$sql);
+						if(mysqli_num_rows($res)>0)
+						{
+							$row=mysqli_fetch_assoc($res);
+
+							echo '<option selected value="' . $row['time'] . '">' . $row['time'] . '</option>'; 
+						}
+						?>
 							<option value="06.00 AM">06.00 AM</option>
 							<option value="07.00 AM">07.00 AM</option>
 							<option value="08.00 AM">08.00 AM</option>
@@ -484,6 +559,7 @@ function findQuesryListStudents()
 					</label>
 					<div class="col-md-4 col-sm-4 col-xs-12">
 						<select id="courseday" name="courseday[]" multiple class="form-control selectpicker">
+							<?php //echo '<option selected value="' . $std_row['course_days'] . '">' . $std_row['course_days'] . '</option>';?>
 							<option value="MON">MONDAY </option>
 							<option value="TUE">TUESDAY </option>
 							<option value="WED">WEDNESDAY </option>
@@ -512,7 +588,7 @@ function findQuesryListStudents()
 						<label class="control-label col-md-2 col-sm-2 col-xs-12" for="caddress">Previous Course<span class=""></span>
 						</label>
 						<div class="col-md-4 col-sm-4 col-xs-12">
-							<input type="text" id="prevcourse" name="prevcourse" class="form-control">
+							<input type="text" id="prevcourse" name="prevcourse" class="form-control" value="<?php echo $std_row['previous_course']; ?>">
 
 						</div>
 					</div>
@@ -526,12 +602,12 @@ function findQuesryListStudents()
 					<label class="control-label col-md-2 col-sm-2 col-xs-12" for="caddress">Note<span class=""></span>
 					</label>
 					<div class="col-md-4 col-sm-4 col-xs-12">
-						<input type="text" id="note" name="note" class="form-control">
+						<input type="text" id="note" name="note" class="form-control" value="<?php echo $std_row['note']; ?>" >
 					</div>
 					<label class="control-label col-md-2 col-sm-2 col-xs-12" for="caddress">Referer Name<span class=""></span>
 					</label>
 					<div class="col-md-4 col-sm-4 col-xs-12">
-						<input type="text" id="refname" name="refname" class="form-control">
+						<input type="text" id="refname" name="refname" class="form-control" value="<?php echo $std_row['ref_name']; ?>" >
 
 					</div>
 				</div>
@@ -543,7 +619,7 @@ function findQuesryListStudents()
 
 			<div class="row">
 				<div class="col-md-4 col-md-offset-4 col-sm-offset-4 col-sm-4 col-xs-12">
-					<input type="submit" id="submit" name="submit" value="Submit Now" class="form-control btn btn-info col-md-7 col-xs-12"><br />
+					<input type="submit" id="submit" name="submit" value="Update" class="form-control btn btn-info col-md-7 col-xs-12"><br />
 					<p><br /></p>
 				</div>
 			</div>
