@@ -171,6 +171,41 @@ include('include/check-login.php');
 						</li>
 
 
+						<li>
+
+							<a href="#"><i class="fa fa-rupee "></i> Payment<span class="fa arrow"></span></a>
+
+							<ul class="nav nav-second-level">
+
+								<li>
+
+									<a href="franchisescollectform.php">Collect Fee</a>
+
+								</li>
+
+								<li>
+
+									<a href="ledgerform.php">Payment Report</a>
+
+								</li>
+
+								<li>
+
+									<a href="notesInformation.php">Notes Information</a>
+
+								</li>
+
+								<li>
+
+									<a href="cancelPayment.php">Delete Receipt </a>
+
+								</li>
+
+							</ul>
+
+						</li>
+
+
 
 						<!-- <li>
 
@@ -203,6 +238,7 @@ include('include/check-login.php');
 						</li> -->
 
 					</ul>
+
 
 
 

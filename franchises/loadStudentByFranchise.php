@@ -1,8 +1,5 @@
 <?php 
-include('include/no-cache.php');
-include('include/dbconfig.php');
-include('include/check-login.php');
-include('include/menu.php');
+include "include/dbconfig.php";
 $id    =trim(isset($_POST['franchiseId']) ? $_POST['franchiseId'] : "") ;
 $sql   ="SELECT * FROM `student_info` WHERE `franchises_id`='$id'";
 
