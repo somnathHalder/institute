@@ -1,8 +1,12 @@
 <?php
 session_start();
 error_reporting(0);
+include "include/no-cache.php";
 include('include/menu.php');
 include('include/dbconfig.php');
+include "include/check-login.php";
+
+
 function fetchRecords()
 {
 	include   'include/dbconfig.php';	

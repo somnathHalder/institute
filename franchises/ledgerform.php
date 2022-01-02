@@ -1,6 +1,9 @@
 <?php 
 session_start();
-include('include/menu.php');?>
+include "include/no-cache.php";
+include('include/menu.php');
+include "include/check-login.php";
+?>
 <!-- Page Content -->
 <div id="page-wrapper">
 	<div class="container-fluid">
