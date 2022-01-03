@@ -283,6 +283,34 @@ include('include/check-login.php');
 							 </ul>
 
 						</li>
+
+						<li>
+
+							<a href="#"><i class="fa fa-th-list"></i> Subjects <span class="fa arrow"></span></a>
+
+							 <ul class="nav nav-second-level">
+
+									<li>
+
+										 <a href="newsubject.php">Add New Subject</a>
+
+									</li>
+
+									<li>
+
+										 <a href="viewsubject.php">View Subject</a>
+
+									</li>
+
+									
+
+							 </ul>
+
+						</li>
+
+
+
+
 						<li>
 							<a href="#"><i class="fa fa-rupee "></i> Franchise<span class="fa arrow"></span></a>
 							 <ul class="nav nav-second-level">

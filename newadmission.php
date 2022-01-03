@@ -37,8 +37,8 @@ if (isset($_POST['formid']) && isset($_SESSION['formid']) && $_POST['formid'] ==
 	//$chequeno		= strtoupper(trim($_POST['chequeno']));
 	$prevcourse		= strtoupper(trim($_POST['prevcourse']));
 	//$previnstitute	= strtoupper(trim($_POST['previnstitute']));
+	$note =   strtoupper(trim($_POST['note']));
 	$refname		= strtoupper(trim($_POST['refname']));
-	$note		= strtoupper(trim($_POST['note']));
 	//$refaddress		= strtoupper(trim($_POST['refaddress']));
 	//$refcontact		= strtoupper(trim($_POST['refcontact']));
 	$time			= strtoupper(trim($_POST['time']));
@@ -46,7 +46,7 @@ if (isset($_POST['formid']) && isset($_SESSION['formid']) && $_POST['formid'] ==
 
 	$stid			= findMaxID($session);
 	$value = '';
-	$courseday=array();
+	$courseday = array();
 	if (isset($_POST['courseday'])) {
 
 		foreach ($_POST["courseday"] as $row) {
@@ -72,21 +72,23 @@ $toyear			=trim($_POST['toyear']); */
 	$imagename		= $_FILES['fileToUpload']['name'];
 	$targetPath 	= "Student_images/" . $_FILES['fileToUpload']['name'];
 	move_uploaded_file($sourcePath, $targetPath);
-	$sql    		= "INSERT INTO `student_info`(`Student_Id`, `St_Name`, `Fathers_Name`, `DOB`, `Gender`, `Cust`, `Religion`, 
+	$sql    		= "INSERT INTO `student_info`(franchises_id,`Student_Id`, `St_Name`, `Fathers_Name`, `DOB`, `Gender`, `Cust`, `Religion`, 
 				 `Mother_Trong`, `Session1`,`session_month`,`session_code`, `Roll`, `DOA`, `Mothers_Name`, `adminslno`, `Vill`, `Post`, `PS`, `Dist`, `Pin`, 
-				 `Contact_no`,`contact2`,`aadhar`, `qualification`, `regno`,`image_name`,`previous_course`,`ref_name`,`admission_type`,note)
-				  VALUES ('$stid','$sname','$fname','$dob','$gender','$caste','$religion','','$session','','$sessioncode','',
+				 `Contact_no`,`contact2`,`aadhar`, `qualification`,`image_name`,`previous_course`,`ref_name`,`admission_type`,note)
+				  VALUES ('{$_SESSION['franchises_id']}','$stid','$sname','$fname','$dob','$gender','$caste','$religion','','$session','','$sessioncode','',
 				 '$date','$mname','','$address','$po','$ps','$district','$pin','$contact','$contact1','$aadhar',
-				 '$qualification','$regno','$imagename','$prevcourse','$refname','$admissionType','$note')";
+				 '$qualification','$imagename','$prevcourse','$refname','$admissionType','$note')";
 
 	$res			= mysqli_query($conn,  $sql);
+	$std_id=mysqli_insert_id($conn);
 	$slno			= mysqli_insert_id($conn);
 	if ($res) {
-		$sql3="SELECT * FROM courses WHERE course_id='$course'";
-		$res=$conn->query($sql3);
-		$course=$res->fetch_assoc();
-		$pursuing_id = addStudentToPursuingTable($course['id'], $stid, $session, $fees, $date, $sessioncode, $coursecode, $serialno, $courseday, $time);
+		$sql3 = "SELECT * FROM courses WHERE id='$course'";
+		$res = $conn->query($sql3);
+		$coursecode = $res->fetch_assoc();
+		$pursuing_id = addStudentToPursuingTable($course, $std_id, $session, $fees, $date, $sessioncode, $coursecode['course_id'], $serialno, $courseday, $time,$regno);
 		$success_msg = 'Addmission Successfull. Student Unique ID Is : <b>' . $stid . '</b> And Registration Number  : <b>' . $regno . '</b> </div>';
+
 	} else {
 
 		$error_msg = 'Error : Unable To Save ! ';
@@ -96,6 +98,7 @@ $toyear			=trim($_POST['toyear']); */
 
 	$_SESSION['formid'] = md5(rand(0, 10000000));
 }
+
 function findMaxID($session)
 {
 	include "include/dbconfig.php";
@@ -136,22 +139,25 @@ function getCourses()
 	$option = '';
 	if (mysqli_num_rows($res) > 0) {
 		while ($row = mysqli_fetch_assoc($res)) {
-			$option .= '<option value="' . $row['course_id'] . '">' . $row['course_name'] . '-' . $row['description'] . '</option>';
+			$option .= '<option value="' . $row['id'] . '">' . $row['course_name'] . '-' . $row['description'] . '</option>';
 		}
 		echo $option;
 	}
 }
-function addStudentToPursuingTable($course, $studentID, $session, $fees, $date, $sessioncode, $coursecode, $serialno, $courseday, $time)
+function addStudentToPursuingTable($course, $studentID, $session, $fees, $date, $sessioncode, $coursecode, $serialno, $courseday, $time,$regno)
 {
 	include "include/dbconfig.php";
 
 	/* 	$frommonth		= trim($_POST['frommonth']);
 	$tomonth		= trim($_POST['tomonth']);
 	$toyear			= trim($_POST['toyear']); */
+
+
+
 	$courseday		= implode(',', $courseday);
 	$sql = "INSERT INTO `pursuing_course`(`session`,`date`,`student_id`, `course_id`,`course_code`, `session_code`, `serial_no`, `course_fee`, `course_days` ,`time`
-		 ,`starting_year`, `starting_month`, `complete_year`, `complete_month` )
-		  VALUES ('$session','$date','$studentID','$course','$coursecode','$sessioncode','$serialno','$fees','$courseday','$time','$session','','','')";
+		 ,`starting_year`, `starting_month`, `complete_year`, `complete_month`,regno )
+		  VALUES ('$session','$date','$studentID','$course','$coursecode','$sessioncode','$serialno','$fees','$courseday','$time','$session','','','','$regno')";
 	$res = mysqli_query($conn,  $sql);
 	$pursuing_id = mysqli_insert_id($conn);
 	if ($res) {
@@ -622,12 +628,12 @@ function findQuesryListStudents()
 			});
 		});
 		$('#course').on('change', function(e) {
-			var courseid = $('#course').val();
+			var id = $('#course').val();
 			$.ajax({
 				url: "findCourseFees.php",
 				method: "post",
 				data: {
-					'courseid': courseid
+					'id': id
 				},
 				success: function(data) {
 					$('#fees').val(data);
