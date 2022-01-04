@@ -6,6 +6,7 @@ include('include/check-login.php');
 include "functions.php";
 $success_msg = null;
 $error_msg = null;
+$course=array();
 
 function getStudentData()
 {
@@ -435,7 +436,7 @@ function findQuesryListStudents()
 
 								echo '<option selected value="' . $row['session_code'] . '">' . $row['session_code'] . "-" . $row['description'] . '</option>';
 							}
-								?>
+							?>
 							<?php getSession(); ?>
 						</select>
 					</div>
@@ -445,18 +446,17 @@ function findQuesryListStudents()
 						<select id="course" name="course" class="form-control col-md-7 col-xs-12" required style="border-color:red">
 							<?php
 
-							$sqll="SELECT * FROM pursuing_course WHERE student_id={$std_row['slno']}";
+							$sqll = "SELECT * FROM pursuing_course WHERE student_id={$std_row['slno']}";
 							$ress = mysqli_query($conn,  $sqll);
-							$roww=mysqli_fetch_assoc($ress);
+							$roww = mysqli_fetch_assoc($ress);
 
-							 $sqll2 = "SELECT * FROM `courses` WHERE id={$roww['course_id']}  ORDER BY `course_name`";
+							$sqll2 = "SELECT * FROM `courses` WHERE id={$roww['course_id']}  ORDER BY `course_name`";
 							$res22 = mysqli_query($conn,  $sqll2);
-							
+
 							if (mysqli_num_rows($res22) > 0) {
 								$row22 = mysqli_fetch_assoc($res22);
-									
+
 								echo '<option selected value="' . $row22['id'] . '">' . $row22['course_name'] . "-" . $row22['description'] . '</option>';
-								
 							}
 
 							?>
@@ -466,13 +466,13 @@ function findQuesryListStudents()
 					<label class="control-label col-md-2 col-sm-2 col-xs-12" for="caddress">Registration No<span class=""></span>
 					</label>
 					<div class="col-md-2 col-sm-2 col-xs-12">
-						<input type="text" class="form-control" name="registrationNo" id="registrationNo" readonly value="<?php 
-						 $sql="SELECT * FROM pursuing_course WHERE student_id='{$std_row['slno']}'";
-						$res=mysqli_query($conn,$sql);
-						$row=mysqli_fetch_assoc($res);
-						echo $row['regno'];
-						
-						?>">
+						<input type="text" class="form-control" name="registrationNo" id="registrationNo" readonly value="<?php
+																															$sql = "SELECT * FROM pursuing_course WHERE student_id='{$std_row['slno']}'";
+																															$res = mysqli_query($conn, $sql);
+																															$row = mysqli_fetch_assoc($res);
+																															echo $row['regno'];
+
+																															?>">
 					</div>
 					<DIV CLASS="clearfix"></div>
 				</div>
@@ -488,13 +488,13 @@ function findQuesryListStudents()
 					<label class="control-label col-md-2 col-sm-2 col-xs-12" for="customer">Course Fees: <span class="required"></span>
 					</label>
 					<div class="col-md-4 col-sm-4 col-xs-12 required">
-						<input type="text" id="fees" name="fees" required="required" class="form-control col-md-7 col-xs-12 required" required style="border-color:red" value="<?php 
-						 $sql="SELECT * FROM pursuing_course WHERE student_id='{$std_row['slno']}'";
-						$res=mysqli_query($conn,$sql);
-						$row=mysqli_fetch_assoc($res);
-						echo $row['course_fee'];
-						
-						?>">
+						<input type="text" id="fees" name="fees" required="required" class="form-control col-md-7 col-xs-12 required" required style="border-color:red" value="<?php
+																																												$sql = "SELECT * FROM pursuing_course WHERE student_id='{$std_row['slno']}'";
+																																												$res = mysqli_query($conn, $sql);
+																																												$row = mysqli_fetch_assoc($res);
+																																												echo $row['course_fee'];
+
+																																												?>">
 					</div>
 				</div>
 			</div>
@@ -528,17 +528,16 @@ function findQuesryListStudents()
 					</label>
 					<div class="col-md-4 col-sm-4 col-xs-12">
 						<select id="time" name="time" class="form-control">
-						<?php 
-						
-						 $sql="SELECT * FROM pursuing_course WHERE student_id='{$std_row['slno']}'";
-						$res=mysqli_query($conn,$sql);
-						if(mysqli_num_rows($res)>0)
-						{
-							$row=mysqli_fetch_assoc($res);
+							<?php
 
-							echo '<option selected value="' . $row['time'] . '">' . $row['time'] . '</option>'; 
-						}
-						?>
+							$sql = "SELECT * FROM pursuing_course WHERE student_id='{$std_row['slno']}'";
+							$res = mysqli_query($conn, $sql);
+							if (mysqli_num_rows($res) > 0) {
+								$row = mysqli_fetch_assoc($res);
+
+								echo '<option selected value="' . $row['time'] . '">' . $row['time'] . '</option>';
+							}
+							?>
 							<option value="06.00 AM">06.00 AM</option>
 							<option value="07.00 AM">07.00 AM</option>
 							<option value="08.00 AM">08.00 AM</option>
@@ -559,14 +558,30 @@ function findQuesryListStudents()
 					</label>
 					<div class="col-md-4 col-sm-4 col-xs-12">
 						<select id="courseday" name="courseday[]" multiple class="form-control selectpicker">
-							<?php //echo '<option selected value="' . $std_row['course_days'] . '">' . $std_row['course_days'] . '</option>';?>
-							<option value="MON">MONDAY </option>
-							<option value="TUE">TUESDAY </option>
-							<option value="WED">WEDNESDAY </option>
-							<option value="THU">THURSDAY </option>
-							<option value="FRI">FRIDAY </option>
-							<option value="SAT">SATURDAY </option>
-							<option value="SUN">SUNDAY </option>
+							<?php
+
+							$sql = "SELECT * FROM pursuing_course WHERE student_id='{$std_row['slno']}'";
+							$res = mysqli_query($conn, $sql);
+							
+							if (mysqli_num_rows($res) > 0) {
+								$row = mysqli_fetch_assoc($res);
+								$arr = (json_decode($row['course_days'], true));
+								$course = explode(',', $arr);
+
+
+							?>
+<!-- in_array("MON",$course) -->
+								<option  <?php echo $couse[0]=="MON"?"selected":"";?>value="MON">MONDAY </option>
+								<option value="TUE">TUESDAY </option>
+								<option value="WED">WEDNESDAY </option>
+								<option value="THU">THURSDAY </option>
+								<option  value="FRI">FRIDAY </option>
+								<option value="SAT">SATURDAY </option>
+								<option value="SUN">SUNDAY </option>
+
+							<?php	}
+
+							?>
 						</select>
 					</div>
 				</div>
@@ -602,12 +617,12 @@ function findQuesryListStudents()
 					<label class="control-label col-md-2 col-sm-2 col-xs-12" for="caddress">Note<span class=""></span>
 					</label>
 					<div class="col-md-4 col-sm-4 col-xs-12">
-						<input type="text" id="note" name="note" class="form-control" value="<?php echo $std_row['note']; ?>" >
+						<input type="text" id="note" name="note" class="form-control" value="<?php echo $std_row['note']; ?>">
 					</div>
 					<label class="control-label col-md-2 col-sm-2 col-xs-12" for="caddress">Referer Name<span class=""></span>
 					</label>
 					<div class="col-md-4 col-sm-4 col-xs-12">
-						<input type="text" id="refname" name="refname" class="form-control" value="<?php echo $std_row['ref_name']; ?>" >
+						<input type="text" id="refname" name="refname" class="form-control" value="<?php echo $std_row['ref_name']; ?>">
 
 					</div>
 				</div>
