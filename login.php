@@ -11,6 +11,7 @@
 	$row=mysqli_fetch_assoc($query);
 	if(mysqli_num_rows($query)>0){
 		$_SESSION['userid'] = $userid;
+		$_SESSION['franchise_id'] = $row['member_id'];
 		$_SESSION['password'] = $password;
 		$_SESSION['id'] = session_id(); 
 		$_SESSION['login_type'] = $row['type'];

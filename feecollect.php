@@ -1,6 +1,6 @@
 <?php
-session_start();
-error_reporting(0);
+session_start() ;
+//error_reporting(0);
 include('include/menu.php');
 include('include/dbconfig.php');
 	$error_msg=NULL;
@@ -8,26 +8,37 @@ include('include/dbconfig.php');
 if(isset($_POST['formid']) && isset($_SESSION['formid']) && $_POST['formid'] == $_SESSION['formid'])
 {
 	extract($_POST);
-
-	$arr = array('Admission','Installment','Fine','Prospectus','Exam Fees');
-	$receiptNo= maxReceiptNo();
+	
+	$arr = array('Admission', 'Installment', 'Fine', 'Prospectus', 'Exam Fees');
+	$receiptNo = maxReceiptNo();
+	$createdAt = date('Y-m-d H:i:s');
+	$studentId = htmlspecialchars($_GET['studentid'], ENT_QUOTES);
+	$sqlQuery  = "INSERT INTO `receipts`(`franchise_id`, `receipt_no`, `receipt_date`, `course_id`, `student_id`, `payment_amt`, `collected_by`, `created_at`) 
+			      VALUES ('$_SESSION[franchise_id]', '$receiptNo', '$date', '$_GET[pursuingcourse]', '$studentId', '$total', '$_SESSION[userid]', '$createdAt')";
+	
+	$result    = mysqli_query($conn, $sqlQuery);
+	$receiptId = mysqli_insert_id($conn);
 	for($i=0 ; $i < count($arr) ; $i++)
 	{
 		$amount	= $_POST['amount'][$i];
-		$sql= "INSERT INTO `payment`(`receipt_no`,`date`, `course_id`, `student_id`,`payment_type`,`payment_amt`,`collect_by`)
-			   VALUES ('$receiptNo','$date','$_GET[pursuingcourse]','$_GET[studentid]','$arr[$i]','$amount','$_SESSION[userid]')";
-		/* echo $sql."<BR/>"; */
-		$res= mysqli_query($conn,  $sql);
+
+		if($amount > 0){
+			$sql= "INSERT INTO `payment`(`receipt_id`, `payment_type`, `payment_amt`)
+			VALUES ('$receiptId','$arr[$i]','$amount')" ;
+			/* echo $sql."<BR/>"; */
+			$res= mysqli_query($conn, $sql);
+		}
+		
 		
 	}
 	if($res)
 	{
-		$student	= getStudentNameById($studentid);
+		$student	= getStudentNameById($studentId);
 		/* $particulars= getCourseNameById($courseid)." COURSE FEES FROM ".$student['St_Name']."(REG NO ".$student['regno'].")" ; */
 		$particulars = "ADMISSION/INSTALLMENT FEES FROM ".$student['St_Name'];
 		$payby="CASH";
-		addIncomeToDayBook($receiptNo,$studentid,$total ,$courseid,$particulars,$date,$payby);
-		saveNoteInfo(trim($note2000),trim($note500),$receiptNo,$studentid);
+		addIncomeToDayBook($receiptId, $studentid, $total , $courseid, $particulars, $date, $payby);
+		
 		$success_msg='<a target="_blank" href="printSlip.php?id='.$receiptNo.'">Print Receipt </a>';
 	}
 
@@ -36,38 +47,39 @@ if(isset($_POST['formid']) && isset($_SESSION['formid']) && $_POST['formid'] == 
 else{
 		$_SESSION['formid']=md5(rand(0,10000000));
 }
-function addIncomeToDayBook($receiptNo,$studentID,$fees,$course,$particulars,$date,$payby)
+function addIncomeToDayBook($receiptId,$studentID,$fees,$course,$particulars,$date,$payby)
 {
 	include "include/dbconfig.php" ;
 	$mode=null;
+	$franchiseId = $_SESSION['franchise_id'];
 	if($payby == "CASH")
 	{
-	$sql  = "INSERT INTO `daybook` (`receipt_No`,`student_id`, `course_id`, `user_id`, `date`, `particulars`,
+	$sql  = "INSERT INTO `daybook` (`franchise_id`, `receipt_id`,`student_id`, `course_id`, `user_id`, `date`, `particulars`,
 			`cash`,`to`, `type`) 
-		    VALUES ('$receiptNo','$studentID','$course','$_SESSION[userid]','$date','$particulars','$fees','CASH','INCOME')" ;
+		    VALUES ('$franchiseId', '$receiptId','$studentID','$course','$_SESSION[userid]','$date','$particulars','$fees','CASH','INCOME')" ;
 	}
 	else{
 		$mode = "BANK";
-		$sql  = "INSERT INTO `daybook` (`student_id`, `course_id`, `user_id`, `date`, `particulars`,
+		$sql  = "INSERT INTO `daybook` (`franchise_id`, `student_id`, `course_id`, `user_id`, `date`, `particulars`,
 			    `bank`, `to`, `type`) 
-		        VALUES ('$studentID','$course','$_SESSION[userid]','$date','$particulars','$fees','BANK','INCOME')" ;
+		        VALUES ('$franchiseId', '$studentID','$course','$_SESSION[userid]','$date','$particulars','$fees','BANK','INCOME')" ;
 	}
 	
 	$res  = mysqli_query($conn,  $sql) ;
 	return (isset($res) ? true : false);
 
 }
-function saveNoteInfo($_2000info,$_500info,$receiptNo,$studentID)
+/* function saveNoteInfo($_2000info,$_500info,$receiptId,$studentID)
 {
 	include "include/dbconfig.php" ;
 	if(($_2000info !="" && $_500info =="") || ($_2000info =="" && $_500info !="") || ($_2000info !="" && $_500info !="") )
 	{
-		$sql="INSERT INTO `note_info`(`student_id`, `recpt_no`, `2000_no`, `500_no`) 
-			  VALUES('$studentID','$receiptNo','$_2000info','$_500info')" ;
+		$sql="INSERT INTO `note_info`(`student_id`, `receipt_id`, `2000_no`, `500_no`) 
+			  VALUES('$studentID','$receiptId','$_2000info','$_500info')" ;
 		$res = mysqli_query($conn,  $sql) ;
 	}
 	
-}
+} */
 function getCourseNameById($courseid)
 {
 	include "include/dbconfig.php" ;
@@ -81,7 +93,7 @@ function getCourseNameById($courseid)
 function getStudentNameById($studentid)
 {
 	include "include/dbconfig.php" ;
-	$sql="SELECT * FROM `student_info` WHERE `Student_Id`='$studentid'" ;
+	$sql="SELECT * FROM `student_info` WHERE `slno`='$studentid'" ;
 	$res=mysqli_query($conn,  $sql);
 	$row=mysqli_fetch_assoc($res);
 	return $row;
@@ -90,33 +102,42 @@ function getStudentNameById($studentid)
 function fechPreviousFeeeRecords()
 {
 	include('include/dbconfig.php');	
-	$courseid	=trim($_GET['pursuingcourse']);
-	$studentid	=trim($_GET['studentid']);
-	$sql		="SELECT payment.date,payment.receipt_no ,SUM(payment.payment_amt) AS payment_amt ,student_info.*,courses.* 
-				FROM `payment`
-				INNER JOIN student_info 
-				ON payment.student_id=student_info.Student_Id
-				INNER JOIN courses
-				ON payment.course_id=courses.course_id
-				WHERE payment.student_id='$studentid' AND payment.course_id='$courseid' 
-				GROUP BY payment.receipt_no
-				";
-	$res	   =mysqli_query($conn,  $sql);
-	$no        =0;
-	while($row=mysqli_fetch_assoc($res))
-	{
-		echo '<tr>
-				<td style="text-align:center;">'.++$no.'</td>
-				<td style="text-align:center;">'.$row['date'].'</td>
-				<td style="text-align:center;">'.$row['receipt_no'].'</td>
-				<td style="text-align:center;">'.$row['St_Name'].'</td>
-				<td style="text-align:center;">'.$row['regno'].'</td>
-				<td style="text-align:center;">'.$row['course_name'].'</td>
-				<td style="text-align:center;">'.$row['payment_amt'].'</td>
-				<td style="text-align:center;">'.printOption($row['receipt_no']).'</td>
-			
-			</tr>';
+	$courseid	    = trim(htmlspecialchars($_GET['pursuingcourse'], ENT_QUOTES));
+	$studentid	    = trim(htmlspecialchars($_GET['studentid'], ENT_QUOTES));
+	$franchiseId	= trim(htmlspecialchars($_GET['franchise'], ENT_QUOTES));
+
+	$sql 	  = "SELECT `receipts`.* ,`student_info`.`St_Name`, `pursuing_course`.`regno` ,`courses`.`course_name`
+				FROM `receipts`
+				INNER JOIN `student_info`
+				ON `receipts`.`student_id` = `student_info`.`slno`
+				INNER JOIN `pursuing_course`
+				ON `pursuing_course`.`student_id` = `receipts`.`student_id` AND `pursuing_course`.`course_id` =`receipts`.`course_id`
+				INNER JOIN `courses`
+				ON `pursuing_course`.`course_id` = `courses`.`id`
+				WHERE `receipts`.`course_id`='{$courseid}' AND `receipts`.`student_id`='{$studentid}' AND `receipts`.`franchise_id`='{$franchiseId}'";
+	
+	$res	   = mysqli_query($conn,  $sql);
+	$no        = 0;
+	
+	if(mysqli_num_rows($res) > 0){
+		while($row=mysqli_fetch_assoc($res))
+		{
+			echo '<tr>
+					<td style="text-align:center;">'.++$no.'</td>
+					<td style="text-align:center;">'.$row['receipt_date'].'</td>
+					<td style="text-align:center;">'.$row['receipt_no'].'</td>
+					<td style="text-align:center;">'.$row['St_Name'].'</td>
+					<td style="text-align:center;">'.$row['regno'].'</td>
+					<td style="text-align:center;">'.$row['course_name'].'</td>
+					<td style="text-align:center;">'.$row['payment_amt'].'</td>
+					<td style="text-align:center;">'.printOption($row['receipt_no']).'</td>
+				
+				</tr>';
+		}
+	}else{
+		echo '<tr><td colspan="8" style="text-align:center;">No Payment Records Found</td></tr>';
 	}
+	
 }
 function printOption($no)
 {
@@ -137,7 +158,7 @@ function fechdueAmount()
 	include('include/dbconfig.php');	
 	$courseid	=trim($_GET['pursuingcourse']);
 	$studentid  =trim($_GET['studentid']);
-	$sql		="SELECT SUM(`payment_amt`) AS totalpay FROM payment WHERE `student_id`='$studentid' AND `course_id`='$courseid' AND (`payment_type`='Installment' OR `payment_type`='Admission')";
+	$sql		="SELECT SUM(`payment_amt`) AS totalpay FROM `receipts` WHERE `student_id`='$studentid' AND `course_id`='$courseid' AND `franchise_id`='$_SESSION[franchise_id]'";
 	/* echo $sql; */
 	$query		="SELECT * FROM `pursuing_course` WHERE `course_id`='$courseid' AND `student_id`='$studentid ' AND `current_status`='PURSUING'";
 	$res		=mysqli_query($conn,  $sql) ;
@@ -172,9 +193,9 @@ function admissionRequired()
 function maxReceiptNo()
 {
 	include "include/dbconfig.php";
-	$sql="SELECT MAX(`receipt_no`) AS ReceiptNo FROM payment";
-	$res=mysqli_query($conn,  $sql);
-	$row=mysqli_fetch_assoc($res);
+	$sql = "SELECT MAX(`receipt_no`) AS ReceiptNo FROM `receipts` WHERE `franchise_id`='$_SESSION[franchise_id]'";
+	$res = mysqli_query($conn,  $sql);
+	$row = mysqli_fetch_assoc($res);
 	if($row['ReceiptNo'] == NULL)
 	{
 		return 1;
@@ -253,27 +274,27 @@ function fineCalculate()
 						<tbody>
 							<tr>
 								<td style="text-align:center;"><b>Admission</b></td>
-								<td style="text-align:center;"><input type="number" name="amount[]"  id="admission" class="form-control" <?php admissionRequired();?> onkeyup="subTotal()" ></td>
+								<td style="text-align:center;"><input type="number" name="amount[]" value="0" id="admission" class="form-control" <?php admissionRequired();?> onkeyup="subTotal()" ></td>
 							</tr>
 							<tr>
 								<td style="text-align:center;"><b>Installment</b></td>
-								<td style="text-align:center;"><input type="number" name="amount[]" id="amount" class="form-control" onkeyup="subTotal()"></td>
+								<td style="text-align:center;"><input type="number" name="amount[]" value="0" id="amount" class="form-control" onkeyup="subTotal()"></td>
 							</tr>
 							<tr>
 								<td style="text-align:center;"><b>Fine</b></td>
-								<td style="text-align:center;"><input type="number" name="amount[]" id="fine" class="form-control" value="<?php fineCalculate(); ?>" onkeyup="subTotal()"></td>
+								<td style="text-align:center;"><input type="number" name="amount[]" value="0" id="fine" class="form-control" value="<?php fineCalculate(); ?>" onkeyup="subTotal()"></td>
 							</tr>
 							<tr>
 								<td style="text-align:center;"><b>Prospectus</b></td>
-								<td style="text-align:center;"><input type="number" name="amount[]" id="prospectus" class="form-control" onkeyup="subTotal()"></td>
+								<td style="text-align:center;"><input type="number" name="amount[]" value="0" id="prospectus" class="form-control" onkeyup="subTotal()"></td>
 							</tr>
 							<tr>
 								<td style="text-align:center;"><b>Exam Fees</b></td>
-								<td style="text-align:center;"><input type="number" name="amount[]" id="examfees" class="form-control" onkeyup="subTotal()"></td>
+								<td style="text-align:center;"><input type="number" name="amount[]" value="0" id="examfees" class="form-control" onkeyup="subTotal()"></td>
 							</tr>
 							<tr>
 								<td style="text-align:center;"><b>Total</b></td>
-								<td style="text-align:center;"><input type="text" name="total" id="total" class="form-control" readonly></td>
+								<td style="text-align:center;"><input type="text" name="total" id="total" class="form-control" readonly required></td>
 							</tr>
 						</tbody>
 					</table>
@@ -300,7 +321,7 @@ function fineCalculate()
 							</div>
 						<div class="clearfix"></div>
 						</div>
-						<div class="form-group">
+						<!-- <div class="form-group">
 								<label class="control-label col-sm-2 col-md-2 col-xs-12">Note No 2000</label>
 							<div class="col-sm-4 col-md-4 col-xs-12">
 								<input type="text" class="form-control" name="note2000" id="note2000" >
@@ -311,7 +332,7 @@ function fineCalculate()
 							</div>
 							<div class="clearfix"></div>
 							
-						</div>
+						</div> -->
 						<div class="form-group">
 							<label>&nbsp;</label>
 							<div class="col-sm-5 col-sm-offset-3 col-md-offset-3 col-md-5 col-xs-12">

@@ -115,7 +115,7 @@ function  getFranchise()
 					if (data.success) {
 
 						for (i = 0; i < data.records.length; i++) {
-							option += '<option value="' + data.records[i].Student_Id + '">' + data.records[i].St_Name + '-' + data.records[i].Contact_no + '</option>'
+							option += '<option value="' + data.records[i].slno + '">' + data.records[i].St_Name + '-' + data.records[i].Contact_no + '</option>'
 						}
 					}
 					$('#studentid').html(option);

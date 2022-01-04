@@ -6,14 +6,15 @@ include('include/check-login.php');
 $studentid = trim(isset($_POST['studentid']) ? $_POST['studentid'] : "" ) ;
 $sql="SELECT pursuing_course.*,courses.*
 FROM `pursuing_course`
-INNER JOIN courses ON pursuing_course.course_id = courses.course_id WHERE pursuing_course.current_status='PURSUING' AND 
+INNER JOIN courses ON pursuing_course.course_id = courses.id WHERE pursuing_course.current_status='PURSUING' AND 
 pursuing_course.student_id='$studentid'";
-/* echo $sql; */
+ //echo $sql; 
 $res=mysqli_query($conn,  $sql);
 $option='<option value="">--Select--</option>';
+
 while($row=mysqli_fetch_assoc($res))
 {
-	$option.='<option value="'.$row['course_id'].'">'.$row['course_name'].'</option>';
+	$option.='<option value="'.$row['id'].'">'.$row['course_name'].'</option>';
 }
 echo $option;
 
