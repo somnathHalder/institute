@@ -10,7 +10,7 @@ function  getCandidates()
 	$sql="SELECT pursuing_course.*,student_info.*
 		FROM `pursuing_course`
 		INNER JOIN student_info
-		ON student_info.Student_Id=pursuing_course.student_id
+		ON student_info.slno=pursuing_course.student_id
 		WHERE pursuing_course.current_status='PURSUING'
 		GROUP BY pursuing_course.student_id";
 	$res=mysqli_query($conn,  $sql)        ;
@@ -28,12 +28,12 @@ function  getCandidates()
 		<div class="row">
 			<div class="col-md-6 col-sm-6 col-md-offset-3">
 	          <h3 class="page-header">Print Admission Form</h3>
-				<form method="REQUEST" id="createTeacherForm" action="admissionform.php?id=<?php echo base64_encode($_REQUEST['studentid']);?>" enctype="multipart/form-data">
+				<form method="GET" id="createTeacherForm" action="admissionform.php" enctype="multipart/form-data">
 					<div class="form-group">
 						<label for="product" class="control-label">Candidate Name<span class="required"></span></label>
 						<select name="studentid"  id="studentid" class="selectpicker form-control"  data-live-search="true" required>
 							<option value="">--Select--</option>
-							<?php getCandidates();?>
+							<?php getCandidates(); ?>
 						</select>
 					</div>
 					<div class="form-group">
