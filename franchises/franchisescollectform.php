@@ -7,7 +7,7 @@ function  getCandidates()
 {
     include('include/dbconfig.php');
     $option = '';
-    $sql = "SELECT pursuing_course.*,student_info.*
+   echo  $sql = "SELECT pursuing_course.*,student_info.*
 		FROM `pursuing_course`
 		INNER JOIN student_info
 		ON student_info.Student_Id=pursuing_course.student_id
@@ -21,7 +21,7 @@ function  getCandidates()
 }
 function  getFranchise()
 {
-    echo $_SESSION['franchises_id'];
+    echo $_SESSION['franchise_id'];
 }
 ?>
 <?php include('include/menu.php'); ?>
@@ -30,7 +30,7 @@ function  getFranchise()
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-6 col-sm-6 col-md-offset-3">
-                <h3 class="page-header">Fees Collection</h3>
+                <h3 class="page-header">Fees Collection <?php getFranchise(); ?> </h3>
                 <form method="GET" id="createTeacherForm" action="feecollect.php" enctype="multipart/form-data">
                     <input type="hidden" id="franchise" name="franchise" value="<?php getFranchise(); ?>">
 
@@ -38,7 +38,7 @@ function  getFranchise()
                         <label for="product" class="control-label">Candidate Name<span class="required"></span></label>
                         <select name="studentid" id="studentid" class="selectpicker form-control" data-live-search="true" required>
                             <option value="">Select Candidate</option>
-                            <?php // getCandidates();
+                            <?php  //getCandidates();
                             ?>
                         </select>
                     </div>

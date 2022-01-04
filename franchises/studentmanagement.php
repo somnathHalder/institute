@@ -123,6 +123,7 @@ function fetchRecords()
 <script type="text/javascript" src="../docs/js/prettify.js"></script>
 <script type="text/javascript" src="../dist/js/bootstrap-multiselect.js"></script>
 <script type="text/javascript">
+    
     var table = $('#example').DataTable({
         "ajax": "retrieveStudent.php",
         "paging": false,

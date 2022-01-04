@@ -11,7 +11,7 @@ function fetchRecords()
 {
 	include   'include/dbconfig.php';	
 	$sql		="SELECT `note_info`.* ,payment.receipt_no,student_info.regno,payment.collect_by,payment.date,student_info.St_Name,student_info.Contact_no,pursuing_course.regno as regno FROM note_info INNER JOIN payment
-	ON note_info.recpt_no=payment.receipt_no INNER JOIN student_info ON student_info.slno=note_info.student_id INNER JOIN pursuing_course ON pursuing_course.student_id=student_info.slno WHERE payment.collect_by='{$_SESSION['franchises_id']}' GROUP BY payment.receipt_no";
+	ON note_info.recpt_no=payment.receipt_no INNER JOIN student_info ON student_info.slno=note_info.student_id INNER JOIN pursuing_course ON pursuing_course.student_id=student_info.slno WHERE payment.collect_by='{$_SESSION['franchise_id']}' GROUP BY payment.receipt_no";
 	/* ECHO $sql; */
 	$res	   = mysqli_query($conn,  $sql);
 	if(mysqli_num_rows($res) > 0)

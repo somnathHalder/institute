@@ -1,6 +1,6 @@
 <?php
 
-	if(!isset($_SESSION['franchises_session_id'])){
+	if(!isset($_SESSION['franchise_session_id'])){
 		header("Location: signin.php");
 	}
 	

@@ -10,10 +10,10 @@
 	$query = mysqli_query($conn,  $q);
 	$row=mysqli_fetch_assoc($query);
 	if(mysqli_num_rows($query)>0){
-        $_SESSION['franchises_id']=$row['member_id'];
-		$_SESSION['franchises_userid'] = $userid;
-		$_SESSION['franchises_password'] = $password;
-		$_SESSION['franchises_session_id'] = session_id(); 
+        $_SESSION['franchise_id']=$row['member_id'];
+		$_SESSION['franchise_userid'] = $userid;
+		$_SESSION['franchise_password'] = $password;
+		$_SESSION['franchise_session_id'] = session_id(); 
 		$_SESSION['login_type'] = $row['type'];
 		/* echo $q; */
 		echo '<script>window.location.assign("home.php");</script>';

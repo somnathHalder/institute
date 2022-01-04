@@ -111,6 +111,7 @@ function  getFranchise()
 				},
 				dataType: "json",
 				success: function(data) {
+					
 					let option = '<option value="">Select Candidate </option>';
 					if (data.success) {
 

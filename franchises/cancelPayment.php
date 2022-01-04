@@ -8,9 +8,10 @@ if(isset($_POST['submit']))
 {
 extract($_POST);
 	
-	$sql1= "DELETE FROM `payment` WHERE `receipt_no`='$recpt_no'";
-	$sql2= "DELETE FROM `daybook` WHERE `receipt_no`='$recpt_no'";
-	$sql3= "DELETE FROM `note_info` WHERE `recpt_no`='$recpt_no'";
+	$sql1= "DELETE FROM `payment` WHERE `receipt_id`='$recpt_no'";
+	$sql2= "DELETE FROM `daybook` WHERE `receipt_id`='$recpt_no'";
+	$sql3= "DELETE FROM `note_info` WHERE `receipt_id`='$recpt_no'";
+	$sql4= "DELETE FROM `receipts` WHERE `id`='$recpt_no'";
 	$res1 = mysqli_query($conn,  $sql1);
 	
 	if($res1)
@@ -21,6 +22,7 @@ extract($_POST);
 			$res3=mysqli_query($conn,  $sql3);
 			if($res3)
 			{
+					$res4=mysqli_query($conn,$sql4);
 					echo '<script>alert("Cancel Complete !") </script>';
 			}
 			else{
@@ -39,11 +41,11 @@ function  getReceipts()
 {
 	include('include/dbconfig.php'); 
 	$option='';
-	$sql="SELECT * FROM `payment` WHERE collect_by='{$_SESSION['franchises_id']}' GROUP BY `receipt_no`";
+	$sql="SELECT * FROM `receipts` WHERE franchise_id='{$_SESSION['franchise_id']}' GROUP BY `id`";
 	$res=mysqli_query($conn,  $sql)        ;
 	while($row=mysqli_fetch_assoc($res))
 	{
-		$option.='<option value="'.$row['receipt_no'].'">'.$row['receipt_no'].'</option>';
+		$option.='<option value="'.$row['id'].'">'.$row['receipt_no'].'</option>';
 	}
 	echo $option;
 }

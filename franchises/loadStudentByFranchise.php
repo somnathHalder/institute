@@ -5,7 +5,7 @@ include "include/dbconfig.php";
 include "include/check-login.php";
 
 $id    =trim(isset($_POST['franchiseId']) ? $_POST['franchiseId'] : "") ;
-$sql   ="SELECT * FROM `student_info` WHERE `franchises_id`='$id'";
+$sql   ="SELECT * FROM `student_info` WHERE `franchise_id`='$id'";
 
 $res   = mysqli_query($conn,  $sql);
 $result = array('success'=> false, 'records'=>[]);

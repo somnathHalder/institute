@@ -189,11 +189,11 @@ include('include/check-login.php');
 
 								</li>
 
-								<li>
+								<!-- <li>
 
 									<a href="notesInformation.php">Notes Information</a>
 
-								</li>
+								</li> -->
 
 								<li>
 

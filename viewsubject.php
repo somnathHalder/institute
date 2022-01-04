@@ -7,9 +7,9 @@ include "include/menu.php";
     <div class="container-fluid">
         <div class="row">
             <h3 class="page-header">Subjects Details</h3>
-            <table id="editable_table" class="table table-bordered">
+            <table id="editable_table" class="table table-bordered-less table-hover">
                 <thead>
-                    <th style="text-align:center;font-size:12px;">SL NO </th>
+                    <th style="text-align:center;font-size:12px;"># </th>
                     <th style="text-align:center;font-size:12px;">COURSE NAME </th>
                     <th style="text-align:center;font-size:12px;">SUBJECT NAME </th>
                     <th style="text-align:center;font-size:12px;">FULL MARKS </th>
@@ -134,17 +134,17 @@ include "include/menu.php";
                 }
                 for (i = 0; i < x.length; i++) {
                     output +=
-                        "<tr><td>" +
+                        "<tr><td style='text-align:center;'>" +
                         (i+1) +
-                        "</td><td>" +
+                        "</td><td style='text-align:center;'>" +
                         x[i].cname +
-                        "</td><td>" +
+                        "</td><td style='text-align:center;'>" +
                         x[i].subject +
-                        "</td><td>" +
+                        "</td><td style='text-align:center;'>" +
                         x[i].full_marks +
-                        "</td><td> <button  class='btn btn-warning btn-sm btn-edit' data-toggle='modal' data-target='#myModal'  data-sid=" + x[i].sid + ">Edit</button> <button class='btn btn-danger btn-sm btn-del' data-sid=" +
+                        "</td><td style='text-align:center;'> <button  class='btn btn-success btn-sm btn-edit' data-toggle='modal' data-target='#myModal'  data-sid=" + x[i].sid + "><span class='glyphicon glyphicon-edit'></span></button> <button class='btn btn-danger btn-sm btn-del' data-sid=" +
                         x[i].sid +
-                        ">Delete</button></td></tr>";
+                        "><span class='glyphicon glyphicon-trash'></span></button></td></tr>";
                 }
                 $("#tbody").html(output);
             },

@@ -8,42 +8,73 @@ include('include/menu.php');
 $error_msg = NULL;
 $success_msg = NULL;
 
+function insertReceipt($franchise_id, $date, $course_id, $student_id, $payment_amt, $collected_by)
+{
+	include('include/dbconfig.php');
+
+	$receipt_no = maxReceiptNo();
+	$createdAt = date('Y-m-d H:i:s');
+
+	 $sql  = "INSERT INTO `receipts`(`franchise_id`, `receipt_no`, `receipt_date`, `course_id`, `student_id`, `payment_amt`, `collected_by`, `created_at`) 
+			      VALUES ('$franchise_id', '$receipt_no', '$date', '$course_id', '$student_id', '$payment_amt', '$collected_by', '$createdAt')";
+
+	mysqli_query($conn,$sql);
+
+	 $id=mysqli_insert_id($conn);
+	 return $id;
+}
+
 if (isset($_POST['formid']) && isset($_SESSION['formid']) && $_POST['formid'] == $_SESSION['formid']) {
 	extract($_POST);
 
+	$pursuingcourse=trim(mysqli_real_escape_string($conn,$_GET['pursuingcourse']));
+	$studentid=htmlspecialchars($_GET['studentid'], ENT_QUOTES);
+
+	$total_amt=$total;
+
 	
 
+	$receipt_id=insertReceipt($_SESSION['franchise_id'],$date,$pursuingcourse,$studentid,$total_amt,$_SESSION['franchises_userid']);
+
+
+	$total_amt=0;
 	$arr = array('Admission', 'Installment', 'Fine', 'Prospectus', 'Exam Fees');
-	$receiptNo = maxReceiptNo();
+	
 	for ($i = 0; $i < count($arr); $i++) {
 		$amount	= $_POST['amount'][$i];
-		$sql = "INSERT INTO `payment`(`receipt_no`,`date`, `course_id`, `student_id`,`payment_type`,`payment_amt`,`collect_by`)
-			   VALUES ('$receiptNo','$date','$_GET[pursuingcourse]','$_GET[studentid]','$arr[$i]','$amount','{$_SESSION['franchises_id']}')";
+		
+
+		$sql = "INSERT INTO `payment`(`receipt_id`,`payment_type`,`payment_amt`)
+			   VALUES ('$receipt_id','$arr[$i]','$amount')";
 		/* echo $sql."<BR/>"; */
 		$res = mysqli_query($conn,  $sql);
 	}
+
+
 	if ($res) {
 		$student	= getStudentNameById($studentid);
 		/* $particulars= getCourseNameById($courseid)." COURSE FEES FROM ".$student['St_Name']."(REG NO ".$student['regno'].")" ; */
 		$particulars = "ADMISSION/INSTALLMENT FEES FROM " . $student['St_Name'];
 		$payby = "CASH";
-		addIncomeToDayBook($receiptNo, $studentid, $total, $courseid, $particulars, $date, $payby);
-		saveNoteInfo(trim($note2000), trim($note500), $receiptNo, $studentid);
-		$success_msg = '<a target="_blank" href="printSlip.php?id=' . $receiptNo . '">Print Receipt </a>';
+		addIncomeToDayBook($receipt_id, $studentid, $total, $courseid, $particulars, $date, $payby);
+		//saveNoteInfo(trim($note2000), trim($note500), $receipt_id, $studentid);
+		$success_msg = '<a target="_blank" href="printSlip.php?id=' . $receipt_id . '">Print Receipt </a>';
 	}
 
 	$_SESSION['formid'] = md5(rand(0, 10000000));
 } else {
 	$_SESSION['formid'] = md5(rand(0, 10000000));
 }
+
+
 function addIncomeToDayBook($receiptNo, $studentID, $fees, $course, $particulars, $date, $payby)
 {
 	include "include/dbconfig.php";
 	$mode = null;
 	if ($payby == "CASH") {
-		$sql  = "INSERT INTO `daybook` (`receipt_No`,`student_id`, `course_id`, `user_id`, `date`, `particulars`,
+		$sql  = "INSERT INTO `daybook` (franchise_id,`receipt_id`,`student_id`, `course_id`, `user_id`, `date`, `particulars`,
 			`cash`,`to`, `type`) 
-		    VALUES ('$receiptNo','$studentID','$course','$_SESSION[userid]','$date','$particulars','$fees','CASH','INCOME')";
+		    VALUES ('{$_SESSION['franchises_id']}','$receiptNo','$studentID','$course','$_SESSION[userid]','$date','$particulars','$fees','CASH','INCOME')";
 	} else {
 		$mode = "BANK";
 		$sql  = "INSERT INTO `daybook` (`student_id`, `course_id`, `user_id`, `date`, `particulars`,
@@ -54,11 +85,12 @@ function addIncomeToDayBook($receiptNo, $studentID, $fees, $course, $particulars
 	$res  = mysqli_query($conn,  $sql);
 	return (isset($res) ? true : false);
 }
+
 function saveNoteInfo($_2000info, $_500info, $receiptNo, $studentID)
 {
 	include "include/dbconfig.php";
 	if (($_2000info != "" && $_500info == "") || ($_2000info == "" && $_500info != "") || ($_2000info != "" && $_500info != "")) {
-		$sql = "INSERT INTO `note_info`(`student_id`, `recpt_no`, `2000_no`, `500_no`) 
+		$sql = "INSERT INTO `note_info`(`student_id`, `receipt_id`, `2000_no`, `500_no`) 
 			  VALUES('$studentID','$receiptNo','$_2000info','$_500info')";
 		$res = mysqli_query($conn,  $sql);
 	}
@@ -82,43 +114,55 @@ function getStudentNameById($studentid)
 }
 function fechPreviousFeeeRecords()
 {
-	include('include/dbconfig.php');
-	$courseid	= trim($_GET['pursuingcourse']);
-	$studentid	= trim($_GET['studentid']);
-	$sql		= "SELECT payment.date,payment.receipt_no ,SUM(payment.payment_amt) AS payment_amt ,student_info.*,courses.* 
-				FROM `payment`
-				INNER JOIN student_info 
-				ON payment.student_id=student_info.Student_Id
-				INNER JOIN courses
-				ON payment.course_id=courses.course_id
-				WHERE payment.student_id='$studentid' AND payment.course_id='$courseid' 
-				GROUP BY payment.receipt_no
-				";
+	include('include/dbconfig.php');	
+	$courseid	    = trim(htmlspecialchars($_GET['pursuingcourse'], ENT_QUOTES));
+	$studentid	    = trim(htmlspecialchars($_GET['studentid'], ENT_QUOTES));
+	$franchiseId	= trim(htmlspecialchars($_GET['franchise'], ENT_QUOTES));
+
+	$sql 	  = "SELECT `receipts`.* ,`student_info`.`St_Name`, `pursuing_course`.`regno` ,`courses`.`course_name`
+				FROM `receipts`
+				INNER JOIN `student_info`
+				ON `receipts`.`student_id` = `student_info`.`slno`
+				INNER JOIN `pursuing_course`
+				ON `pursuing_course`.`student_id` = `receipts`.`student_id` AND `pursuing_course`.`course_id` =`receipts`.`course_id`
+				INNER JOIN `courses`
+				ON `pursuing_course`.`course_id` = `courses`.`id`
+				WHERE `receipts`.`course_id`='{$courseid}' AND `receipts`.`student_id`='{$studentid}' AND `receipts`.`franchise_id`='{$franchiseId}'";
+	
 	$res	   = mysqli_query($conn,  $sql);
 	$no        = 0;
-	while ($row = mysqli_fetch_assoc($res)) {
-		echo '<tr>
-				<td style="text-align:center;">' . ++$no . '</td>
-				<td style="text-align:center;">' . $row['date'] . '</td>
-				<td style="text-align:center;">' . $row['receipt_no'] . '</td>
-				<td style="text-align:center;">' . $row['St_Name'] . '</td>
-				<td style="text-align:center;">' . $row['regno'] . '</td>
-				<td style="text-align:center;">' . $row['course_name'] . '</td>
-				<td style="text-align:center;">' . $row['payment_amt'] . '</td>
-				<td style="text-align:center;">' . printOption($row['receipt_no']) . '</td>
-			
-			</tr>';
+	
+	if(mysqli_num_rows($res) > 0){
+		while($row=mysqli_fetch_assoc($res))
+		{
+			echo '<tr>
+					<td style="text-align:center;">'.++$no.'</td>
+					<td style="text-align:center;">'.$row['receipt_date'].'</td>
+					<td style="text-align:center;">'.$row['receipt_no'].'</td>
+					<td style="text-align:center;">'.$row['St_Name'].'</td>
+					<td style="text-align:center;">'.$row['regno'].'</td>
+					<td style="text-align:center;">'.$row['course_name'].'</td>
+					<td style="text-align:center;">'.$row['payment_amt'].'</td>
+					<td style="text-align:center;">'.printOption($row['receipt_no']).'</td>
+				
+				</tr>';
+		}
+	}else{
+		echo '<tr><td colspan="8" style="text-align:center;">No Payment Records Found</td></tr>';
 	}
+	
 }
 function printOption($no)
 {
-	if ($_SESSION['login_type'] == "Super Administrator" ||  $_SESSION['login_type'] == "Administrator") {
-		return '<a target="_blank" href="printreceipt.php?id=' . $no . '">Original Print</a> / 
-			<a target="_blank" href="printSlip.php?id=' . $no . '">Normal Print</a>
+	if($_SESSION['login_type'] == "Super Administrator" ||  $_SESSION['login_type'] == "Administrator")
+	{
+	return '<a target="_blank" href="printreceipt.php?id='.$no.'">Original Print</a> / 
+			<a target="_blank" href="printSlip.php?id='.$no.'">Normal Print</a>
 			';
-	} else {
+	}
+	else{
 		return '
-			<a target="_blank" href="printSlip.php?id=' . $no . '">Print</a>
+			<a target="_blank" href="printSlip.php?id='.$no.'">Print</a>
 			';
 	}
 }
@@ -127,7 +171,7 @@ function fechdueAmount()
 	include('include/dbconfig.php');
 	$courseid	= trim($_GET['pursuingcourse']);
 	$studentid  = trim($_GET['studentid']);
-	$sql		= "SELECT SUM(`payment_amt`) AS totalpay FROM payment WHERE `student_id`='$studentid' AND `course_id`='$courseid' AND (`payment_type`='Installment' OR `payment_type`='Admission')";
+	$sql		= "SELECT SUM(`payment_amt`) AS totalpay FROM payment WHERE `student_id`='$studentid' AND `course_id`='$courseid' AND (`payment_type`='Installment' OR `payment_type`='Admission' OR `payment_type`='Prospectus' OR `payment_type`='Exam Fees' OR `payment_type`='Fine')";
 	/* echo $sql; */
 	$query		= "SELECT * FROM `pursuing_course` WHERE `course_id`='$courseid' AND `student_id`='$studentid ' AND `current_status`='PURSUING'";
 	$res		= mysqli_query($conn,  $sql);
@@ -154,18 +198,22 @@ function admissionRequired()
 		}
 	}
 }
+
 function maxReceiptNo()
 {
 	include "include/dbconfig.php";
-	$sql = "SELECT MAX(`receipt_no`) AS ReceiptNo FROM payment";
+	$sql = "SELECT MAX(`receipt_no`) AS ReceiptNo FROM receipts WHERE franchise_id='{$_SESSION['franchise_id']}'	";
+
 	$res = mysqli_query($conn,  $sql);
 	$row = mysqli_fetch_assoc($res);
+
 	if ($row['ReceiptNo'] == NULL) {
 		return 1;
 	} else {
 		return ($row['ReceiptNo'] + 1);
 	}
 }
+
 function fineCalculate()
 {
 	include "include/dbconfig.php";
@@ -276,7 +324,7 @@ function fineCalculate()
 						</div>
 						<div class="clearfix"></div>
 					</div>
-					<div class="form-group">
+					<!-- <div class="form-group">
 						<label class="control-label col-sm-2 col-md-2 col-xs-12">Note No 2000</label>
 						<div class="col-sm-4 col-md-4 col-xs-12">
 							<input type="text" class="form-control" name="note2000" id="note2000">
@@ -287,7 +335,7 @@ function fineCalculate()
 						</div>
 						<div class="clearfix"></div>
 
-					</div>
+					</div> -->
 					<div class="form-group">
 						<label>&nbsp;</label>
 						<div class="col-sm-5 col-sm-offset-3 col-md-offset-3 col-md-5 col-xs-12">

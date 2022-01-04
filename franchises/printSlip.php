@@ -48,12 +48,18 @@ function getSlipRemarks()
 function getFeesRecord()
 {
 	include "include/dbconfig.php";
-	$sql="SELECT *,pursuing_course.regno as registration FROM `payment` 
+
+	$id=trim(mysqli_real_escape_string($conn,$_GET['id']));
+	$sql1="SELECT * FROM receipts WHERE receipt_no='{$id}' group by receipt_no";
+	$res1=mysqli_query($conn,$sql1);
+	$row1=mysqli_fetch_assoc($res1);
+
+	 $sql="SELECT *,pursuing_course.regno as registration FROM `payment` 
 		  INNER JOIN `student_info`
 		  ON payment.student_id = student_info.slno
 		  INNER JOIN courses
-		  ON courses.course_id = payment.course_id INNER JOIN pursuing_course ON pursuing_course.student_id=student_info.slno
-		  WHERE `receipt_no`='$_GET[id]'";
+		  ON courses.id = payment.course_id INNER JOIN pursuing_course ON pursuing_course.student_id=student_info.slno
+		  WHERE payment.`receipt_id`='{$row1['id']}'";
 		  /* echo $sql; */
 	$res=mysqli_query($conn,  $sql);
 	$ress=mysqli_query($conn,  $sql);

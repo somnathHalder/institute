@@ -50,13 +50,16 @@ if (isset($_POST['formid']) && isset($_SESSION['formid']) && $_POST['formid'] ==
 	if (isset($_POST['courseday'])) {
 
 		foreach ($_POST["courseday"] as $row) {
-			$value .= $row . ',';
+			$value .= "'".$row."'". ',';
+			//$value .= $row. ',';
 		}
-		$value = rtrim($value, ',');
+	 $value = '['.rtrim($value, ',').']';
+	// $value = rtrim($value, ',');
 	}
 
 	if ($value != "") {
 		$courseday = explode(',', $value);
+		//print_r($courseday);
 	}
 
 	//$payby			= strtoupper(trim($_POST['payby']));
@@ -72,10 +75,10 @@ $toyear			=trim($_POST['toyear']); */
 	$imagename		= $_FILES['fileToUpload']['name'];
 	$targetPath 	= "Student_images/" . $_FILES['fileToUpload']['name'];
 	move_uploaded_file($sourcePath, $targetPath);
-	$sql    		= "INSERT INTO `student_info`(franchises_id,`Student_Id`, `St_Name`, `Fathers_Name`, `DOB`, `Gender`, `Cust`, `Religion`, 
+	$sql    		= "INSERT INTO `student_info`(franchise_id,`Student_Id`, `St_Name`, `Fathers_Name`, `DOB`, `Gender`, `Cust`, `Religion`, 
 				 `Mother_Trong`, `Session1`,`session_month`,`session_code`, `Roll`, `DOA`, `Mothers_Name`, `adminslno`, `Vill`, `Post`, `PS`, `Dist`, `Pin`, 
 				 `Contact_no`,`contact2`,`aadhar`, `qualification`,`image_name`,`previous_course`,`ref_name`,`admission_type`,note)
-				  VALUES ('{$_SESSION['franchises_id']}','$stid','$sname','$fname','$dob','$gender','$caste','$religion','','$session','','$sessioncode','',
+				  VALUES ('{$_SESSION['franchise_id']}','$stid','$sname','$fname','$dob','$gender','$caste','$religion','','$session','','$sessioncode','',
 				 '$date','$mname','','$address','$po','$ps','$district','$pin','$contact','$contact1','$aadhar',
 				 '$qualification','$imagename','$prevcourse','$refname','$admissionType','$note')";
 
@@ -98,6 +101,8 @@ $toyear			=trim($_POST['toyear']); */
 
 	$_SESSION['formid'] = md5(rand(0, 10000000));
 }
+
+
 
 function findMaxID($session)
 {
@@ -156,8 +161,8 @@ function addStudentToPursuingTable($course, $studentID, $session, $fees, $date, 
 
 	$courseday		= implode(',', $courseday);
 	$sql = "INSERT INTO `pursuing_course`(`session`,`date`,`student_id`, `course_id`,`course_code`, `session_code`, `serial_no`, `course_fee`, `course_days` ,`time`
-		 ,`starting_year`, `starting_month`, `complete_year`, `complete_month`,regno )
-		  VALUES ('$session','$date','$studentID','$course','$coursecode','$sessioncode','$serialno','$fees','$courseday','$time','$session','','','','$regno')";
+		 ,`starting_year`, `starting_month`, `complete_year`, `complete_month`,regno,franchise_id )
+		  VALUES ('$session','$date','$studentID','$course','$coursecode','$sessioncode','$serialno','$fees','$courseday','$time','$session','','','','$regno','{$_SESSION['franchise_id']}')";
 	$res = mysqli_query($conn,  $sql);
 	$pursuing_id = mysqli_insert_id($conn);
 	if ($res) {

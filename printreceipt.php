@@ -34,7 +34,7 @@ function getFeesRecord()
 	$res=mysqli_query($conn,  $sql);
 	$ress=mysqli_query($conn,  $sql);
 	$no=1;$total=0;
-	$info = mysql_fetch_array($ress) ;
+	$info = mysqli_fetch_assoc($ress) ;
 	echo '<tr>
 					<td colspan="3"><b>Student Name : </b>'.$info['St_Name'].'</td>
 					

@@ -18,7 +18,7 @@ session_start();
 		
 		$sessioncode	=trim($_POST['sessionCode']);
 		
-		$sql 		="SELECT MAX(`serial_no`) AS `slno` FROM `pursuing_course` WHERE `course_code`='{$coursecode}' AND `session_code`='$sessioncode' AND franchises_id='{$_SESSION['franchise_id']}'  ";
+		$sql 		="SELECT MAX(`serial_no`) AS `slno` FROM `pursuing_course` WHERE `course_code`='{$coursecode}' AND `session_code`='$sessioncode' AND franchise_id='{$_SESSION['franchise_id']}'  ";
 		$res 		=mysqli_query($conn,  $sql);
 		$row 		=mysqli_fetch_assoc($res);
 		if($row['slno']!=null)

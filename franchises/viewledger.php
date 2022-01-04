@@ -10,24 +10,14 @@ function fetchRecords()
 	include   'include/dbconfig.php';
 	$from		= trim($_POST['from']);
 	$to			= trim($_POST['to']);
-	$sql		= "SELECT St_Name,P.*,courses.course_name,pursuing_course.regno FROM student_info
-				INNER JOIN
-				(SELECT `date`,`receipt_no`,`course_id`,`student_id`,collect_by,
-				SUM(CASE WHEN TRIM(`payment_type`) = 'Admission' THEN `payment_amt` ELSE 0 END) AS 'ADMISSION',
-				SUM(CASE WHEN TRIM(`payment_type`) = 'Installment' THEN `payment_amt` ELSE 0 END) AS 'INSTALLMENT',
-				SUM(CASE WHEN TRIM(`payment_type`) = 'Fine' THEN `payment_amt` ELSE 0 END) AS 'FINE',
-				SUM(CASE WHEN TRIM(`payment_type`) = 'Prospectus' THEN `payment_amt` ELSE 0 END) AS 'PROSPECTUS',
-				SUM(CASE WHEN TRIM(`payment_type`) = 'Exam Fees' THEN `payment_amt` ELSE 0 END) AS 'EXAM FEES',
-				SUM(`payment_amt`) AS TOTAL
-				FROM payment
-				WHERE date BETWEEN '$from' AND '$to'
-				GROUP BY `receipt_no`)P
-				ON student_info.slno=P.`student_id`
-				INNER JOIN courses
-				ON courses.course_id=P.`course_id`
-				INNER JOIN pursuing_course ON pursuing_course.student_id=student_info.slno WHERE p.collect_by='{$_SESSION['franchises_id']}'
-				ORDER BY receipt_no
-				";
+	
+	 $sql		="SELECT St_Name,P.*,courses.course_name,pursuing_course.regno,receipts.receipt_no,franchises.franchise_name FROM student_info INNER JOIN (SELECT `date`,`receipt_id`,`course_id`,`student_id`,collect_by, SUM(CASE WHEN TRIM(`payment_type`) = 'Admission' THEN `payment_amt` ELSE 0 END) AS 'ADMISSION', SUM(CASE WHEN TRIM(`payment_type`) = 'Installment' THEN `payment_amt` ELSE 0 END) AS 'INSTALLMENT', SUM(CASE WHEN TRIM(`payment_type`) = 'Fine' THEN `payment_amt` ELSE 0 END) AS 'FINE', SUM(CASE WHEN TRIM(`payment_type`) = 'Prospectus' THEN `payment_amt` ELSE 0 END) AS 'PROSPECTUS', SUM(CASE WHEN TRIM(`payment_type`) = 'Exam Fees' THEN `payment_amt` ELSE 0 END) AS 'EXAM FEES', SUM(`payment_amt`) AS TOTAL FROM payment WHERE date BETWEEN '$from' AND '$to' GROUP BY `receipt_id`)P ON student_info.slno=P.`student_id` INNER JOIN courses ON courses.id=P.`course_id` INNER JOIN pursuing_course ON pursuing_course.student_id=student_info.slno INNER JOIN receipts ON receipts.id=P.receipt_id INNER JOIN franchises ON franchises.id=receipts.franchise_id ORDER BY receipt_id";
+
+
+
+
+
+
 	/* ECHO $sql; */
 	$res	   = mysqli_query($conn,  $sql);
 	if (mysqli_num_rows($res) > 0) {
@@ -39,9 +29,7 @@ function fetchRecords()
 		$exam = 0;
 		$total = 0;
 
-		$sql1 = "SELECT * FROM franchises WHERE  id='$_SESSION[franchises_id]'";
-		$res1 = mysqli_query($conn, $sql1);
-		$row1 = mysqli_fetch_assoc($res1);
+		 
 
 		while ($row = mysqli_fetch_assoc($res)) {
 			echo '<tr>
@@ -56,7 +44,7 @@ function fetchRecords()
 				<td style="text-align:center;">' . printIt($row['PROSPECTUS']) . '</td>
 				<td style="text-align:center;">' . printIt($row['EXAM FEES']) . '</td>
 				<td style="text-align:center;">' . printIt($row['TOTAL']) . '</td>
-				<td style="text-align:center;">' . $row1['franchise_name'] . '</td>
+				<td style="text-align:center;">' . $row['franchise_name'] . '</td>
 			</tr>';
 			$admission += $row['ADMISSION'];
 			$fine += $row['FINE'];
@@ -82,6 +70,8 @@ function fetchRecords()
 		</tr>';
 	}
 }
+
+
 function printIt($info)
 {
 	if ($info != "0.00") {
