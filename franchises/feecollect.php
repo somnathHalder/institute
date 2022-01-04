@@ -171,7 +171,8 @@ function fechdueAmount()
 	include('include/dbconfig.php');
 	$courseid	= trim($_GET['pursuingcourse']);
 	$studentid  = trim($_GET['studentid']);
-	$sql		= "SELECT SUM(`payment_amt`) AS totalpay FROM payment WHERE `student_id`='$studentid' AND `course_id`='$courseid' AND (`payment_type`='Installment' OR `payment_type`='Admission' OR `payment_type`='Prospectus' OR `payment_type`='Exam Fees' OR `payment_type`='Fine')";
+	$sql		= "SELECT SUM(payment.`payment_amt`) AS totalpay,receipt_id FROM payment INNER JOIN receipts on receipts.id=payment.receipt_id WHERE receipts.`student_id`='$studentid' AND receipts.`course_id`='$courseid' AND (`payment_type`='Installment' OR `payment_type`='Admission' OR `payment_type`='Prospectus' OR `payment_type`='Exam Fees' OR `payment_type`='Fine')";
+	
 	/* echo $sql; */
 	$query		= "SELECT * FROM `pursuing_course` WHERE `course_id`='$courseid' AND `student_id`='$studentid ' AND `current_status`='PURSUING'";
 	$res		= mysqli_query($conn,  $sql);
@@ -189,7 +190,7 @@ function admissionRequired()
 	if (mysqli_num_rows($result) > 0) {
 		echo "readonly";
 	} else {
-		$sql = "SELECT * FROM `payment` WHERE `student_id`='$_GET[studentid]' AND `payment_type`='Admission' AND `payment_amt`!='0.00'";
+		$sql = "SELECT * FROM `payment` inner join receipts on receipts.id=payment.receipt_id WHERE receipts.`student_id`='$_GET[studentid]' AND payment.`payment_type`='Admission' AND payment.`payment_amt`!='0.00'";
 		$res = mysqli_query($conn,  $sql);
 		if (mysqli_num_rows($res) > 0) {
 			echo "readonly";
