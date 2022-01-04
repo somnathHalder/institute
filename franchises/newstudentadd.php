@@ -50,16 +50,15 @@ if (isset($_POST['formid']) && isset($_SESSION['formid']) && $_POST['formid'] ==
 	if (isset($_POST['courseday'])) {
 
 		foreach ($_POST["courseday"] as $row) {
-			$value .= "'".$row."'". ',';
+			$value .= $row. ',';
 			//$value .= $row. ',';
 		}
-	 $value = '['.rtrim($value, ',').']';
+	$value = rtrim($value, ',');
 	// $value = rtrim($value, ',');
 	}
 
 	if ($value != "") {
-		$courseday = explode(',', $value);
-		//print_r($courseday);
+		 $courseday = explode(',', $value);
 	}
 
 	//$payby			= strtoupper(trim($_POST['payby']));
@@ -160,9 +159,10 @@ function addStudentToPursuingTable($course, $studentID, $session, $fees, $date, 
 
 
 	$courseday		= implode(',', $courseday);
+	$course_day=json_encode($courseday);
 	$sql = "INSERT INTO `pursuing_course`(`session`,`date`,`student_id`, `course_id`,`course_code`, `session_code`, `serial_no`, `course_fee`, `course_days` ,`time`
 		 ,`starting_year`, `starting_month`, `complete_year`, `complete_month`,regno,franchise_id )
-		  VALUES ('$session','$date','$studentID','$course','$coursecode','$sessioncode','$serialno','$fees','$courseday','$time','$session','','','','$regno','{$_SESSION['franchise_id']}')";
+		  VALUES ('$session','$date','$studentID','$course','$coursecode','$sessioncode','$serialno','$fees','{$course_day}','$time','$session','','','','$regno','{$_SESSION['franchise_id']}')";
 	$res = mysqli_query($conn,  $sql);
 	$pursuing_id = mysqli_insert_id($conn);
 	if ($res) {

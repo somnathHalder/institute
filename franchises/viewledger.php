@@ -11,7 +11,7 @@ function fetchRecords()
 	$from		= trim($_POST['from']);
 	$to			= trim($_POST['to']);
 	
-	 $sql		="SELECT St_Name,P.*,courses.course_name,pursuing_course.regno,receipts.receipt_no,franchises.franchise_name FROM student_info INNER JOIN (SELECT `date`,`receipt_id`,`course_id`,`student_id`,collect_by, SUM(CASE WHEN TRIM(`payment_type`) = 'Admission' THEN `payment_amt` ELSE 0 END) AS 'ADMISSION', SUM(CASE WHEN TRIM(`payment_type`) = 'Installment' THEN `payment_amt` ELSE 0 END) AS 'INSTALLMENT', SUM(CASE WHEN TRIM(`payment_type`) = 'Fine' THEN `payment_amt` ELSE 0 END) AS 'FINE', SUM(CASE WHEN TRIM(`payment_type`) = 'Prospectus' THEN `payment_amt` ELSE 0 END) AS 'PROSPECTUS', SUM(CASE WHEN TRIM(`payment_type`) = 'Exam Fees' THEN `payment_amt` ELSE 0 END) AS 'EXAM FEES', SUM(`payment_amt`) AS TOTAL FROM payment WHERE date BETWEEN '$from' AND '$to' GROUP BY `receipt_id`)P ON student_info.slno=P.`student_id` INNER JOIN courses ON courses.id=P.`course_id` INNER JOIN pursuing_course ON pursuing_course.student_id=student_info.slno INNER JOIN receipts ON receipts.id=P.receipt_id INNER JOIN franchises ON franchises.id=receipts.franchise_id ORDER BY receipt_id";
+	 $sql		="SELECT St_Name,P.*,courses.course_name,pursuing_course.regno,receipts.*,franchises.franchise_name FROM student_info INNER JOIN (SELECT receipt_date,receipt_no,student_id,course_id,franchise_id,id FROM receipts WHERE receipt_date BETWEEN '$from' AND '$to' GROUP BY receipt_no)receipts ON receipts.student_id=student_info.slno INNER JOIN (SELECT `receipt_id`, SUM(CASE WHEN TRIM(`payment_type`) = 'Admission' THEN `payment_amt` ELSE 0 END) AS 'ADMISSION', SUM(CASE WHEN TRIM(`payment_type`) = 'Installment' THEN `payment_amt` ELSE 0 END) AS 'INSTALLMENT', SUM(CASE WHEN TRIM(`payment_type`) = 'Fine' THEN `payment_amt` ELSE 0 END) AS 'FINE', SUM(CASE WHEN TRIM(`payment_type`) = 'Prospectus' THEN `payment_amt` ELSE 0 END) AS 'PROSPECTUS', SUM(CASE WHEN TRIM(`payment_type`) = 'Exam Fees' THEN `payment_amt` ELSE 0 END) AS 'EXAM FEES', SUM(`payment_amt`) AS TOTAL FROM payment GROUP BY `receipt_id`)P ON receipts.id=P.`receipt_id` INNER JOIN courses ON courses.id=receipts.`course_id` INNER JOIN pursuing_course ON pursuing_course.student_id=student_info.slno  INNER JOIN franchises ON franchises.id=receipts.franchise_id ORDER BY receipt_id";
 
 
 
@@ -32,9 +32,10 @@ function fetchRecords()
 		 
 
 		while ($row = mysqli_fetch_assoc($res)) {
+			
 			echo '<tr>
 				<td style="text-align:center;">' . $row['receipt_no'] . '</td>
-				<td style="text-align:center;">' . date('d/m/Y', strtotime($row['date'])) . '</td>
+				<td style="text-align:center;">' . date('d/m/Y', strtotime($row['receipt_date'])) . '</td>
 				<td style="text-align:center;">' . $row['regno'] . '</td>
 				<td style="text-align:center;">' . $row['St_Name'] . '</td>
 				<td style="text-align:center;">' . $row['course_name'] . '</td>

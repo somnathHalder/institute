@@ -54,7 +54,7 @@ function getFeesRecord()
 	$res1=mysqli_query($conn,$sql1);
 	$row1=mysqli_fetch_assoc($res1);
 
-	 $sql="SELECT *,pursuing_course.regno as registration FROM `payment` 
+	echo  $sql="SELECT *,pursuing_course.regno as registration FROM `payment` 
 		  INNER JOIN `student_info`
 		  ON payment.student_id = student_info.slno
 		  INNER JOIN courses
