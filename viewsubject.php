@@ -85,28 +85,31 @@ include "include/menu.php";
             let id = $(this).attr("data-sid");
             // console.log(id);
             mythis = this;
-            $.ajax({
-                url: "deleteSubject.php",
-                method: "POST",
-                data: {
-                    'id': id
-                },
-                success: function(data) {
-                    // console.log(data);
-                    if (data) {
-                        alert("Delete Successfully");
-                        $(mythis).closest("tr").fadeOut();
-                    } else {
-                        alert("Unable to Delete !");
-                    }
-                },
-            });
+            var chk = confirm("Are you sure?");
+            if (chk) {
+                $.ajax({
+                    url: "deleteSubject.php",
+                    method: "POST",
+                    data: {
+                        'id': id
+                    },
+                    success: function(data) {
+                        // console.log(data);
+                        if (data) {
+                            alert("Delete Successfully");
+                            $(mythis).closest("tr").fadeOut();
+                        } else {
+                            alert("Unable to Delete !");
+                        }
+                    },
+                });
+            }
         });
 
 
-        $("tbody").on("click",".btn-edit",function(){
+        $("tbody").on("click", ".btn-edit", function() {
             let id = $(this).attr("data-sid");
-            window.location="editsubject.php?id="+id;
+            window.location = "editsubject.php?id=" + id;
         })
 
 
@@ -135,7 +138,7 @@ include "include/menu.php";
                 for (i = 0; i < x.length; i++) {
                     output +=
                         "<tr><td style='text-align:center;'>" +
-                        (i+1) +
+                        (i + 1) +
                         "</td><td style='text-align:center;'>" +
                         x[i].cname +
                         "</td><td style='text-align:center;'>" +
