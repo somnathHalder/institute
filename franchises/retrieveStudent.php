@@ -15,11 +15,12 @@ while($row=mysqli_fetch_assoc($res))
 	$actionButton = '
     <button class="btn btn-sm btn-primary" onclick="editMember('.$row['slno'].')"><span class="glyphicon glyphicon-edit"></span> Edit</button>
 
-
+	<a class="btn btn-sm btn-primary" target="_blank" href="franchiseadmitionprint.php?studentid='.$row['slno'].'" ><span class="fa fa-print"></span> Print</a>
+	 
     <!--<button class="btn btn-sm btn-primary" data-toggle="modal"  data-target="#removeMemberModal" onclick="removeMember('.$row['slno'].')"><span class="glyphicon glyphicon-trash"></span> Remove</button>-->
      
      ';
-	
+	 
 	$output['data'][]=array
 	(
 		$x,

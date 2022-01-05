@@ -67,7 +67,7 @@ function getIndianCurrency($amount)
 		<div class="row">
 			<div class="col-sm-2 col-md-2 col-xs-2">
 				<div class="img">
-					<img src="images/logo.png" height="150" width="280"></img>
+					<img src="../images/logo.png" height="150" width="280"></img>
 				</div>
 			</div>
 			<div class="col-sm-10 col-md-10 col-xs-10" style="text-align:center;padding-left:0px;padding-right:0px;">
