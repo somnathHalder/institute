@@ -1,5 +1,6 @@
 <?php
 session_start();
+include('include/menu.php');
 include "include/dbconfig.php";
 include "instituteinfo.php";
 $id = isset($_GET['studentid']) ? $_GET['studentid'] : "";
@@ -60,7 +61,7 @@ function getIndianCurrency($amount)
 	echo $result . "Rupees  " . $points . " Only";
 }
 ?>
-<?php include('include/menu.php'); ?>
+ 
 <!-- Page Content -->
 <div id="page-wrapper">
 	<div class="container-fluid">

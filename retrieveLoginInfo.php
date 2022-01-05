@@ -15,7 +15,7 @@ $sql="SELECT * FROM `student_logininfo`
 	/* echo $sql; */
 $res=mysqli_query($conn,  $sql);
 $x=1;
-while($row=mysql_fetch_array($res))
+while($row=mysqli_fetch_array($res))
 {
 	 $actionButton = '
     <div class="btn-group" tabindex="-1">
