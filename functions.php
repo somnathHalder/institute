@@ -312,4 +312,26 @@ function getFranchises($id = Null)
 	return json_encode($arr) ;
 
 }
+function getSubjects($id = Null)
+{
+	include "include/dbconfig.php" ;
+	if(!empty($id)){
+		$sql = "SELECT * FROM `subjects` WHERE `course_id`='$id'";
+	}else{
+		$sql = "SELECT * FROM `subjects`";
+	}
+	$result = mysqli_query($conn, $sql);
+	$arr= ['success'=> false, 'records'=>[]];
+	if(mysqli_num_rows($result) > 0){
+		$arr['success'] = true;
+		while($row = mysqli_fetch_assoc($result)){
+			$arr['records'][] = $row;
+		}
+	}
+
+	return json_encode($arr) ;
+
+}
+
+
 ?>

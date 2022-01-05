@@ -1,48 +1,9 @@
 <?php 
 session_start();
 include "include/menu.php";
-function getCourses()
-{
-	include ('include/dbconfig.php');
-	$sql="SELECT * FROM `courses` ORDER BY `course_name`";
-	$res=mysqli_query($conn,  $sql);
-	$option='';
-	if(mysqli_num_rows($res) > 0)
-	{
-		while($row=mysqli_fetch_assoc($res))
-		{
-			$option.='<option value="'.$row['course_id'].'">'.$row['course_name'].'-'.$row['description'].'</option>';
-		}
-		echo $option;
-	}
-}
-function getExamName()
-{
-	include "include/dbconfig.php";
-	
-	$sql="SELECT * FROM `examinfo`";
-	/* echo $sql; */
-	$res=mysqli_query($conn,  $sql);
-	$option='';
-	while($row=mysqli_fetch_assoc($res))
-	{
-		$option.='<option value="'.$row['id'].'">'.$row['exam_name'].'</option>';
-	}
-	echo $option;
-}
-function getSession()
-{
-	include "include/dbconfig.php" ;
-	$sql="SELECT * FROM `session`";
-	$res=mysqli_query($conn,  $sql);
-	if(mysqli_num_rows($res) > 0)
-	{
-		while($row=mysqli_fetch_assoc($res))
-		{
-			echo '<option value="'.$row['session_code'].'">'.$row['session_code']."-".$row['description'].'</option>';
-		}
-	}
-}
+include "functions.php";
+$franchises =  json_decode(getFranchises(), true);
+$courses    =  json_decode(getCourses(), true);
 ?>
 
         <div id="page-wrapper">
@@ -52,32 +13,48 @@ function getSession()
             <!--    <div class="x_panel">
                    <div class="x_content"> -->
 			<h3 class="page-header">Marks Entry</h3>
-			<form id="myForm" method="post" action="inserLogininfo.php" enctype="multipart/form-data">
+			<form id="myForm" method="post" action="fetch-marks.php" enctype="multipart/form-data">
 			<input type="hidden" name="formid" id="formid" value="<?php echo htmlspecialchars($_SESSION['formid']);?>">
 			<div class="form-group">
 				<div class="col-md-3 col-sm-4col-xs-12">
 					<label>Franchise</label>
 					<select name="franchise" id="franchise" class="form-control">
 						<option value="">Select Franchise</option>
-						<?php getCourses();?>
+						<?php
+                            if(count($franchises['records']) > 0){
+                                foreach ($franchises['records'] as $key => $franchise) {
+                                    echo '<option value="'.$franchise['id'].'">'.$franchise['franchise_name'].'</option>';
+                                }
+                                
+                            }
+                        
+                        ?>
 					</select>
 				</div>
 				<div class="col-md-3 col-sm-4col-xs-12">
 					<label>Course</label>
 					<select name="course" id="course" class="form-control">
 						<option value="">Select Course</option>
-						<?php getSession();?>
+						<?php
+                            if(count($courses['records']) > 0){
+                                foreach ($courses['records'] as $key => $course) {
+                                    echo '<option value="'.$course['id'].'">'.$course['course_name'].'</option>';
+                                }
+                                
+                            }
+                        
+                        ?>
 					</select>
 				</div>
 				<div class="col-md-3 col-sm-4 col-xs-12">
 					<label>Subject</label>
-					<select name="month" id="month" class="form-control">
+					<select name="subject" id="subject" class="form-control">
 						<option value="">Select Subject</option>
 					</select>
 				</div>
 				<div class="col-md-3 col-sm-4 col-xs-12">
 					<label>&nbsp;</label>
-                    <button type="button" class="btn btn-info form-control">Submit</button>
+                    <button type="button" id="search" class="btn btn-info form-control">Search</button>
 				</div>
 
 
@@ -94,15 +71,16 @@ function getSession()
 				<div>&nbsp;</div>
 				<div class="table-responsive">
 				<table id="example" class="table table-stripped">
-                         <thead>
-                          <th style="text-align:left;">SLNO </th>
-                          <th style="text-align:center;">Exam Name</th>
-                          <th style="text-align:center;">Registration No </th>
-                          <th style="text-align:center;">Password</th>
-                      	  <th style="text-align:center;">ACTION</th>
-                        </thead>
-                      <tbody>
-                      </tbody>
+                    <thead>
+                        <th style="text-align:left;"># </th>
+                        <th style="text-align:center;">Name</th>
+                        <th style="text-align:center;">Registration No </th>
+                        <th style="text-align:center;">Full Marks</th>
+                        <th style="text-align:center;">Obtained Marks</th>
+                    </thead>
+                    <tbody>
+
+                    </tbody>
                   </table>
 <!-- /panel -->		
 			</div>
@@ -208,85 +186,28 @@ function getSession()
 <script src="ckeditor/ckeditor.js"></script>
 
     <!-- Page-Level Demo Scripts - Notifications - Use for reference -->
-    <script>
+<script type="text/javascript">
 $(document).ready(function(){
 
-	$('#updateMemberForm').unbind('submit').bind('submit',function(e){
-		var form	  = $(this);
-		       $.ajax({
-                    url : form.attr('action'),
-                    type : form.attr('method'),
-                    data : form.serialize(),
-                    dataType : 'json',
-                    success:function(response) {
- 
-                        // remove the error 
-                        $(".form-group").removeClass('has-error').removeClass('has-success');
- 
-                        if(response.success == true) {
-                            $(".messages").html('<div class="alert alert-success alert-dismissible" role="alert">'+
-                             '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'+
-                             '<strong> <span class="glyphicon glyphicon-ok-sign"></span> </strong>'+response.messages+
-                            '</div>');
- 
-                            // reset the form
-                               
- 
-                            // reload the datatables
-                           /*  table.ajax.reload(null, false); */
-						   reload($('#examid').val(),$('#course').val(),$('#year').val(),$('#month').val());
-						     $("#editMemberModal").modal('hide');
-                            // this function is built in function of datatables;
-                        } else {
-                            $(".messages").html('<div class="alert alert-warning alert-dismissible" role="alert">'+
-                             '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'+
-                             '<strong> <span class="glyphicon glyphicon-exclamation-sign"></span> </strong>'+response.messages+
-                            '</div>');
-                        } // /else
-                    } // success 
-                });
+$('#course').on('change',function(e){
+		var form	  = $('#myForm');
+        $.ajax({
+            url : "fetch-subjects.php",
+            type : 'POST',
+            data : form.serialize(),
+            dataType : 'json',
+            success:function(response) {
+                let option ='<option value="">Select Subject</option>';
+                if(response.success){
+                    for(i=0; i< response.records.length ; i++){
+                        option += '<option value="'+response.records[i].id+'">'+response.records[i].subject+'</option>';
+                    }
+                    $('#subject').html(option);
+                }
+            }
+        });
 		
-
-		return false;
-		
-	});
-$('#myForm').unbind('submit').bind('submit',function(e){
-		var form	  = $(this);
-		       $.ajax({
-                    url : form.attr('action'),
-                    type : form.attr('method'),
-                    data : form.serialize(),
-                    dataType : 'json',
-                    success:function(response) {
- 
-                        // remove the error 
-                        $(".form-group").removeClass('has-error').removeClass('has-success');
- 
-                        if(response.success == true) {
-                            $(".messages").html('<div class="alert alert-success alert-dismissible" role="alert">'+
-                             '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'+
-                             '<strong> <span class="glyphicon glyphicon-ok-sign"></span> </strong>'+response.messages+
-                            '</div>');
- 
-                            // reset the form
-                               
- 
-                            // reload the datatables
-                           reload($('#examid').val(),$('#course').val(),$('#year').val(),$('#month').val());
-						   $('#studentid').html("");
-							$('#studentid').multiselect('rebuild');
-                            // this function is built in function of datatables;
-                        } else {
-                            $(".messages").html('<div class="alert alert-warning alert-dismissible" role="alert">'+
-                             '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'+
-                             '<strong> <span class="glyphicon glyphicon-exclamation-sign"></span> </strong>'+response.messages+
-                            '</div>');
-                        } // /else
-                    } // success 
-                });
-		
-
-		return false;
+    return false;
 		
 	});
 });
@@ -354,103 +275,10 @@ function removeMember(id=null)
 	}
 	
 }
-$('#studentid').multiselect
-({
-   allSelectedText: 'All',
-   nonSelectedText:'Select Student',
-   enableFiltering:true,
-   enableCaseInsensitiveFiltering:true,
-   buttonWidth:'311px',
-   includeSelectAllOption: true
-   
-});
- $('#course').on('change',function(e){
-	
-		fetchStudents();			
-});
-$('#examid').on('change',function(e){
-	 
-		fetchStudents();
-});
-$('#year').on('change',function(e){
-	 
-		fetchStudents();
-});
-$('#month').on('change',function(e){
-	 
-		fetchStudents();
-});
-function reload(examid,courseid,year,month)
-{
-$('#example').DataTable({
-   "serverSide": true,
-   "ajax": {
-      "url": "retrieveLoginInfo.php",
-      "type": "POST",
-      "data": {
-         'examid': examid,
-		 'courseid':courseid,
-		 'year':year,
-		 'month':month,
-   
-      },
-	  "destroy" : true
-   },
-   'columnDefs': [
-		  {
-			  "targets": 0, // your case first column
-			  "className": "text-center",
-			  "width": "1%"
-		 },
-		 {
-			  "targets": 1,
-			  "className": "text-center",
-		 },
-		 {
-			  "targets": 2,
-			  "className": "text-center",
-		 },
-		 {
-			  "targets": 3,
-			  "className": "text-center",
-		 },
-		 {
-			  "targets": 4,
-			  "className": "text-center",
-		 },
 
-		 ],
-		"order":[]
-});
-$('#example').DataTable().ajax.reload(null, false);
-$("#example").dataTable().fnDestroy();
-}
- function fetchStudents()
- {
-	 if($('#course').val() !="" && $('#examid').val() !="" && $('#year').val() && $('#month').val()!="")
-	 {
-		 $.ajax({
-				url:"findStudentsInfo.php",
-				method:"post",
-				data:{
-					  'courseid':$('#course').val(),
-					  'examid':$('#examid').val(),
-					  'year':$('#year').val(),
-					  'month':$('#month').val()
-					  },
-				success:function(data)
-				{
 
-					$('#studentid').html(data);
-					$('#studentid').multiselect('rebuild');
-					
-				}	
-				
-			});
-			reload($('#examid').val(),$('#course').val(),$('#year').val(),$('#month').val());
-	 }
-	 
- }
+
+
     </script>
 
 </body>

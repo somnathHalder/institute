@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jan 05, 2022 at 09:44 AM
+-- Generation Time: Jan 05, 2022 at 12:29 PM
 -- Server version: 10.4.21-MariaDB
 -- PHP Version: 8.0.12
 
@@ -33,10 +33,8 @@ CREATE TABLE `marks` (
   `franchise_info` longtext DEFAULT NULL,
   `student_id` int(11) DEFAULT NULL,
   `course_id` int(11) DEFAULT NULL,
-  `course_name` varchar(255) DEFAULT NULL,
-  `subject_id` int(11) DEFAULT NULL,
-  `subject_name` varchar(255) DEFAULT NULL,
-  `full_marks` int(11) DEFAULT NULL,
+  `course_info` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`course_info`)),
+  `total_marks` int(11) DEFAULT NULL,
   `obtained_marks` int(11) DEFAULT NULL,
   `submit_by` text DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL
