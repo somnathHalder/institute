@@ -6,7 +6,7 @@ include('include/check-login.php');
 include "functions.php";
 $success_msg = null;
 $error_msg = null;
-$course=array();
+$course = array();
 
 function getStudentData()
 {
@@ -562,24 +562,32 @@ function findQuesryListStudents()
 
 							$sql = "SELECT * FROM pursuing_course WHERE student_id='{$std_row['slno']}'";
 							$res = mysqli_query($conn, $sql);
-							
+
 							if (mysqli_num_rows($res) > 0) {
 								$row = mysqli_fetch_assoc($res);
 								$arr = (json_decode($row['course_days'], true));
 								$course = explode(',', $arr);
 
 
-							?>
-<!-- in_array("MON",$course) -->
-								<option  <?php echo $couse[0]=="MON"?"selected":"";?>value="MON">MONDAY </option>
-								<option value="TUE">TUESDAY </option>
-								<option value="WED">WEDNESDAY </option>
-								<option value="THU">THURSDAY </option>
-								<option  value="FRI">FRIDAY </option>
-								<option value="SAT">SATURDAY </option>
-								<option value="SUN">SUNDAY </option>
 
-							<?php	}
+								//<!-- in_array("MON",$course) -->
+								$val1 = in_array("MON", $course) ? 'selected' : "";
+								$val2 = in_array("TUE", $course) ? 'selected' : "";
+								$val3 = in_array("WED", $course) ? 'selected' : "";
+								$val4 = in_array("THU", $course) ? 'selected' : "";
+								$val5 = in_array("FRI", $course) ? 'selected' : "";
+								$val6 = in_array("SAT", $course) ? 'selected' : "";
+								$val7 = in_array("SUN", $course) ? 'selected' : "";
+
+								echo
+								'<option selected="'. $val1 . '" value="MON">MONDAY </option>
+								<option selected="' . $val2 . '" value="TUE">TUESDAY </option>
+								<option selected="' . $val3 . '" value="WED">WEDNESDAY </option>
+								<option selected="' . $val4 . '" value="THU">THURSDAY </option>
+								<option selected="' . $val5 . '" value="FRI">FRIDAY </option>
+								<option selected="' . $val6 . '" value="SAT">SATURDAY </option>
+								<option selected="' . $val7 . '" value="SUN">SUNDAY </option>';
+							}
 
 							?>
 						</select>
