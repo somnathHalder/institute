@@ -205,6 +205,12 @@ include('include/check-login.php');
 
 						</li>
 
+						<li>
+
+							<a href="loginsetting.php"><i class="fa fa-plus-circle"></i> Student Marks</a>
+
+						</li>
+
 
 
 						<!-- <li>

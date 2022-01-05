@@ -13,7 +13,7 @@ $x=1;
 while($row=mysqli_fetch_assoc($res))
 {
 	$actionButton = '
-    <button class="btn btn-sm btn-primary" onclick="editMember('.$row['slno'].')"><span class="glyphicon glyphicon-edit"></span> Edit</button>
+    <button class="btn btn-sm btn-success" onclick="editMember('.$row['slno'].')"><span class="glyphicon glyphicon-edit"></span> Edit</button>
 
 	<a class="btn btn-sm btn-primary" target="_blank" href="franchiseadmitionprint.php?studentid='.$row['slno'].'" ><span class="fa fa-print"></span> Print</a>
 	 
