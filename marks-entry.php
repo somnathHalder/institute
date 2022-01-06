@@ -4,6 +4,17 @@ include "include/menu.php";
 include "functions.php";
 $franchises =  json_decode(getFranchises(), true);
 $courses    =  json_decode(getCourses(), true);
+$sessions   =  json_decode(getSessions(), true);
+
+if(isset($_POST['formid']) && isset($_SESSION['formid']) && $_POST['formid'] == $_SESSION['formid'])
+{
+
+
+		$_SESSION['formid']=md5(rand(0,10000000));
+}
+else{
+		$_SESSION['formid']=md5(rand(0,10000000));
+}
 ?>
 
         <div id="page-wrapper">
@@ -14,9 +25,26 @@ $courses    =  json_decode(getCourses(), true);
                    <div class="x_content"> -->
 			<h3 class="page-header">Marks Entry</h3>
 			<form id="myForm" method="post" action="fetch-marks.php" enctype="multipart/form-data">
-			<input type="hidden" name="formid" id="formid" value="<?php echo htmlspecialchars($_SESSION['formid']);?>">
+			<input type="hidden" name="formid" id="formid" value="<?php echo htmlspecialchars($_SESSION['formid']); ?>">
 			<div class="form-group">
-				<div class="col-md-3 col-sm-4col-xs-12">
+           
+            <div class="col-md-2 col-sm-2 col-xs-12">
+					<label>Session</label>
+                    <select name="franchise" id="franchise" class="form-control">
+                    <option value="">Select Session</option>
+						<?php
+                            if(count($sessions['records']) > 0){
+                                foreach ($sessions['records'] as $key => $sessions) {
+                                    echo '<option value="'.$sessions.'">'.$sessions.'</option>';
+                                }
+                                
+                            }
+                        
+                        ?>
+					</select>
+				</div>
+				<div class="col-md-3 col-sm-3 col-xs-12">
+                    
 					<label>Franchise</label>
 					<select name="franchise" id="franchise" class="form-control">
 						<option value="">Select Franchise</option>
@@ -31,7 +59,7 @@ $courses    =  json_decode(getCourses(), true);
                         ?>
 					</select>
 				</div>
-				<div class="col-md-3 col-sm-4col-xs-12">
+				<div class="col-md-2 col-sm-2 col-xs-12">
 					<label>Course</label>
 					<select name="course" id="course" class="form-control">
 						<option value="">Select Course</option>
@@ -46,13 +74,13 @@ $courses    =  json_decode(getCourses(), true);
                         ?>
 					</select>
 				</div>
-				<div class="col-md-3 col-sm-4 col-xs-12">
+				<div class="col-md-3 col-sm-3 col-xs-12">
 					<label>Subject</label>
 					<select name="subject" id="subject" class="form-control">
 						<option value="">Select Subject</option>
 					</select>
 				</div>
-				<div class="col-md-3 col-sm-4 col-xs-12">
+				<div class="col-md-2 col-sm-2 col-xs-12">
 					<label>&nbsp;</label>
                     <button type="button" id="search" class="btn btn-info form-control">Search</button>
 				</div>
@@ -194,6 +222,29 @@ $('#course').on('change',function(e){
         $.ajax({
             url : "fetch-subjects.php",
             type : 'POST',
+            data : form.serialize(),
+            dataType : 'json',
+            success:function(response) {
+                let option ='<option value="">Select Subject</option>';
+                if(response.success){
+                    for(i=0; i< response.records.length ; i++){
+                        option += '<option value="'+response.records[i].id+'">'+response.records[i].subject+'</option>';
+                    }
+                    $('#subject').html(option);
+                }
+            }
+        });
+		
+    return false;
+		
+	});
+});
+$('#myForm').on('submit',function(e){
+		var form	  = $('#myForm');
+
+        $.ajax({
+            url :  form.attr('action'),
+            type : form.attr('method'),
             data : form.serialize(),
             dataType : 'json',
             success:function(response) {

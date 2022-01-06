@@ -332,6 +332,22 @@ function getSubjects($id = Null)
 	return json_encode($arr) ;
 
 }
+function getSessions($id = Null)
+{
+	include "include/dbconfig.php" ;
+	$sql = "SELECT `session` FROM `pursuing_course` GROUP BY `session` ORDER BY `session` DESC";
+	$result = mysqli_query($conn, $sql);
+	$arr= ['success'=> false, 'records'=>[]];
+	if(mysqli_num_rows($result) > 0){
+		$arr['success'] = true;
+		while($row = mysqli_fetch_assoc($result)){
+			$arr['records'][] = $row['session'];
+		}
+	}
+
+	return json_encode($arr) ;
+
+}
 
 
 ?>
