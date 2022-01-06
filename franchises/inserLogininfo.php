@@ -21,14 +21,27 @@ if($_POST)
     //     $validator['messages'] = "Successfully Added";
 	// }
 
-    $sql="SELECT pursuing_course.regno as reg_no,pursuing_course.*,marks.*,student_info.*,subjects.* FROM pursuing_course INNER JOIN marks ON marks.course_id=pursuing_course.course_id INNER JOIN student_info on student_info.slno=pursuing_course.student_id INNER JOIN subjects ON subjects.course_id=pursuing_course.course_id WHERE pursuing_course.franchise_id='{$_SESSION['franchise_id']}' AND pursuing_course.course_id='{$course}' AND subjects.id='{$subject}'";
+    // $sql="SELECT pursuing_course.regno as reg_no,marks.*,student_info.slno,student_info.St_Name,subjects.*,courses.* FROM pursuing_course INNER JOIN marks ON marks.student_id=pursuing_course.student_id INNER JOIN student_info on student_info.slno=pursuing_course.student_id INNER JOIN subjects ON subjects.course_id=pursuing_course.course_id INNER JOIN courses ON courses.id=pursuing_course.course_id WHERE marks.franchise_id='{$_SESSION['franchise_id']}' AND marks.course_id='{$course}' AND marks.subject_id='{$subject}'";
+
+	$sql="SELECT pursuing_course.regno as reg_no,pursuing_course.*,student_info.*,courses.* FROM `pursuing_course` INNER JOIN student_info ON student_info.slno=pursuing_course.student_id INNER JOIN courses ON courses.id=pursuing_course.course_id WHERE pursuing_course.course_id='{$course}' AND pursuing_course.franchise_id='{$_SESSION['franchise_id']}'";
+
+	
 
    $res =mysqli_query($conn,$sql);
+   
+
    if(mysqli_num_rows($res)>0)
    {
        while($row=mysqli_fetch_assoc($res))
        {
-       $data[]=$row;
+		$sql1="SELECT * FROM marks WHERE student_id='{$row['slno']}'";
+		$res1=mysqli_query($conn,$sql1);
+		   $row1=mysqli_fetch_assoc($res1);
+		   if($row1 === null)
+		   {
+			   $row1=array();
+		   }
+       $data[]=$row+$row1;
        }
   
    }
@@ -51,4 +64,3 @@ function getRegno($key)
 		return null;
 	}
 }
-?>

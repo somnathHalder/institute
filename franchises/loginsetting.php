@@ -39,6 +39,7 @@ function getSession()
 	}
 }
 
+ 
 
 
 
@@ -75,7 +76,7 @@ function getSession()
 					<div class="col-md-4 col-sm-4 col-xs-12">
 						<div class="">
 							<br>
-							<button  type="submit" id="submit" class="btn btn-info form-control">Submit</button>
+							<button type="submit" id="submit" name="submit" class="btn btn-info form-control">Submit</button>
 						</div>
 					</div>
 
@@ -90,13 +91,12 @@ function getSession()
 			</form>
 			<div>&nbsp;</div>
 			<div class="table-responsive">
-				<table id="example" class="table table-stripped">
+				<table id="example" class="table table-stripped editable_table">
 					<thead>
 						<th style="text-align:left;">SLNO </th>
 						<th style="text-align:center;">Student Name </th>
 						<th style="text-align:center;">Registration No </th>
-						<th style="text-align:center;">Course</th>
-						<th style="text-align:center;">Subject</th>
+						<th style="text-align:center;">Full Marks</th>
 						<th style="text-align:center;">Marks</th>
 					</thead>
 					<tbody id="tbody">
@@ -209,7 +209,36 @@ function getSession()
 <script>
 	$(document).ready(function() {
 
-		$('#submit').on('click',function(){
+		
+
+		// $('.editable_table').Tabledit({
+		// 	url: "editMarksAction.php",
+		// 	buttons: {
+		// 		edit: {
+		// 			class: 'btn btn-xs btn-info',
+		// 			action: 'edit'
+		// 		}
+
+		// 	},
+		// 	deleteButton: false,
+		// 	columns: {
+		// 		identifier: [0, "slno"],
+		// 		editable: [
+		// 			[6, 'obi_marks']
+		// 		]
+		// 	},
+		// 	restoreButton: false,
+		// 	onSuccess: function(data, status, jqXHR) {
+
+		// 	}
+		// });
+
+		$('#obtain_btn').on('click',function(){
+			alert(1);
+			//obtainMarksEdit();
+		})
+
+		$('#submit').on('click', function() {
 
 			showdata();
 		});
@@ -468,40 +497,69 @@ function getSession()
 
 
 	function showdata() {
-		alert(1);
-		var chk=1;
+		var chk = 1;
+		var course = $('#course').val();
+		var subject = $('#subject').val();
 		output = "";
 		$.ajax({
-			url: "insertLogininfo.php",
+			url: "inserLogininfo.php",
 			method: "POST",
 			dataType: "json",
-			data:{
-				'course':
+			data: {
+				'course': course,
+				'subject': subject
 			},
 			success: function(x) {
 				// console.log(data);
 
 				for (i = 0; i < x.length; i++) {
-					output +=
-						"<tr><td>" +
-						chk +
-						"</td><td>" +
-						x[i].St_Name +
-						"</td><td>" +
-						x[i].reg_no +
-						"</td><td>" +
-						x[i].course_name +
-						"</td></tr>"+
-						x[i].subject +
-						"</td></tr>"+
-						x[i].obtained_marks +
+					var aa='';
+					if(x[i].obtained_marks)
+					{
+						aa="<input type='text' readonly class='form-control text-center'  value='"+x[i].obtained_marks+"'>"+
 						"</td></tr>";
+					}
+					else
+					{
+						aa="<input type='text'  class='form-control text-center'  id='obtain' value='"+x[i].obtained_marks+"'> <button class='btn btn-success btn-sm obtain_btn'>SAVE</button>"+
+						"</td></tr>";
+					}
 
-						chk++;
+					output +=
+						"<tr><td style='text-align:center;'>" +
+						chk +
+						"</td><td style='text-align:center;'>" +
+						x[i].St_Name +
+						"</td><td style='text-align:center;'>" +
+						x[i].reg_no +
+						"</td><td style='text-align:center;'>" +
+						x[i].total_marks +
+						"</td><td style='text-align:center;'>" +
+						 aa;
+
+					chk++;
 				}
 				$("#tbody").html(output);
 			},
 		});
+	}
+
+	function obtainMarksEdit(){
+
+		var marks=$('#obtain').val();
+		alert(marks);
+		// $.ajax({
+		// 	url:'obtainMarksEdit.php',
+		// 	type:'POST',
+		// 	data:{
+		// 		'marks':marks
+		// 	},
+		// 	success:function(data)
+		// 	{
+
+		// 	}
+		// });
+		
 	}
 </script>
 
