@@ -1,6 +1,7 @@
 <?php 
 session_start();
 include "include/menu.php";
+include "include/dbconfig.php";
 include "functions.php";
 $franchises =  json_decode(getFranchises(), true);
 $courses    =  json_decode(getCourses(), true);
@@ -8,9 +9,26 @@ $sessions   =  json_decode(getSessions(), true);
 
 if(isset($_POST['formid']) && isset($_SESSION['formid']) && $_POST['formid'] == $_SESSION['formid'])
 {
+    extract($_POST);
+    $createdAt = date('Y-m-d H:i:s');
+    $submitBy  = $_SESSION['userid'];
+    
+    for($i=0; $i< count($_POST['obtainedMarks']); $i++){
+        $obtainedMarks =  $_POST['obtainedMarks'][$i];
+        $fullMarks     =  $_POST['fullMarks'][$i];
+        $admissionId   =  $_POST['admissionId'][$i];
+        $studentId     =  $_POST['studentId'][$i];
+       
+        $sql = "INSERT INTO `marks`( `admission_id`, `franchise_id`,`student_id`, `course_id`,`submit_by`, `created_at`) 
+                VALUES ('$admissionId', '$franchise','$studentId','$course','$submitBy','$createdAt')";
+        $res= mysqli_query($conn, $sql);
+        $marksId = mysqli_insert_id($conn);
+        $query = "INSERT INTO `marks_details`( `marks_id`, `subject_id`, `full_marks`, `obtained_marks`) 
+                VALUES ('$marksId','$subject','$fullMarks', '$obtainedMarks')";
+        $ress= mysqli_query($conn, $query);
+    }
 
-
-		$_SESSION['formid']=md5(rand(0,10000000));
+	//	$_SESSION['formid']=md5(rand(0,10000000));
 }
 else{
 		$_SESSION['formid']=md5(rand(0,10000000));
@@ -24,13 +42,13 @@ else{
             <!--    <div class="x_panel">
                    <div class="x_content"> -->
 			<h3 class="page-header">Marks Entry</h3>
-			<form id="myForm" method="post" action="fetch-marks.php" enctype="multipart/form-data">
-			<input type="hidden" name="formid" id="formid" value="<?php echo htmlspecialchars($_SESSION['formid']); ?>">
+			
+			<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST">
 			<div class="form-group">
            
             <div class="col-md-2 col-sm-2 col-xs-12">
 					<label>Session</label>
-                    <select name="franchise" id="franchise" class="form-control">
+                    <select name="session" id="session" class="form-control">
                     <option value="">Select Session</option>
 						<?php
                             if(count($sessions['records']) > 0){
@@ -95,23 +113,29 @@ else{
 					</div>
 				</div>
 				<div class="clearfix"></div>
-			</form>
+			
 				<div>&nbsp;</div>
 				<div class="table-responsive">
-				<table id="example" class="table table-stripped">
-                    <thead>
-                        <th style="text-align:left;"># </th>
-                        <th style="text-align:center;">Name</th>
-                        <th style="text-align:center;">Registration No </th>
-                        <th style="text-align:center;">Full Marks</th>
-                        <th style="text-align:center;">Obtained Marks</th>
-                    </thead>
-                    <tbody>
+                    
+                    <input type="hidden" name="formid" id="formid" value="<?php echo htmlspecialchars($_SESSION['formid']); ?>">
+                        <table id="example" class="table table-stripped">
+                            <thead>
+                                <th style="text-align:left;"># </th>
+                                <th style="text-align:center;">Name</th>
+                                <th style="text-align:center;">Registration No </th>
+                                <th style="text-align:center;">Full Marks</th>
+                                <th style="text-align:center;">Obtained Marks</th>
+                            </thead>
+                            <tbody>
 
-                    </tbody>
-                  </table>
+                            </tbody>
+                        </table>
+                        <button type="submit" name="submit" id="submit" class="btn btn-success form-control" >Save</button>
+                    </form>
+				
 <!-- /panel -->		
 			</div>
+            
                   <!--</div>
                 </div>-->
 				
@@ -222,7 +246,7 @@ $('#course').on('change',function(e){
         $.ajax({
             url : "fetch-subjects.php",
             type : 'POST',
-            data : form.serialize(),
+            data : {"course":$('#course').val()},
             dataType : 'json',
             success:function(response) {
                 let option ='<option value="">Select Subject</option>';
@@ -237,29 +261,35 @@ $('#course').on('change',function(e){
 		
     return false;
 		
-	});
+	
 });
-$('#myForm').on('submit',function(e){
+
+$('#search').on('click',function(e){
+       // e.preventDefault();
 		var form	  = $('#myForm');
 
         $.ajax({
-            url :  form.attr('action'),
-            type : form.attr('method'),
-            data : form.serialize(),
+            url :  "fetch-marks.php",
+            type : "POST",
+            data : {"franchise":$('#franchise').val(),"course":$('#course').val(),"session":$('#session').val(),"subject":$('#subject').val()},
             dataType : 'json',
             success:function(response) {
-                let option ='<option value="">Select Subject</option>';
+                let option ='';
                 if(response.success){
-                    for(i=0; i< response.records.length ; i++){
-                        option += '<option value="'+response.records[i].id+'">'+response.records[i].subject+'</option>';
-                    }
-                    $('#subject').html(option);
+                   for(i=0; i< response.records.length ; i++){
+                    option += '<tr>'+
+                                    '<td style="text-align:center;"><input type="hidden" value="'+response.records[i].pusuing_id+'"  name="admissionId[]" id="admissionId'+i+'">'+(i+1)+'</td>'+
+                                    '<td style="text-align:center;"><input type="hidden" name="studentId[]" id="studentId'+response.records[i].student_id+'" value="'+response.records[i].student_id+'">'+response.records[i].St_Name+'</td>'+
+                                    '<td style="text-align:center;">'+response.records[i].regno+'</td>'+
+                                    '<td style="text-align:center;"><input type="hidden"  name="fullMarks[]" id="fullMarks'+i+'">'+response.records[i].full_marks+'</td>'+
+                                    '<td style="text-align:center;"><input type="number" class="form-control" name="obtainedMarks[]" id="obtainedMarks'+i+'"></td>'+
+                              '</tr>';
+                   }
+                   $('#example tbody').html(option);
                 }
             }
         });
-		
-    return false;
-		
+        return false;
 	});
 });
 
@@ -288,6 +318,7 @@ function editMember(id = null)
         alert("Error : Refresh the page again");
     }
 }
+
 function removeMember(id=null)
 {
 	if(id)
