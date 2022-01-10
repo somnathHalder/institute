@@ -348,6 +348,20 @@ function getSessions($id = Null)
 	return json_encode($arr) ;
 
 }
+function getTotalMarksByCourse($courseId){
+	include "include/dbconfig.php" ;
+	$sql = "SELECT * FROM `subjects` WHERE `course_id`='$courseId'";
+	$result = mysqli_query($conn, $sql);
+	$totalMarks = 0;
+	if(mysqli_num_rows($result) > 0){
+	
+		while($row = mysqli_fetch_assoc($result)){
+			extract($row) ;
+			$totalMarks += $full_marks;
+		}
+	}
+	return $totalMarks;
 
+}
 
 ?>

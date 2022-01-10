@@ -100,9 +100,9 @@ function getObtainedMarks($marksId)
 			 
             <!--    <div class="x_panel">
                    <div class="x_content"> -->
-			<h3 class="page-header">Marks Entry</h3>
+			<h3 class="page-header">Marks Edit</h3>
 			
-			<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST">
+			<!-- <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST"> -->
 			<div class="form-group">
            
             <div class="col-md-2 col-sm-2 col-xs-12">
@@ -194,8 +194,7 @@ function getObtainedMarks($marksId)
 
                             </tbody>
                         </table>
-                        <button type="submit" name="submit" id="submit" class="btn btn-success form-control" >Save</button>
-                    </form>
+             <!--    </form> -->
 				
 <!-- /panel -->		
 			</div>
@@ -335,13 +334,7 @@ $('#search').on('click',function(e){
         $.ajax({
             url :  "fetch-marks.php",
             type : "POST",
-            data : {
-                "franchise":$('#franchise').val(),
-                "course":$('#course').val(),
-                "session":$('#session').val(),
-                "subject":$('#subject').val(),
-                "type":"insert"
-            },
+            data : {"franchise":$('#franchise').val(),"course":$('#course').val(),"session":$('#session').val(),"subject":$('#subject').val()},
             dataType : 'json',
             success:function(response) {
                 let option ='';
@@ -352,7 +345,7 @@ $('#search').on('click',function(e){
                                     '<td style="text-align:center;"><input type="hidden" name="studentId[]" id="studentId'+response.records[i].student_id+'" value="'+response.records[i].student_id+'">'+response.records[i].St_Name+'</td>'+
                                     '<td style="text-align:center;">'+response.records[i].regno+'</td>'+
                                     '<td style="text-align:center;"><input type="hidden"  name="fullMarks[]" id="fullMarks'+i+'" value="'+response.records[i].full_marks+'">'+response.records[i].full_marks+'</td>'+
-                                    '<td style="text-align:center;"><input type="number" class="form-control" name="obtainedMarks[]" id="obtainedMarks'+i+'"></td>'+
+                                    '<td style="text-align:center;"><input type="hidden" class="form-control" name="obtainedMarks[]" id="obtainedMarks'+i+'" value="'+response.records[i].obtained_marks+'">'+response.records[i].obtained_marks+'</td>'+
                               '</tr>';
                    }
                    $('#example tbody').html(option);
