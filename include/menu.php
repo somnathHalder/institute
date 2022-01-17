@@ -307,10 +307,16 @@ include('include/check-login.php');
 							 </ul>
 
 						</li>
-
-
-
-
+						<li>
+							<a href="#"><i class="fa fa-th-list"></i> Marks Section <span class="fa arrow"></span></a>
+							<ul class="nav nav-second-level">
+									<li>
+										<a href="marks-entry.php">Marks Entry</a>
+										 <a href="marks-edit.php">Marks Edit</a>
+									</li>
+									
+							</ul>
+							</li>
 						<li>
 							<a href="#"><i class="fa fa-rupee "></i> Franchise<span class="fa arrow"></span></a>
 							 <ul class="nav nav-second-level">
@@ -540,34 +546,19 @@ include('include/check-login.php');
 						</li>
 
 						<li>
-
 							<a href="#"><i class="fa fa-paper-plane"></i> Exam Setting<span class="fa arrow"></span></a>
-
 							 <ul class="nav nav-second-level">
-
 								<li>
-
 									 <a href="examcreate.php">Create Exam</a>
-
 									 <a href="examselect.php">Set Question</a>
-
 									 <a href="activeExam.php">Active Exam Link</a>
-
 									 <a href="loginsetting.php">Manage Student Login</a>
-
 									 <a href="setrule.php">Exam Rule & Description Setting</a>
-
 									 <a href="selectexam.php">Result</a>
-
 									 <a href="removeanswer.php">Remove Answer Record</a>
-
 								</li>
-
-								
-
 							 </ul>
-
-						</li>
+						</li> 
 
 						</ul>
 

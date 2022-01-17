@@ -4,6 +4,9 @@ include('include/no-cache.php');
 include('include/dbconfig.php');
 include('include/check-login.php');
 include "functions.php";
+$courses = json_decode(getCourses(), true);
+
+$courses  = $courses['records'] ;
 $success_msg = null;
 $error_msg = null;
 if (isset($_POST['formid']) && isset($_SESSION['formid']) && $_POST['formid'] == $_SESSION['formid']) {
@@ -131,19 +134,19 @@ function getAddress()
 		echo $option;
 	}
 }
-function getCourses()
-{
-	include('include/dbconfig.php');
-	$sql = "SELECT * FROM `courses` ORDER BY `course_name`";
-	$res = mysqli_query($conn,  $sql);
-	$option = '';
-	if (mysqli_num_rows($res) > 0) {
-		while ($row = mysqli_fetch_assoc($res)) {
-			$option .= '<option value="' . $row['id'] . '">' . $row['course_name'] . '-' . $row['description'] . '</option>';
-		}
-		echo $option;
-	}
-}
+// function getCourses()
+// {
+// 	include('include/dbconfig.php');
+// 	$sql = "SELECT * FROM `courses` ORDER BY `course_name`";
+// 	$res = mysqli_query($conn,  $sql);
+// 	$option = '';
+// 	if (mysqli_num_rows($res) > 0) {
+// 		while ($row = mysqli_fetch_assoc($res)) {
+// 			$option .= '<option value="' . $row['id'] . '">' . $row['course_name'] . '-' . $row['description'] . '</option>';
+// 		}
+// 		echo $option;
+// 	}
+// }
 function addStudentToPursuingTable($course, $studentID, $session, $fees, $date, $sessioncode, $coursecode, $serialno, $courseday, $time,$regno)
 {
 	include "include/dbconfig.php";
@@ -407,7 +410,13 @@ function findQuesryListStudents()
 					<div class="col-md-3 col-sm-3 col-xs-12">
 						<select id="course" name="course" class="form-control col-md-7 col-xs-12" required style="border-color:red">
 							<option value="">--Select--</option>
-							<?php getCourses(); ?>
+							<?php 
+								if(count($courses) > 0){
+									foreach ($courses as $key => $coure) {
+										echo '<option value="'.$coure['id'].'">'.$coure['course_name'].'</option>';
+									}
+								}
+							?>
 						</select>
 					</div>
 					<label class="control-label col-md-2 col-sm-2 col-xs-12" for="caddress">Registration No<span class=""></span>

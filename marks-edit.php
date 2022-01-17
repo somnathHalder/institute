@@ -206,24 +206,46 @@ function getObtainedMarks($marksId)
 				</div>
 
 	
-<div id="editMemberModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="editMemberModal" aria-hidden="true">
+<div id="marksEdit" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="editMemberModal" aria-hidden="true">
       <div class="modal-dialog">
         <div class="modal-content">
 
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-            <h4 class="modal-title" id="myModalLabel">Update Password</h4>
+            <h4 class="modal-title" id="myModalLabel">Update Marks</h4>
           </div>
 		  <div id="editMessage"></div>
-		  <form method="post" id="updateMemberForm" class="form-horizontal" action="updateRecord.php">
+		  <form method="post" id="updateMemberForm" class="form-horizontal" action="update-marks.php">
 			  <div class="modal-body">
 			  <div class="messages"></div>
 				<div id="testmodal" style="padding: 5px 20px;">
 					<div class="form-group">
-					  <label class="col-sm-2 control-label">Password</label>
-					  <div class="col-sm-10">
-						<input type="text" class="form-control" id="password" name="password" required="required"> 
-						<input type="hidden" id="q_id" name="q_id">
+					  <label class="col-sm-4 control-label">Name:</label>
+					  <div class="col-sm-8">
+                        <label class="col-sm-8 control-label" id ="editStudentName"></label>
+					
+					  </div>
+					</div> 
+					<div class="form-group">
+					  <label class="col-sm-4 control-label">Registration No:</label>
+					  <div class="col-sm-8">
+                        <label class="col-sm-8 control-label" id ="editRegNo"></label>
+						
+					  </div>
+					</div> 
+					<div class="form-group">
+					  <label class="col-sm-4 control-label">Full Marks:</label>
+					  <div class="col-sm-8">
+                        <label class="col-sm-8 control-label " id ="editFullMarks"></label>
+						
+					  </div>
+					</div> 
+					<div class="form-group">
+					  <label class="col-sm-4 control-label">Obtained Marks:</label>
+					  <div class="col-sm-8">
+                        <input type="number" class="form-control" id ="editObtainedMarks" name ="editObtainedMarks">
+                        <input type="hidden" id ="editMarksDetailId" name ="editMarksDetailId">
+						
 					  </div>
 					</div> 
 				</div>
@@ -307,7 +329,7 @@ $(document).ready(function(){
 $('#course').on('change',function(e){
 		var form	  = $('#myForm');
         $.ajax({
-            url : "fetch-subjects.php",
+            url  : "fetch-subjects.php",
             type : 'POST',
             data : {"course":$('#course').val()},
             dataType : 'json',
@@ -327,8 +349,37 @@ $('#course').on('change',function(e){
 	
 });
 
+$('#updateMemberForm').on('submit', function(e){
+    e.preventDefault();
+    marksDetailId = $('#editMarksDetailId').val() ;
+    obtainedMark  = parseFloat($('#editObtainedMarks').val()) || 0 ;
+    fullMarks      = parseFloat($('#fullMarks'+marksDetailId).val()) || 0 ;
+    
+    if(obtainedMark <= fullMarks){
+        $.ajax({
+            url :  "update-marks.php",
+            type : "POST",
+            data : {"marks_detail_id":marksDetailId,'obtained_marks':$('#editObtainedMarks').val()},
+            dataType : 'json',
+            success:function(response) {
+                if(response.success){
+                    $('#marksEdit').modal('hide');
+                    $('#obtainedMarksData'+marksDetailId).html($('#editObtainedMarks').val());
+                    $('#obtainedMarks'+marksDetailId).val($('#editObtainedMarks').val());
+                }
+            }
+        });
+    }else{
+        alert("Obtained marks can not be greater than full marks.");
+    }
+    
+        return false;
+});
+
+
 $('#search').on('click',function(e){
        // e.preventDefault();
+       $('#example tbody').html("");
 		var form	  = $('#myForm');
 
         $.ajax({
@@ -341,11 +392,12 @@ $('#search').on('click',function(e){
                 if(response.success){
                    for(i=0; i< response.records.length ; i++){
                     option += '<tr>'+
-                                    '<td style="text-align:center;"><input type="hidden" value="'+response.records[i].pusuing_id+'"  name="admissionId[]" id="admissionId'+i+'">'+(i+1)+'</td>'+
-                                    '<td style="text-align:center;"><input type="hidden" name="studentId[]" id="studentId'+response.records[i].student_id+'" value="'+response.records[i].student_id+'">'+response.records[i].St_Name+'</td>'+
-                                    '<td style="text-align:center;">'+response.records[i].regno+'</td>'+
-                                    '<td style="text-align:center;"><input type="hidden"  name="fullMarks[]" id="fullMarks'+i+'" value="'+response.records[i].full_marks+'">'+response.records[i].full_marks+'</td>'+
-                                    '<td style="text-align:center;"><input type="hidden" class="form-control" name="obtainedMarks[]" id="obtainedMarks'+i+'" value="'+response.records[i].obtained_marks+'">'+response.records[i].obtained_marks+'</td>'+
+                                    '<td style="text-align:center;"><input type="hidden" value="'+response.records[i].pusuing_id+'"  name="admissionId[]" id="admissionId'+response.records[i].marks_detail_id+'">'+(i+1)+'</td>'+
+                                    '<td style="text-align:center;"><input type="hidden" name="studentName[]" id="studentName'+response.records[i].marks_detail_id+'" value="'+response.records[i].St_Name+'">'+response.records[i].St_Name+'</td>'+
+                                    '<td style="text-align:center;"><input type="hidden" name="regno[]" id="regno'+response.records[i].marks_detail_id+'" value="'+response.records[i].regno+'">'+response.records[i].regno+'</td>'+
+                                    '<td style="text-align:center;"><input type="hidden"  name="fullMarks[]" id="fullMarks'+response.records[i].marks_detail_id+'" value="'+response.records[i].full_marks+'">'+response.records[i].full_marks+'</td>'+
+                                    '<td style="text-align:center;"><input type="hidden" class="form-control" name="obtainedMarks[]" id="obtainedMarks'+response.records[i].marks_detail_id+'" value="'+response.records[i].obtained_marks+'"><span id="obtainedMarksData'+response.records[i].marks_detail_id+'">'+response.records[i].obtained_marks+'</span></td>'+
+                                    '<td style="text-align:center;"><button type="button" class="btn btn-sm btn-primary" onclick="showModal('+response.records[i].marks_detail_id+')"><i class="fa fa-pencil"></i></button></td>'+
                               '</tr>';
                    }
                    $('#example tbody').html(option);
@@ -356,69 +408,56 @@ $('#search').on('click',function(e){
 	});
 });
 
-function editMember(id = null) 
-{
-	$('.messages').html("");
-	$('#updateMemberForm')[0].reset();
-	/* alert(id); */
-    if(id) 
-	{
 
-        $.ajax({
-            url: 'getSelectedRecord.php',
-            type: 'post',
-            data: {member_id : id},
-            dataType: 'json',
-            success:function(response) {
-				/* alert(response.id); */
-                $("#password").val(response.password);
-                $("#q_id").val(response.id);
-            } 
-        }); 
-		
- 
-    } else {
-        alert("Error : Refresh the page again");
-    }
-}
 
-function removeMember(id=null)
-{
-	if(id)
-	{
-		$('#removeBtn').unbind('click').bind('click',function()
-		{
+// function removeMember(id=null)
+// {
+// 	if(id)
+// 	{
+// 		$('#removeBtn').unbind('click').bind('click',function()
+// 		{
 
-			 $.ajax({
-                url: 'removeRecord.php',
-                type: 'post',
-                data: {member_id : id},
-                dataType: 'json',
-                success:function(response) {
-                    if(response.success == true) {                      
-                        $(".removeMessages").html('<div class="alert alert-success alert-dismissible" role="alert">'+
-                             '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'+
-                             '<strong> <span class="glyphicon glyphicon-ok-sign"></span> </strong>'+response.messages+
-                            '</div>');
+// 			 $.ajax({
+//                 url: 'removeRecord.php',
+//                 type: 'post',
+//                 data: {member_id : id},
+//                 dataType: 'json',
+//                 success:function(response) {
+//                     if(response.success == true) {                      
+//                         $(".removeMessages").html('<div class="alert alert-success alert-dismissible" role="alert">'+
+//                              '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'+
+//                              '<strong> <span class="glyphicon glyphicon-ok-sign"></span> </strong>'+response.messages+
+//                             '</div>');
  
-                        // refresh the table
-                        reload($('#examid').val(),$('#course').val(),$('#year').val(),$('#month').val());
+//                         // refresh the table
+//                         reload($('#examid').val(),$('#course').val(),$('#year').val(),$('#month').val());
  
-                        // close the modal
-                        $("#removeMemberModal").modal('hide');
+//                         // close the modal
+//                         $("#removeMemberModal").modal('hide');
  
-                    } else {
-                        $(".removeMessages").html('<div class="alert alert-warning alert-dismissible" role="alert">'+
-                             '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'+
-                             '<strong> <span class="glyphicon glyphicon-exclamation-sign"></span> </strong>'+response.messages+
-                            '</div>');
-                    }
-                }
-            }); 
+//                     } else {
+//                         $(".removeMessages").html('<div class="alert alert-warning alert-dismissible" role="alert">'+
+//                              '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'+
+//                              '<strong> <span class="glyphicon glyphicon-exclamation-sign"></span> </strong>'+response.messages+
+//                             '</div>');
+//                     }
+//                 }
+//             }); 
 			
-		});
-	}
+// 		});
+// 	}
 	
+// }
+function showModal(marksDetailId)
+{
+    //alert(marksDetailId);
+    $('#editObtainedMarks').val($('#obtainedMarks'+marksDetailId).val());
+    $('#editStudentName').html($('#studentName'+marksDetailId).val());
+    $('#editRegNo').html($('#regno'+marksDetailId).val());
+    $('#editFullMarks').html($('#fullMarks'+marksDetailId).val());
+    $('#editMarksDetailId').val(marksDetailId);
+    
+    $('#marksEdit').modal('show');
 }
 
 

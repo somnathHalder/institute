@@ -25,7 +25,7 @@ if($_POST){
     LEFT JOIN `student_info` ON `student_info`.`slno` = Q.`student_id`
     LEFT JOIN `subjects` ON `subjects`.`id` = '$subject'" ;
  }else{
-    $query = "SELECT Q.*,`student_info`.`St_Name`,`marks_details`.`subject_id`,`marks_details`.`obtained_marks`,`subjects`.`subject`,`subjects`.`full_marks` FROM 
+    $query = "SELECT Q.*,`student_info`.`St_Name`,`marks_details`.`id` AS `marks_detail_id`,`marks_details`.`subject_id`,`marks_details`.`obtained_marks`,`subjects`.`subject`,`subjects`.`full_marks` FROM 
     (SELECT P.*,`marks`.`id` 
     FROM (SELECT `pusuing_id`,`student_id`,`franchise_id`,`regno`
           FROM `pursuing_course` 
