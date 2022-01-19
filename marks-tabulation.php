@@ -6,92 +6,7 @@ include "functions.php";
 $franchises =  json_decode(getFranchises(), true);
 $courses    =  json_decode(getCourses(), true);
 $sessions   =  json_decode(getSessions(), true);
-$successMsg = "" ;
-if(isset($_POST['formid']) && isset($_SESSION['formid']) && $_POST['formid'] == $_SESSION['formid'])
-{
-    extract($_POST);
-    $createdAt  = date('Y-m-d H:i:s');
-    $submitBy   = $_SESSION['userid'];
-    $totalMarks = getTotalMarksByCourse($course);
-    $data       = json_decode(getCourses($course), true);
-    $courseInfo = json_encode($data['records'][0]);
-    $franchiseRecords = json_decode(getFranchises($franchise), true);
-    $franchiseInfo    =  json_encode($franchiseRecords['records'][0]);
-    
-    for($i=0; $i< count($_POST['obtainedMarks']); $i++){
-        $obtainedMarks =  $_POST['obtainedMarks'][$i];
-        $fullMarks     =  $_POST['fullMarks'][$i];
-        $admissionId   =  $_POST['admissionId'][$i];
-        $studentId     =  $_POST['studentId'][$i];
-        $marksId       =  getMarksTable($studentId, $course, $admissionId, $franchise, $totalMarks, $courseInfo, $franchiseInfo);
-       
-        $query = "INSERT INTO `marks_details`( `marks_id`, `subject_id`, `full_marks`, `obtained_marks`) 
-                 VALUES ('$marksId', '$subject', '$fullMarks', '$obtainedMarks')";
-        $ress  = mysqli_query($conn, $query);
 
-        $totalObtainedMarks = getObtainedMarks($marksId);
-       
-        $updateQuery = "UPDATE `marks` SET  `franchise_info`='$franchiseInfo', `student_id`='$studentId',
-                       `course_id`='$course', `course_info`='$courseInfo', `total_marks`='$totalMarks', `obtained_marks`='$totalObtainedMarks',
-                       `submit_by`='$submitBy' WHERE `id` = '$marksId'" ;
-        $updateQueryress = mysqli_query($conn, $updateQuery); 
-        
-    }
-    $successMsg = "Marks saved succesfully." ;
-	
-    $_SESSION['formid'] = md5(rand(0, 10000000));
-}
-else{
-		$_SESSION['formid']=md5(rand(0, 10000000));
-}
-
-function getMarksTable($studentId, $courseId, $admissionId, $franchiseId, $totalMarks, $courseInfo, $franchiseInfo){
-    include "include/dbconfig.php" ;
-    require_once "functions.php" ;
-   
-    $createdAt = date('Y-m-d H:i:s');
-    $submitBy  = $_SESSION['userid'];
-    $marksId = "" ;
-    
-    
-    $sql = "SELECT * FROM `marks` WHERE `admission_id`='$admissionId' AND `franchise_id`='$franchiseId' 
-            AND `student_id`='$studentId' AND `course_id`='$courseId' LIMIT 1";
-    
-    $res = mysqli_query($conn, $sql);
-  
-    if(mysqli_num_rows($res) > 0){
-       $row = mysqli_fetch_assoc($res);
-       $marksId = $row['id'];
-     
-    }else{
-        $sql = "INSERT INTO `marks`( `admission_id`, `franchise_id`, `franchise_info`, `student_id`, `course_id`, `course_info`, `total_marks`,`submit_by`, `created_at`) 
-        VALUES ('$admissionId', '$franchiseId', '$franchiseInfo', '$studentId', '$courseId', '$courseInfo', '$totalMarks', '$submitBy', '$createdAt')";
-        $res = mysqli_query($conn, $sql);
-        $marksId = mysqli_insert_id($conn);
-    }
-
-    return $marksId;
-}
-
-function getObtainedMarks($marksId)
-{
-    include "include/dbconfig.php" ;
-   
-    $totalMarks = 0 ;
-   
-    $sql = "SELECT * FROM `marks_details` WHERE `marks_id`= '$marksId'";
-    $res = mysqli_query($conn, $sql) ;
-    
-    if(mysqli_num_rows($res) > 0){
-        while($row = mysqli_fetch_assoc($res)){
-            extract($row);
-            $totalMarks += $obtained_marks;
-        }
-        
-    }
-
-    return $totalMarks ;
-}
 ?>
 
         <div id="page-wrapper">
@@ -105,7 +20,7 @@ function getObtainedMarks($marksId)
 			<!-- <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST"> -->
 			<div class="form-group">
            
-            <div class="col-md-2 col-sm-2 col-xs-12">
+            <div class="col-md-3 col-sm-3 col-xs-12">
 					<label>Session</label>
                     <select name="session" id="session" class="form-control">
                     <option value="">Select Session</option>
@@ -136,7 +51,7 @@ function getObtainedMarks($marksId)
                         ?>
 					</select>
 				</div>
-				<div class="col-md-2 col-sm-2 col-xs-12">
+				<div class="col-md-3 col-sm-3 col-xs-12">
 					<label>Course</label>
 					<select name="course" id="course" class="form-control">
 						<option value="">Select Course</option>
@@ -151,12 +66,12 @@ function getObtainedMarks($marksId)
                         ?>
 					</select>
 				</div>
-				<div class="col-md-3 col-sm-3 col-xs-12">
+				<!-- <div class="col-md-3 col-sm-3 col-xs-12">
 					<label>Subject</label>
 					<select name="subject" id="subject" class="form-control">
 						<option value="">Select Subject</option>
 					</select>
-				</div>
+				</div> -->
 				<div class="col-md-2 col-sm-2 col-xs-12">
 					<label>&nbsp;</label>
                     <button type="button" id="search" class="btn btn-info form-control">Search</button>
@@ -182,19 +97,11 @@ function getObtainedMarks($marksId)
                 </div>
                 <?php } ?>
                     <input type="hidden" name="formid" id="formid" value="<?php echo htmlspecialchars($_SESSION['formid']); ?>">
-                        <table id="example" class="table table-stripped">
-                            <thead>
-                                <th style="text-align:left;"># </th>
-                                <th style="text-align:center;">Name</th>
-                                <th style="text-align:center;">Registration No </th>
-                                <th style="text-align:center;">Full Marks</th>
-                                <th style="text-align:center;">Obtained Marks</th>
-                            </thead>
-                            <tbody>
 
-                            </tbody>
+                        <table id="example" class="table table-stripped table-condensed">
+                           
                         </table>
-             <!--    </form> -->
+          
 				
 <!-- /panel -->		
 			</div>
@@ -326,28 +233,28 @@ function getObtainedMarks($marksId)
 <script type="text/javascript">
 $(document).ready(function(){
 
-$('#course').on('change',function(e){
-		var form	  = $('#myForm');
-        $.ajax({
-            url  : "fetch-subjects.php",
-            type : 'POST',
-            data : {"course":$('#course').val()},
-            dataType : 'json',
-            success:function(response) {
-                let option ='<option value="">Select Subject</option>';
-                if(response.success){
-                    for(i=0; i< response.records.length ; i++){
-                        option += '<option value="'+response.records[i].id+'">'+response.records[i].subject+'</option>';
-                    }
-                    $('#subject').html(option);
-                }
-            }
-        });
+// $('#course').on('change',function(e){
+// 		var form	  = $('#myForm');
+//         $.ajax({
+//             url  : "fetch-subjects.php",
+//             type : 'POST',
+//             data : {"course":$('#course').val()},
+//             dataType : 'json',
+//             success:function(response) {
+//                 let option ='<option value="">Select Subject</option>';
+//                 if(response.success){
+//                     for(i=0; i< response.records.length ; i++){
+//                         option += '<option value="'+response.records[i].id+'">'+response.records[i].subject+'</option>';
+//                     }
+//                     $('#subject').html(option);
+//                 }
+//             }
+//         });
 		
-    return false;
+//     return false;
 		
 	
-});
+// });
 
 $('#updateMemberForm').on('submit', function(e){
     e.preventDefault();
@@ -381,17 +288,42 @@ $('#search').on('click',function(e){
        // e.preventDefault();
        $('#example tbody').html("");
 		var form	  = $('#myForm');
-
+        $('#example').html("");
         $.ajax({
             url :  "fetch-tabulation.php",
             type : "POST",
-            data : {"franchise":$('#franchise').val(),"course":$('#course').val(),"session":$('#session').val(),"subject":$('#subject').val()},
+            data : {"franchise":$('#franchise').val(),"course":$('#course').val(),"session":$('#session').val()},
             dataType : 'json',
             success:function(response) {
                 let option ='';
+                let thead  ='<thead>';
+                let tbody  ='<tbody>';
+                let tr     ='';
+            
                 if(response.success){
-                   
+                  for(let key in response.heads){
+                    thead += '<th style="text-align:center;">'+response.heads[key]+'</th>';
+                  }
+                 thead += '</thead>';
+                if(response.records.length  > 0){
+                    for(i=0; i< response.records.length ; i++){
+                        console.log(response.records[i]);
+                        let tempTr = '<tr>';
+                        for(let key in response.records[i]){
+                            tempTr += '<td style="text-align:center;">'+response.records[i][key]+'</td>';
+                            //console.log();
+                         }
+                         tempTr  += '</tr>';
+                         tr  += tempTr;
+                     }
                 }
+
+                 
+                    
+                    tbody +=  tr + '</tbody>';
+                }
+               
+             $('#example').html(thead + tbody);
             }
         });
         return false;
