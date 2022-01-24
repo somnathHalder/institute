@@ -46,7 +46,7 @@ function  getFranchise()
 							<?php getFranchise(); ?>
 						</select>
 					</div>
-					<form method="GET" id="createTeacherForm" action="feecollect.php" enctype="multipart/form-data">
+				<!-- 	<form method="GET" id="createTeacherForm" action="feecollect.php" enctype="multipart/form-data"> -->
 						<div class="form-group">
 							<label for="product" class="control-label">Candidate Name<span class="required"></span></label>
 							<select name="studentid" id="studentid" class="selectpicker form-control" data-live-search="true" required>

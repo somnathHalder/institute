@@ -1,7 +1,7 @@
 <?php 
 session_start();
 include('include/check-login.php');
-error_reporting(0);
+// error_reporting(0);
 function encryptIt( $var )
 {
     $cryptKey  = 'qJcB0rGtjk89Q2r54G03efyCp';
@@ -14,9 +14,9 @@ function fetchRecords()
 	$sql="SELECT student_info.*,pursuing_course.*,courses.*
 		FROM `student_info`
 		INNER JOIN pursuing_course 
-		ON student_info.Student_Id=pursuing_course.student_id
+		ON student_info.slno=pursuing_course.student_id
 		INNER JOIN courses
-		ON courses.course_id=pursuing_course.course_id
+		ON courses.id=pursuing_course.course_id
 		";
 /* 		echo $sql; */
 	$res=mysqli_query($conn,  $sql);
@@ -48,11 +48,11 @@ function fetchRecords()
 					<td style="text-align:center">'.$row['qualification'].'</td>
 					<td style="text-align:center">'.$row['Student_Occupation'].'</td>
 					<td style="text-align:center">'.$row['fathers_occupation'].'</td>
-					<td style="text-align:center">
-						<a href="editStudents.php?id='.urlencode(encryptIt($row['Student_Id'])).'">
+					<!--<td style="text-align:center">
+						<a href="editStudents.php?id='.urlencode(base64_encode($row['slno'])).'">
 							<button class="btn btn-info" '.typeCheck().'><i class="fa fa-wrench"></i> Edit </button>
 						</a>
-					</td>
+					</td>-->
 					
 				</tr>
 			
@@ -78,14 +78,14 @@ function typeCheck()
 		 <div class="col-md-12 col-sm-12 column" style="overflow-x:auto;">
 	         
 			
-					<table id="example" class="table table-sm table-bordered">
+					<table id="example" class="table table-sm table-condensed">
 						<thead>
 							<th style="text-align:center;font-size:12px;">SL NO			</th>
 							<th style="text-align:center;font-size:12px;">STUDENT ID		</th>
 							<th style="text-align:center;font-size:12px;">REGISTRATION NO</th>
 							<th style="text-align:center;font-size:12px;">DOA</th>
-							<th style="text-align:center;font-size:12px;">COURSE NAME 	</th>
-							<th style="text-align:center;font-size:12px;">STUDENT NAME 	</th>
+							<th style="text-align:center;font-size:12px;">COURSE 	</th>
+							<th style="text-align:center;font-size:12px;">STUDENT 	</th>
 							<th style="text-align:center;font-size:12px;">DOB	</th>
 							<th style="text-align:center;font-size:12px;">FATHER'S NAME 	</th>
 							<th style="text-align:center;font-size:12px;">MOTHER'S NAME 	</th>
@@ -101,7 +101,7 @@ function typeCheck()
 							<th style="text-align:center;font-size:12px;">QUALIFICATION	</th>
 							<th style="text-align:center;font-size:12px;">APLICANT OCCUPATION	</th>
 							<th style="text-align:center;font-size:12px;">FATHER'S OCCUPATION	</th>
-							<th style="text-align:center;font-size:12px;">Action</th>
+							<!-- <th style="text-align:center;font-size:12px;">Action</th> -->
 						</thead>
 						<tbody>
 							<?php fetchRecords(); ?>

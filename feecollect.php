@@ -118,7 +118,7 @@ function fechPreviousFeeeRecords()
 	
 	$res	   = mysqli_query($conn,  $sql);
 	$no        = 0;
-	
+	/* echo $sql; */
 	if(mysqli_num_rows($res) > 0){
 		while($row=mysqli_fetch_assoc($res))
 		{
