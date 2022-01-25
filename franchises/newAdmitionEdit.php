@@ -7,6 +7,7 @@ include "functions.php";
 $success_msg = null;
 $error_msg = null;
 $course = array();
+$std_row=[];
 
 function getStudentData()
 {
@@ -16,8 +17,8 @@ function getStudentData()
 	$res = mysqli_query($conn, $sql);
 	if (mysqli_num_rows($res) > 0) {
 		$std_row = mysqli_fetch_assoc($res);
+		return $std_row;
 	}
-	return $std_row;
 }
 
 
@@ -60,9 +61,11 @@ if (isset($_POST['formid']) && isset($_SESSION['formid']) && $_POST['formid'] ==
 	$time			= strtoupper(trim($_POST['time']));
 	$admissionType	= strtoupper(trim($_POST['admissionType']));
 
-	$stid			= findMaxID($session);
+	$stid			= trim(mysqli_real_escape_string($conn, $_POST['std_id']));
 	$value = '';
 	$courseday = array();
+	
+
 	if (isset($_POST['courseday'])) {
 
 		foreach ($_POST["courseday"] as $row) {
@@ -81,29 +84,31 @@ $tomonth		=trim($_POST['tomonth']);
 $toyear			=trim($_POST['toyear']); */
 	$sessioncode	= trim($_POST['sessionCode']);
 	$coursecode		= $course;
-	$serialno		= findSerialNo($sessioncode, $coursecode);
-	$regno			= findStudentRegistraionNo($sessioncode, $coursecode);
+	//$serialno		= findSerialNo($sessioncode, $coursecode);
+	$regno			= $_POST['registrationNo'];
 	$particulars	= "ADMISSION TO " . findCourseName($course);
 	$sourcePath 	= $_FILES['fileToUpload']['tmp_name'];
 	$imagename		= $_FILES['fileToUpload']['name'];
 	$targetPath 	= "Student_images/" . $_FILES['fileToUpload']['name'];
 	move_uploaded_file($sourcePath, $targetPath);
-	$sql    		= "INSERT INTO `student_info`(franchise_id,`Student_Id`, `St_Name`, `Fathers_Name`, `DOB`, `Gender`, `Cust`, `Religion`, 
-				 `Mother_Trong`, `Session1`,`session_month`,`session_code`, `Roll`, `DOA`, `Mothers_Name`, `adminslno`, `Vill`, `Post`, `PS`, `Dist`, `Pin`, 
-				 `Contact_no`,`contact2`,`aadhar`, `qualification`, `regno`,`image_name`,`previous_course`,`ref_name`,`admission_type`,note)
-				  VALUES ('{$_SESSION['franchise_id']}','$stid','$sname','$fname','$dob','$gender','$caste','$religion','','$session','','$sessioncode','',
-				 '$date','$mname','','$address','$po','$ps','$district','$pin','$contact','$contact1','$aadhar',
-				 '$qualification','$regno','$imagename','$prevcourse','$refname','$admissionType','$note')";
+	//update----
+	 $sql    		= "UPDATE `student_info` SET `St_Name`='$sname',`Fathers_Name`='$fname',`DOB`='$dob',`Gender`='$gender',`Cust`='$caste',`Religion`='$religion',`DOA`='$date',`Mothers_Name`='$mname',`Vill`='$address',`Post`='$po',`PS`='$ps',`Dist`='$district',`Pin`='$pin',`Contact_no`='$contact',`contact2`='$contact1',`aadhar`='$aadhar',`qualification`='$qualification',`image_name`='$imagename',`previous_course`='$prevcourse',`ref_name`='$refname',`admission_type`='$admissionType',`note`='$note' WHERE slno='$stid'";
+
 
 	$res			= mysqli_query($conn,  $sql);
-	$std_id = mysqli_insert_id($conn);
-	$slno			= mysqli_insert_id($conn);
+	
 	if ($res) {
-		$sql3 = "SELECT * FROM courses WHERE id='$course'";
-		$res = $conn->query($sql3);
-		$coursecode = $res->fetch_assoc();
-		$pursuing_id = addStudentToPursuingTable($course, $std_id, $session, $fees, $date, $sessioncode, $coursecode['course_id'], $serialno, $courseday, $time);
+
+		$courseday		= implode(',', $courseday);
+		$course_day=json_encode($courseday);
+		
+		$sql3="UPDATE `pursuing_course` SET `course_days`='{$course_day}',`time`='$time' WHERE student_id='$stid'";
+		mysqli_query($conn,$sql3);
+
+
+
 		$success_msg = 'Addmission Successfull. Student Unique ID Is : <b>' . $stid . '</b> And Registration Number  : <b>' . $regno . '</b> </div>';
+		header("Location:studentmanagement.php");
 	} else {
 
 		$error_msg = 'Error : Unable To Save ! ';
@@ -159,28 +164,7 @@ function getCourses()
 		echo $option;
 	}
 }
-function addStudentToPursuingTable($course, $studentID, $session, $fees, $date, $sessioncode, $coursecode, $serialno, $courseday, $time)
-{
-	include "include/dbconfig.php";
 
-	/* 	$frommonth		= trim($_POST['frommonth']);
-	$tomonth		= trim($_POST['tomonth']);
-	$toyear			= trim($_POST['toyear']); */
-
-
-
-	$courseday		= implode(',', $courseday);
-	$sql = "INSERT INTO `pursuing_course`(`session`,`date`,`student_id`, `course_id`,`course_code`, `session_code`, `serial_no`, `course_fee`, `course_days` ,`time`
-		 ,`starting_year`, `starting_month`, `complete_year`, `complete_month` )
-		  VALUES ('$session','$date','$studentID','$course','$coursecode','$sessioncode','$serialno','$fees','$courseday','$time','$session','','','')";
-	$res = mysqli_query($conn,  $sql);
-	$pursuing_id = mysqli_insert_id($conn);
-	if ($res) {
-		return  $pursuing_id;
-	} else {
-		return false;
-	}
-}
 function updateQuesryListStudents($id)
 {
 	include "include/dbconfig.php";
@@ -258,6 +242,7 @@ function findQuesryListStudents()
 			<input type="hidden" name="id" id="id" value="<?php echo $std_row['slno']; ?>">
 			<div class="row">
 				<div class="form-group">
+					<input type="hidden" name="std_id" id="std_id" value="<?php echo $std_row['slno']; ?>">
 					<label class="control-label col-md-1 col-sm-1 col-xs-12">Student's Name: <span class=""></span>
 					</label>
 					<div class="col-md-3 col-sm-3 col-xs-12 ">
@@ -427,23 +412,26 @@ function findQuesryListStudents()
 					<label class="control-label col-md-1 col-sm-1 col-xs-12" for="caddress">Session:<span class=""></span>
 					</label>
 					<div class="col-md-3 col-sm-3 col-xs-12">
-						<select id="sessionCode" name="sessionCode" class="form-control col-md-7 col-xs-12" required style="border-color:red">
+						<select id="sessionCode" name="sessionCode" class="form-control col-md-7 col-xs-12" required readonly 		style="border-color:red">
 							<?php
 							$sql = "SELECT * FROM `session` WHERE session_code={$std_row['session_code']} AND `status`='ACTIVE'";
 							$res = mysqli_query($conn,  $sql);
 							if (mysqli_num_rows($res) > 0) {
 								$row = mysqli_fetch_assoc($res);
 
-								echo '<option selected value="' . $row['session_code'] . '">' . $row['session_code'] . "-" . $row['description'] . '</option>';
+								echo '
+								<option selected value="' . $row['session_code'] . '">' . $row['session_code'] . "-" . $row['description'] . '</option>';
 							}
 							?>
-							<?php getSession(); ?>
+							
 						</select>
+
+						
 					</div>
 					<label class="control-label col-md-1 col-sm-1 col-xs-12" for="caddress">Course:<span class=""></span>
 					</label>
 					<div class="col-md-3 col-sm-3 col-xs-12">
-						<select id="course" name="course" class="form-control col-md-7 col-xs-12" required style="border-color:red">
+						<select id="course" name="course" class="form-control col-md-7 col-xs-12" required style="border-color:red" readonly >
 							<?php
 
 							$sqll = "SELECT * FROM pursuing_course WHERE student_id={$std_row['slno']}";
@@ -460,7 +448,7 @@ function findQuesryListStudents()
 							}
 
 							?>
-							<?php getCourses(); ?>
+							 
 						</select>
 					</div>
 					<label class="control-label col-md-2 col-sm-2 col-xs-12" for="caddress">Registration No<span class=""></span>
@@ -488,7 +476,7 @@ function findQuesryListStudents()
 					<label class="control-label col-md-2 col-sm-2 col-xs-12" for="customer">Course Fees: <span class="required"></span>
 					</label>
 					<div class="col-md-4 col-sm-4 col-xs-12 required">
-						<input type="text" id="fees" name="fees" required="required" class="form-control col-md-7 col-xs-12 required" required style="border-color:red" value="<?php
+						<input type="text" id="fees" readonly name="fees" required="required" class="form-control col-md-7 col-xs-12 required" required style="border-color:red" value="<?php
 																																												$sql = "SELECT * FROM pursuing_course WHERE student_id='{$std_row['slno']}'";
 																																												$res = mysqli_query($conn, $sql);
 																																												$row = mysqli_fetch_assoc($res);
@@ -566,30 +554,18 @@ function findQuesryListStudents()
 							if (mysqli_num_rows($res) > 0) {
 								$row = mysqli_fetch_assoc($res);
 								$arr = (json_decode($row['course_days'], true));
-								$course = explode(',', $arr);
-
-
-
-								//<!-- in_array("MON",$course) -->
-								$val1 = in_array("MON", $course) ? 'selected' : "";
-								$val2 = in_array("TUE", $course) ? 'selected' : "";
-								$val3 = in_array("WED", $course) ? 'selected' : "";
-								$val4 = in_array("THU", $course) ? 'selected' : "";
-								$val5 = in_array("FRI", $course) ? 'selected' : "";
-								$val6 = in_array("SAT", $course) ? 'selected' : "";
-								$val7 = in_array("SUN", $course) ? 'selected' : "";
-
-								echo
-								'<option selected="'. $val1 . '" value="MON">MONDAY </option>
-								<option selected="' . $val2 . '" value="TUE">TUESDAY </option>
-								<option selected="' . $val3 . '" value="WED">WEDNESDAY </option>
-								<option selected="' . $val4 . '" value="THU">THURSDAY </option>
-								<option selected="' . $val5 . '" value="FRI">FRIDAY </option>
-								<option selected="' . $val6 . '" value="SAT">SATURDAY </option>
-								<option selected="' . $val7 . '" value="SUN">SUNDAY </option>';
-							}
+								$courseDays = explode(',', $arr);
 
 							?>
+								<option <?php echo in_array("MON", $courseDays) ? 'selected' : ""; ?> value="MON">MONDAY </option>
+								<option <?php echo in_array("TUE", $courseDays) ? 'selected' : ""; ?> value="TUE">TUESDAY </option>
+								<option <?php echo in_array("WED", $courseDays) ? 'selected' : ""; ?> value="WED">WEDNESDAY </option>
+								<option <?php echo in_array("THU", $courseDays) ? 'selected' : ""; ?> value="THU">THURSDAY </option>
+								<option <?php echo in_array("FRI", $courseDays) ? 'selected' : ""; ?> value="FRI">FRIDAY </option>
+								<option <?php echo in_array("SAT", $courseDays) ? 'selected' : ""; ?> value="SAT">SATURDAY </option>
+								<option <?php echo in_array("SUN", $courseDays) ? 'selected' : ""; ?> value="SUN">SUNDAY </option>
+
+							<?php } ?>
 						</select>
 					</div>
 				</div>

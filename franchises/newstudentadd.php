@@ -66,9 +66,10 @@ if (isset($_POST['formid']) && isset($_SESSION['formid']) && $_POST['formid'] ==
 $tomonth		=trim($_POST['tomonth']);
 $toyear			=trim($_POST['toyear']); */
 	$sessioncode	= trim($_POST['sessionCode']);
+	$sessionId		=findSessionId($sessioncode);
 	$coursecode		= $course;
 	$serialno		= findSerialNo($sessioncode, $coursecode);
-	$regno			= findStudentRegistraionNo($sessioncode, $coursecode);
+	$regno			= findStudentRegistraionNo($sessionId, $coursecode);
 	$particulars	= "ADMISSION TO " . findCourseName($course);
 	$sourcePath 	= $_FILES['fileToUpload']['tmp_name'];
 	$imagename		= $_FILES['fileToUpload']['name'];
@@ -88,7 +89,11 @@ $toyear			=trim($_POST['toyear']); */
 		$sql3 = "SELECT * FROM courses WHERE id='$course'";
 		$res = $conn->query($sql3);
 		$coursecode = $res->fetch_assoc();
-		$pursuing_id = addStudentToPursuingTable($course, $std_id, $session, $fees, $date, $sessioncode, $coursecode['course_id'], $serialno, $courseday, $time,$regno);
+		$pursuing_id = addStudentToPursuingTable($course, $std_id, $session, $fees, $date, $sessioncode,$sessionId, $coursecode['course_id'], $serialno, $courseday, $time,$regno);
+
+		//// marks insert
+		
+
 		$success_msg = 'Addmission Successfull. Student Unique ID Is : <b>' . $stid . '</b> And Registration Number  : <b>' . $regno . '</b> </div>';
 
 	} else {
@@ -101,6 +106,15 @@ $toyear			=trim($_POST['toyear']); */
 	$_SESSION['formid'] = md5(rand(0, 10000000));
 }
 
+function findSessionId($code)
+{
+	include 'include/dbconfig.php';
+	$sql="SELECT slno from session where session_code='$code'";
+	$res=mysqli_query($conn,$sql);
+	$row=mysqli_fetch_assoc($res);
+	return $row['slno'];
+
+}
 
 
 function findMaxID($session)
@@ -148,7 +162,7 @@ function getCourses()
 		echo $option;
 	}
 }
-function addStudentToPursuingTable($course, $studentID, $session, $fees, $date, $sessioncode, $coursecode, $serialno, $courseday, $time,$regno)
+function addStudentToPursuingTable($course, $studentID, $session, $fees, $date, $sessioncode,$sessionId,$coursecode, $serialno, $courseday, $time,$regno)
 {
 	include "include/dbconfig.php";
 
@@ -161,8 +175,8 @@ function addStudentToPursuingTable($course, $studentID, $session, $fees, $date, 
 	$courseday		= implode(',', $courseday);
 	$course_day=json_encode($courseday);
 	$sql = "INSERT INTO `pursuing_course`(`session`,`date`,`student_id`, `course_id`,`course_code`, `session_code`, `serial_no`, `course_fee`, `course_days` ,`time`
-		 ,`starting_year`, `starting_month`, `complete_year`, `complete_month`,regno,franchise_id )
-		  VALUES ('$session','$date','$studentID','$course','$coursecode','$sessioncode','$serialno','$fees','{$course_day}','$time','$session','','','','$regno','{$_SESSION['franchise_id']}')";
+		 ,`starting_year`, `starting_month`, `complete_year`, `complete_month`,regno,franchise_id,`session_id` )
+		  VALUES ('$session','$date','$studentID','$course','$coursecode','$sessioncode','$serialno','$fees','{$course_day}','$time','$session','','','','$regno','{$_SESSION['franchise_id']}','$sessionId')";
 	$res = mysqli_query($conn,  $sql);
 	$pursuing_id = mysqli_insert_id($conn);
 	if ($res) {

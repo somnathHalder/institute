@@ -2,7 +2,7 @@
 session_start();
 include "include/menu.php";
 include "include/dbconfig.php";
-include "functions.php";
+include "../functions.php";
 $franchises =  json_decode(getFranchises(), true);
 $courses    =  json_decode(getCourses(), true);
 $sessions   =  json_decode(getSessions(), true);
@@ -10,11 +10,11 @@ $successMsg = "";
 if (isset($_POST['formid']) && isset($_SESSION['formid']) && $_POST['formid'] == $_SESSION['formid']) {
     extract($_POST);
     $createdAt  = date('Y-m-d H:i:s');
-    $submitBy   = $_SESSION['userid'];
+    $submitBy   = $_SESSION['franchise_userid'];
     $totalMarks = getTotalMarksByCourse($course);
     $data       = json_decode(getCourses($course), true);
     $courseInfo = json_encode($data['records'][0]);
-    $franchiseRecords = json_decode(getFranchises($franchise), true);
+    $franchiseRecords = json_decode(getFranchises($_SESSION['franchise_id']), true);
     $franchiseInfo    =  json_encode($franchiseRecords['records'][0]);
 
     for ($i = 0; $i < count($_POST['obtainedMarks']); $i++) {
@@ -22,7 +22,7 @@ if (isset($_POST['formid']) && isset($_SESSION['formid']) && $_POST['formid'] ==
         $fullMarks     =  $_POST['fullMarks'][$i];
         $admissionId   =  $_POST['admissionId'][$i];
         $studentId     =  $_POST['studentId'][$i];
-        $marksId       =  getMarksTable($studentId, $course, $admissionId, $franchise, $totalMarks, $courseInfo, $franchiseInfo);
+        $marksId       =  getMarksTable($studentId, $course, $admissionId, $_SESSION['franchise_id'], $totalMarks, $courseInfo, $franchiseInfo);
 
         $query = "INSERT INTO `marks_details`( `marks_id`, `subject_id`, `full_marks`, `obtained_marks`) 
                  VALUES ('$marksId', '$subject', '$fullMarks', '$obtainedMarks')";
@@ -45,10 +45,10 @@ if (isset($_POST['formid']) && isset($_SESSION['formid']) && $_POST['formid'] ==
 function getMarksTable($studentId, $courseId, $admissionId, $franchiseId, $totalMarks, $courseInfo, $franchiseInfo)
 {
     include "include/dbconfig.php";
-    require_once "functions.php";
+    require_once "../functions.php";
 
     $createdAt = date('Y-m-d H:i:s');
-    $submitBy  = $_SESSION['userid'];
+    $submitBy  = $_SESSION['franchise_userid'];
     $marksId = "";
 
 
@@ -115,21 +115,21 @@ function getObtainedMarks($marksId)
                             ?>
                         </select>
                     </div>
-                    <div class="col-md-3 col-sm-3 col-xs-12">
+                    <!-- <div class="col-md-3 col-sm-3 col-xs-12">
 
                         <label>Franchise</label>
                         <select name="franchise" id="franchise" class="form-control">
                             <option value="">Select Franchise</option>
                             <?php
-                            if (count($franchises['records']) > 0) {
-                                foreach ($franchises['records'] as $key => $franchise) {
-                                    echo '<option value="' . $franchise['id'] . '">' . $franchise['franchise_name'] . '</option>';
-                                }
-                            }
+                            //if (count($franchises['records']) > 0) {
+                            //     foreach ($franchises['records'] as $key => $franchise) {
+                            //         echo '<option value="' . $franchise['id'] . '">' . $franchise['franchise_name'] . '</option>';
+                            //     }
+                            // }
 
                             ?>
                         </select>
-                    </div>
+                    </div> -->
                     <div class="col-md-2 col-sm-2 col-xs-12">
                         <label>Course</label>
                         <select name="course" id="course" class="form-control">

@@ -2,7 +2,7 @@
 session_start();
 include "include/menu.php";
 include "include/dbconfig.php";
-include "functions.php";
+include "../functions.php";
 $franchises =  json_decode(getFranchises(), true);
 $courses    =  json_decode(getCourses(), true);
 $sessions   =  json_decode(getSessions(), true);
@@ -96,161 +96,126 @@ function getObtainedMarks($marksId)
 
             <!--    <div class="x_panel">
                    <div class="x_content"> -->
-            <h3 class="page-header">Marks Entry</h3>
+            <h3 class="page-header">Marks Edit</h3>
 
-            <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST">
-                <div class="form-group">
+            <!-- <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST"> -->
+            <div class="form-group">
 
-                    <div class="col-md-2 col-sm-2 col-xs-12">
-                        <label>Session</label>
-                        <select name="session" id="session" class="form-control">
-                            <option value="">Select Session</option>
-                            <?php
-                            if (count($sessions['records']) > 0) {
-                                foreach ($sessions['records'] as $key => $sessions) {
-                                    echo '<option value="' . $sessions . '">' . $sessions . '</option>';
-                                }
+                <div class="col-md-2 col-sm-2 col-xs-12">
+                    <label>Session</label>
+                    <select name="session" id="session" class="form-control">
+                        <option value="">Select Session</option>
+                        <?php
+                        if (count($sessions['records']) > 0) {
+                            foreach ($sessions['records'] as $key => $sessions) {
+                                echo '<option value="' . $sessions . '">' . $sessions . '</option>';
                             }
+                        }
 
-                            ?>
-                        </select>
-                    </div>
-                    <div class="col-md-3 col-sm-3 col-xs-12">
-
-                        <label>Franchise</label>
-                        <select name="franchise" id="franchise" class="form-control">
-                            <option value="">Select Franchise</option>
-                            <?php
-                            if (count($franchises['records']) > 0) {
-                                foreach ($franchises['records'] as $key => $franchise) {
-                                    echo '<option value="' . $franchise['id'] . '">' . $franchise['franchise_name'] . '</option>';
-                                }
+                        ?>
+                    </select>
+                </div>
+                <input type="hidden" name="franchise" id="franchise" value="<?php echo $_SESSION['franchise_id']; ?>">
+                <div class="col-md-2 col-sm-2 col-xs-12">
+                    <label>Course</label>
+                    <select name="course" id="course" class="form-control">
+                        <option value="">Select Course</option>
+                        <?php
+                        if (count($courses['records']) > 0) {
+                            foreach ($courses['records'] as $key => $course) {
+                                echo '<option value="' . $course['id'] . '">' . $course['course_name'] . '</option>';
                             }
+                        }
 
-                            ?>
-                        </select>
-                    </div>
-                    <div class="col-md-2 col-sm-2 col-xs-12">
-                        <label>Course</label>
-                        <select name="course" id="course" class="form-control">
-                            <option value="">Select Course</option>
-                            <?php
-                            if (count($courses['records']) > 0) {
-                                foreach ($courses['records'] as $key => $course) {
-                                    echo '<option value="' . $course['id'] . '">' . $course['course_name'] . '</option>';
-                                }
-                            }
-
-                            ?>
-                        </select>
-                    </div>
-                    <div class="col-md-3 col-sm-3 col-xs-12">
-                        <label>Subject</label>
-                        <select name="subject" id="subject" class="form-control">
-                            <option value="">Select Subject</option>
-                        </select>
-                    </div>
-                    <div class="col-md-2 col-sm-2 col-xs-12">
-                        <label>&nbsp;</label>
-                        <button type="button" id="search" class="btn btn-info form-control">Search</button>
-                    </div>
-
-
-                    <div class="clearfix"></div>
+                        ?>
+                    </select>
+                </div>
+                <div class="col-md-3 col-sm-3 col-xs-12">
+                    <label>Subject</label>
+                    <select name="subject" id="subject" class="form-control">
+                        <option value="">Select Subject</option>
+                    </select>
+                </div>
+                <div class="col-md-2 col-sm-2 col-xs-12">
+                    <label>&nbsp;</label>
+                    <button type="button" id="search" class="btn btn-info form-control">Search</button>
                 </div>
 
-                <div class="form-group">
-                    <div class="col-sm-2 col-md-2 col-sm-offset-5 col-md-offset-5">
 
-                    </div>
-                </div>
                 <div class="clearfix"></div>
+            </div>
 
-                <div>&nbsp;</div>
-                <div class="table-responsive">
-                    <?php if (!empty($successMsg)) { ?>
-                        <div class="alert alert-success alert-dismissible">
-                            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                            <strong>Success:</strong> <?php echo $successMsg; ?>
-                        </div>
-                    <?php } ?>
-                    <input type="hidden" name="formid" id="formid" value="<?php echo htmlspecialchars($_SESSION['formid']); ?>">
-                    <table id="example" class="table table-stripped">
-                        <thead>
-                            <th style="text-align:left;"># </th>
-                            <th style="text-align:center;">Name</th>
-                            <th style="text-align:center;">Registration No </th>
-                            <th style="text-align:center;">Full Marks</th>
-                            <th style="text-align:center;">Obtained Marks</th>
-                        </thead>
-                        <tbody>
+            <div class="form-group">
+                <div class="col-sm-2 col-md-2 col-sm-offset-5 col-md-offset-5">
 
-                        </tbody>
-                    </table>
-                    <button type="submit" name="submit" id="submit" class="btn btn-success form-control">Save</button>
-            </form>
+                </div>
+            </div>
+            <div class="clearfix"></div>
 
-            <!-- /panel -->
-        </div>
+            <div>&nbsp;</div>
+            <div class="table-responsive">
+                <?php if (!empty($successMsg)) { ?>
+                    <div class="alert alert-success alert-dismissible">
+                        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                        <strong>Success:</strong> <?php echo $successMsg; ?>
+                    </div>
+                <?php } ?>
+                <input type="hidden" name="formid" id="formid" value="<?php echo htmlspecialchars($_SESSION['formid']); ?>">
+                <table id="example" class="table table-stripped">
+                    <thead>
+                        <th style="text-align:left;"># </th>
+                        <th style="text-align:center;">Name</th>
+                        <th style="text-align:center;">Registration No </th>
+                        <th style="text-align:center;">Full Marks</th>
+                        <th style="text-align:center;">Obtained Marks</th>
+                    </thead>
+                    <tbody id="tbody">
 
-        <!--</div>
+                    </tbody>
+                </table>
+                <!--    </form> -->
+
+                <!-- /panel -->
+            </div>
+
+            <!--</div>
                 </div>-->
 
-    </div>
-</div>
-
-
-<div id="editMemberModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="editMemberModal" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                <h4 class="modal-title" id="myModalLabel">Update Password</h4>
-            </div>
-            <div id="editMessage"></div>
-            <form method="post" id="updateMemberForm" class="form-horizontal" action="updateRecord.php">
-                <div class="modal-body">
-                    <div class="messages"></div>
-                    <div id="testmodal" style="padding: 5px 20px;">
-                        <div class="form-group">
-                            <label class="col-sm-2 control-label">Password</label>
-                            <div class="col-sm-10">
-                                <input type="text" class="form-control" id="password" name="password" required="required">
-                                <input type="hidden" id="q_id" name="q_id">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default antoclose" data-dismiss="modal">Close</button>
-                    <button type="submit" id="modalSave" class="btn btn-primary antosubmit">Save changes</button>
-                </div>
-            </form>
         </div>
     </div>
-
-</div>
-<div class="modal fade" tabindex="-1" role="dialog" id="removeMemberModal">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title"><span class="glyphicon glyphicon-trash"></span> Warning</h4>
-            </div>
-            <div class="modal-body">
-                <font color="red">Do You Really Want To Remove This Info?</font>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-danger" id="removeBtn" name="removeBtn">Yes</button>
-            </div>
-        </div><!-- /.modal-content -->
-    </div><!-- /.modal-dialog -->
-</div>
 
 </div>
 <!-- /#page-wrapper -->
+
+
+   <!-- Modal -->
+    <div class="modal fade" id="myModal" role="dialog">
+        <div class="modal-dialog modal-md">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class=" modal-title p-2">Update Marks</h3>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <form class="col-sm" id="myform">
+                        <div>
+                            <input type="hidden" class="form-control" id="m-id" style="display: none;" />
+                            <input type="hidden" class="form-control" id="m-marks_id" style="display: none;" />
+                            <label for="m-obtained_marks" class="form-label">Name</label>
+                            <input type="number" class="form-control" id="m-obtained_marks" />
+                        </div>
+
+
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success myWish" id="m-btnadd" data-dismiss="modal">Update</button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- end Modal -->
 
 
 
@@ -294,9 +259,60 @@ function getObtainedMarks($marksId)
 <!-- CK Editor -->
 <script src="ckeditor/ckeditor.js"></script>
 
+<!-- modal -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
 <!-- Page-Level Demo Scripts - Notifications - Use for reference -->
 <script type="text/javascript">
+     
+
     $(document).ready(function() {
+
+        $('#m-btnadd').on('click',function() {
+            id = $('#m-id').val();
+            marks_id = $('#m-marks_id').val();
+            obtained_marks = $('#m-obtained_marks').val();
+            
+            $.ajax({
+                url: 'obtainMarksEdit.php',
+                type: 'POST',
+                dataType: 'json',
+                data:{
+                    'id':id,
+                    'marks_id':marks_id,
+                    'obtained_marks':obtained_marks,
+                    'chk':''
+                },
+                success:function(data)
+                {
+                    alert('Update Marks Successfully');
+                    $('#tbody').html("");
+                    
+                }
+            })
+
+        });
+
+
+        $("tbody").on('click', '.btn-edit', function() {
+            let id = $(this).attr("data-sid");
+            $.ajax({
+                url: 'obtainMarksEdit.php',
+                type: 'POST',
+                dataType: 'json',
+                data: {
+                    'id': id,
+                    'chk': 'pre_edit'
+                },
+                success: function(data) {
+                    $('#m-id').val(data.id);
+                    $('#m-marks_id').val(data.marks_id);
+                    $('#m-obtained_marks').val(data.obtained_marks);
+                }
+            })
+            $('#obtainMarks').val()
+        })
 
         $('#course').on('change', function(e) {
             var form = $('#myForm');
@@ -334,8 +350,7 @@ function getObtainedMarks($marksId)
                     "franchise": $('#franchise').val(),
                     "course": $('#course').val(),
                     "session": $('#session').val(),
-                    "subject": $('#subject').val(),
-                    "type": "insert"
+                    "subject": $('#subject').val()
                 },
                 dataType: 'json',
                 success: function(response) {
@@ -347,7 +362,8 @@ function getObtainedMarks($marksId)
                                 '<td style="text-align:center;"><input type="hidden" name="studentId[]" id="studentId' + response.records[i].student_id + '" value="' + response.records[i].student_id + '">' + response.records[i].St_Name + '</td>' +
                                 '<td style="text-align:center;">' + response.records[i].regno + '</td>' +
                                 '<td style="text-align:center;"><input type="hidden"  name="fullMarks[]" id="fullMarks' + i + '" value="' + response.records[i].full_marks + '">' + response.records[i].full_marks + '</td>' +
-                                '<td style="text-align:center;"><input type="number" class="form-control" name="obtainedMarks[]" id="obtainedMarks' + i + '"></td>' +
+                                '<td style="text-align:center;"><input type="hidden" class="form-control" name="obtainedMarks[]" id="obtainedMarks' + i + '" value="' + response.records[i].obtained_marks + '">' + response.records[i].obtained_marks + '</td>' +
+                                '<td style="text-align:center;"><button class="btn-sm btn btn-primary btn-edit" data-toggle="modal" data-target="#myModal"  data-sid="' + response.records[i].md_id + '" >Edit</button></td>' +
                                 '</tr>';
                         }
                         $('#example tbody').html(option);

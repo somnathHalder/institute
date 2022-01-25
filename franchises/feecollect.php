@@ -58,6 +58,9 @@ if (isset($_POST['formid']) && isset($_SESSION['formid']) && $_POST['formid'] ==
 		$payby = "CASH";
 		addIncomeToDayBook($receipt_id, $studentid, $total, $courseid, $particulars, $date, $payby);
 		//saveNoteInfo(trim($note2000), trim($note500), $receipt_id, $studentid);
+
+		
+
 		$success_msg = '<a target="_blank" href="printSlip.php?id=' . $receipt_id . '">Print Receipt </a>';
 	}
 

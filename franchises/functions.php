@@ -61,11 +61,11 @@ function addIncomeToDayBook($studentID,$fees,$course,$particulars,$date,$payby)
 	return (isset($res) ? true : false);
 
 }
-function findStudentRegistraionNo($sessioncode,$coursecode)
+function findStudentRegistraionNo($sessionId,$courseId)
 {
 	include "include/dbconfig.php" ;
 
-	$sql2="SELECT * FROM courses WHERE id='$coursecode'  ";
+	$sql2="SELECT * FROM courses WHERE id='$courseId'  ";
 	$res2=mysqli_query($conn,$sql2);
 	$row2=mysqli_fetch_assoc($res2);
 	$course_code=$row2['course_id'];
@@ -75,8 +75,13 @@ function findStudentRegistraionNo($sessioncode,$coursecode)
 	$res3=mysqli_query($conn,$sql3);
 	$row3=mysqli_fetch_assoc($res3);
 	$institutecode =$row3['code'];
+
+	$sql4="SELECT * FROM session WHERE slno='$sessionId'  ";
+	$res4=mysqli_query($conn,$sql4);
+	$row4=mysqli_fetch_assoc($res4);
+	$sessioncode =$row4['session_code'];
 		
-	$sql 		="SELECT MAX(`serial_no`) AS `slno` FROM `pursuing_course` WHERE `course_code`='$course_code' AND `session_code`='$sessioncode' AND franchise_id='{$_SESSION['franchise_id']}'";
+	$sql 		="SELECT MAX(`serial_no`) AS `slno` FROM `pursuing_course` WHERE `course_id`='$courseId' AND `session_id`='$sessionId' AND franchise_id='{$_SESSION['franchise_id']}'";
 	$res 		=mysqli_query($conn,  $sql);
 	$row 		=mysqli_fetch_assoc($res);
 	if($row['slno']!=null)
@@ -280,4 +285,3 @@ function generateSessionCode($fromyear,$frommonth)
 		}
 	}
 }
-?>

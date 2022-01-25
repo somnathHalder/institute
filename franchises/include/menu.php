@@ -35,6 +35,9 @@ include('include/check-login.php');
 	<link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1/themes/smoothness/jquery-ui.css">
 
 	<link rel="stylesheet" href="http://jquery.malsup.com/block/block.css?v3">
+	
+	<!-- modal -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
 
 	<!-- MetisMenu CSS -->
 
@@ -189,11 +192,11 @@ include('include/check-login.php');
 
 								</li>
 
-								<!-- <li>
+								<li>
 
-									<a href="notesInformation.php">Notes Information</a>
+									<a href="duelistform.php">Due Report</a>
 
-								</li> -->
+								</li>
 
 								<li>
 
@@ -207,7 +210,28 @@ include('include/check-login.php');
 
 						<li>
 
-							<a href="loginsetting.php"><i class="fa fa-plus-circle"></i> Student Marks</a>
+							<a href="#"><i class="fa fa-plus-circle"></i> Student Marks <span class="fa arrow"></a>
+							<ul class="nav nav-second-level">
+
+								<li>
+
+									<a href="marks-entry.php"> Marks Entry</a>
+
+								</li>
+
+								<!-- <li>
+									<a href="marks-edit.php"> Marks Edit</a>
+
+								</li> -->
+
+								<li>
+
+									<a href="showallstudent.php"> Show All Student</a>
+
+								</li>
+
+								 
+							</ul>
 
 						</li>
 

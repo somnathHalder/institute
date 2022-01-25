@@ -2,7 +2,7 @@
 session_start();
 include "include/menu.php";
 include "include/dbconfig.php";
-include "functions.php";
+include "../functions.php";
 $franchises =  json_decode(getFranchises(), true);
 $courses    =  json_decode(getCourses(), true);
 $sessions   =  json_decode(getSessions(), true);
@@ -34,21 +34,21 @@ $sessions   =  json_decode(getSessions(), true);
                         ?>
                     </select>
                 </div>
-                <div class="col-md-3 col-sm-3 col-xs-12">
+                <!-- <div class="col-md-3 col-sm-3 col-xs-12"> -->
 
-                    <label>Franchise</label>
-                    <select name="franchise" id="franchise" class="form-control">
+                    <!-- <label>Franchise</label> -->
+                    <!-- <select name="franchise" id="franchise" class="form-control">
                         <option value="">Select Franchise</option>
                         <?php
-                        if (count($franchises['records']) > 0) {
-                            foreach ($franchises['records'] as $key => $franchise) {
-                                echo '<option value="' . $franchise['id'] . '">' . $franchise['franchise_name'] . '</option>';
-                            }
-                        }
+                        // if (count($franchises['records']) > 0) {
+                        //     foreach ($franchises['records'] as $key => $franchise) {
+                        //         echo '<option value="' . $franchise['id'] . '">' . $franchise['franchise_name'] . '</option>';
+                        //     }
+                        // }
 
                         ?>
-                    </select>
-                </div>
+                    </select> -->
+                <!-- </div> -->
                 <div class="col-md-3 col-sm-3 col-xs-12">
                     <label>Course</label>
                     <select name="course" id="course" class="form-control">
@@ -230,29 +230,7 @@ $sessions   =  json_decode(getSessions(), true);
 <script type="text/javascript">
     $(document).ready(function() {
 
-        // $('#course').on('change',function(e){
-        // 		var form	  = $('#myForm');
-        //         $.ajax({
-        //             url  : "fetch-subjects.php",
-        //             type : 'POST',
-        //             data : {"course":$('#course').val()},
-        //             dataType : 'json',
-        //             success:function(response) {
-        //                 let option ='<option value="">Select Subject</option>';
-        //                 if(response.success){
-        //                     for(i=0; i< response.records.length ; i++){
-        //                         option += '<option value="'+response.records[i].id+'">'+response.records[i].subject+'</option>';
-        //                     }
-        //                     $('#subject').html(option);
-        //                 }
-        //             }
-        //         });
-
-        //     return false;
-
-
-        // });
-
+        
         $('#updateMemberForm').on('submit', function(e) {
             e.preventDefault();
             marksDetailId = $('#editMarksDetailId').val();
@@ -293,7 +271,7 @@ $sessions   =  json_decode(getSessions(), true);
                 url: "fetch-tabulation.php",
                 type: "POST",
                 data: {
-                    "franchise": $('#franchise').val(),
+                    
                     "course": $('#course').val(),
                     "session": $('#session').val()
                 },
@@ -336,44 +314,7 @@ $sessions   =  json_decode(getSessions(), true);
 
 
 
-    // function removeMember(id=null)
-    // {
-    // 	if(id)
-    // 	{
-    // 		$('#removeBtn').unbind('click').bind('click',function()
-    // 		{
-
-    // 			 $.ajax({
-    //                 url: 'removeRecord.php',
-    //                 type: 'post',
-    //                 data: {member_id : id},
-    //                 dataType: 'json',
-    //                 success:function(response) {
-    //                     if(response.success == true) {                      
-    //                         $(".removeMessages").html('<div class="alert alert-success alert-dismissible" role="alert">'+
-    //                              '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'+
-    //                              '<strong> <span class="glyphicon glyphicon-ok-sign"></span> </strong>'+response.messages+
-    //                             '</div>');
-
-    //                         // refresh the table
-    //                         reload($('#examid').val(),$('#course').val(),$('#year').val(),$('#month').val());
-
-    //                         // close the modal
-    //                         $("#removeMemberModal").modal('hide');
-
-    //                     } else {
-    //                         $(".removeMessages").html('<div class="alert alert-warning alert-dismissible" role="alert">'+
-    //                              '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'+
-    //                              '<strong> <span class="glyphicon glyphicon-exclamation-sign"></span> </strong>'+response.messages+
-    //                             '</div>');
-    //                     }
-    //                 }
-    //             }); 
-
-    // 		});
-    // 	}
-
-    // }
+    
     function showModal(marksDetailId) {
         //alert(marksDetailId);
         $('#editObtainedMarks').val($('#obtainedMarks' + marksDetailId).val());
