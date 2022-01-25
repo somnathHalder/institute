@@ -8,28 +8,28 @@ function fetchRecords()
 	$session	= trim($_POST['session']);
 	$time		= trim($_POST['time']);
 	$courseid	= trim($_POST['course']);
-	$sql		= "	SELECT  `pursuing_course`.*,student_info.*,courses.*
-					FROM pursuing_course
-					INNER JOIN courses
-					ON pursuing_course.course_id=courses.course_id
-					INNER JOIN student_info
-					ON pursuing_course.student_id=student_info.Student_Id
-					WHERE pursuing_course.`course_id`='$courseid' AND pursuing_course.`session_code`='$session'
-					AND pursuing_course.`time`='$time'
+	$sql		= "SELECT  `pursuing_course`.*,student_info.*,courses.*
+					FROM `pursuing_course`
+					LEFT JOIN courses
+					ON `pursuing_course`.`course_id`=courses.id
+					LEFT JOIN student_info
+					ON `pursuing_course`.student_id=student_info.slno
+					WHERE `pursuing_course`.`course_id`='$courseid' AND pursuing_course.`session_id`='$session'
+					AND `pursuing_course`.`time`='$time' AND `pursuing_course`.`time`='$time' AND `pursuing_course`.`current_status`='PURSUING'
 				";
-	$res	    = mysqli_query($conn,  $sql);
+	$res	    = mysqli_query($conn, $sql);
 	$no         = 0;
 	/* echo $sql; */
 	while($row=mysqli_fetch_assoc($res))
 	{
 		echo '<tr>
-			<td style="text-align:center;">'.++$no.'</td>
-			<td style="text-align:center;">'.$row['course_name'].'</td>
-			<td style="text-align:center;">'.$row['St_Name'].'</td>
-			<td style="text-align:center;">'.$row['regno'].'</td>
-			<td style="text-align:center;">'.$row['DOA'].'</td>
-			<td style="text-align:center;">'.$row['course_fee'].'</td>
-			<td style="text-align:center;">'.$row['Contact_no'].'</td>
+				<td style="text-align:center;">'.++$no.'</td>
+				<td style="text-align:center;">'.$row['course_name'].'</td>
+				<td style="text-align:center;">'.$row['St_Name'].'</td>
+				<td style="text-align:center;">'.$row['regno'].'</td>
+				<td style="text-align:center;">'.$row['DOA'].'</td>
+				<td style="text-align:center;">'.$row['course_fee'].'</td>
+				<td style="text-align:center;">'.$row['Contact_no'].'</td>
 			</tr>';
 	}
 }

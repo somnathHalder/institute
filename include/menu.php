@@ -437,7 +437,7 @@ include('include/check-login.php');
 
 								<li>
 
-									 <a href="feesqueryform.php">Fees Query</a>
+									 <a href="feesqueryform.php">Due Report</a>
 
 								</li>
 
@@ -466,16 +466,11 @@ include('include/check-login.php');
 								</li>
 
 								<!--<li>
-
 									 <a href="collectionform.php">Collection List Date Wise</a>
-
-								</li> -->
-
+								</li> 
 								<li>
-
 									 <a href="duelistform.php">Due List Month Wise</a>
-
-								</li>
+								</li>-->
 
 							 </ul>
 
@@ -499,7 +494,7 @@ include('include/check-login.php');
 
 						</li>
 
-						<li>
+						<!--<<li>
 
 							<a href="#"><i class="fa fa-graduation-cap"></i> Students Enquery <span class="fa arrow"></span></a>
 
@@ -521,7 +516,7 @@ include('include/check-login.php');
 
 						</li>
 
-						<li>
+						li>
 
 							<a href="#"><i class="fa fa-comments"></i> Messaging<span class="fa arrow"></span></a>
 
@@ -554,7 +549,7 @@ include('include/check-login.php');
 									 <a href="removeanswer.php">Remove Answer Record</a>
 								</li>
 							 </ul>
-						</li> 
+						</li> -->
 
 						</ul>
 

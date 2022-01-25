@@ -1,22 +1,22 @@
 <?php
 session_start();
-error_reporting(0);
+//error_reporting(0);
 function generateIdCard()
 {
 	include('include/dbconfig.php');
 	$from=trim($_POST['date1']);
 	$to  =trim($_POST['date2']);
 	$courseid= trim($_POST['coursename']);
-	$sql="	SELECT * FROM pursuing_course
+	$sql="SELECT * FROM pursuing_course
 			INNER JOIN courses
-			ON pursuing_course.course_id=courses.course_id
+			ON pursuing_course.`course_id`=courses.id
 			INNER JOIN student_info 
-			ON student_info.Student_Id=pursuing_course.student_id
+			ON student_info.slno = pursuing_course.student_id
 			WHERE pursuing_course.current_status='PURSUING'
 			AND pursuing_course.date BETWEEN '$from' AND '$to'
 			AND pursuing_course.course_id='$courseid'
 	";
-	 
+	 echo $sql ;
 	$res=mysqli_query($conn,  $sql);
 	$no=0;
 

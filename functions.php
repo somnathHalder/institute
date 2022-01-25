@@ -14,7 +14,13 @@ function checkYear($fromyear)
 	}
 	
 }
-
+function sessionById($sessionId){
+	include "include/dbconfig.php" ;
+	$sql 	= "SELECT * FROM `session` WHERE `slno`='$sessionId'";
+	$res 	= mysqli_query($conn,  $sql);
+	$row 	= mysqli_fetch_assoc($res);	
+	return $row;
+}
 function findCourseName($ID)
 {
 	include "include/dbconfig.php" ;

@@ -6,17 +6,31 @@ function getCourses()
 {
 	include ('include/dbconfig.php');
 	$sql="SELECT * FROM `courses` ORDER BY `course_name`";
+	
 	$res=mysqli_query($conn,  $sql);
 	$option='';
 	if(mysqli_num_rows($res) > 0)
 	{
 		while($row=mysqli_fetch_assoc($res))
 		{
-			$option.='<option value="'.$row['course_id'].'">'.$row['course_name'].'-'.$row['description'].'</option>';
+			$option.='<option value="'.$row['id'].'">'.$row['course_name'].'-'.$row['description'].'</option>';
 		}
 		echo $option;
 	}
 }
+
+function  getFranchise()
+{
+	include('include/dbconfig.php');
+	$option = '';
+	$sql = "SELECT * FROM `franchises`";
+	$res = mysqli_query($conn, $sql);
+	while ($row = mysqli_fetch_assoc($res)) {
+		$option .= '<option value="' . $row['id'] . '">' . $row['franchise_name'] . '</option>';
+	}
+	echo $option;
+}
+
 function getSession()
 {
 	include "include/dbconfig.php" ;
@@ -26,7 +40,7 @@ function getSession()
 	{
 		while($row=mysqli_fetch_assoc($res))
 		{
-			echo '<option value="'.$row['session_code'].'">'.$row['session_code']."-".$row['description'].'</option>';
+			echo '<option value="'.$row['slno'].'">'.$row['session_code']."-".$row['description'].'</option>';
 		}
 	}
 }
@@ -38,6 +52,13 @@ include('include/menu.php');?>
 			<div class="col-md-6 col-sm-6 col-md-offset-3">
 	          <h3 class="page-header">Batchwise Query</h3>
 				<form method="post" id="createTeacherForm" action="showresult.php" enctype="multipart/form-data">
+					<div class="form-group">
+						<label for="product" class="control-label">Franchise Name<span class="required"></span></label>
+						<select name="franchise" id="franchise" class="selectpicker form-control" data-live-search="true" required>
+							<option value="">Select Franchise</option>
+							<?php getFranchise(); ?>
+						</select>
+					</div>
 					<div class="form-group">
 						<label for="product" class="control-label">Session<span class="required"></span></label>
 						<select  id="session" name="session" class="form-control"  required>

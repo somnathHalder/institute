@@ -11,73 +11,38 @@ function encryptIt( $var )
 function fetchRecords()
 {
 	include "include/dbconfig.php" ;
-	$year=trim($_POST['year']);
-	$session=trim($_POST['session']);
-	$course=trim($_POST['course']);
-	$month=trim($_POST['month']);
-	/* $sql="
-		SELECT * FROM (SELECT pursuing_course.student_id,pursuing_course.course_id,student_info.St_Name,student_info.regno,courses.course_name
-		FROM pursuing_course 
-		INNER JOIN student_info
-		ON pursuing_course.student_id = student_info.Student_Id
-		INNER JOIN courses
-		ON pursuing_course.course_id=courses.course_id
-		WHERE pursuing_course.course_id='$course')Q
-		LEFT JOIN
-		(SELECT payment.* ,pursuing_course.course_id AS csid,student_info.St_Name,student_info.regno FROM payment
-		INNER JOIN pursuing_course
-		ON pursuing_course.student_id=payment.student_id
-		INNER JOIN student_info
-		 ON student_info.Student_Id=pursuing_course.student_id
-		WHERE pursuing_course.`course_id`='$course' AND pursuing_course.current_status='PURSUING'
-		AND YEAR(payment.date)='$session' AND MONTH(payment.date)='$month'
-		)P
-		ON Q.student_id=P.student_id 
-	"; */
-	$sql="
-		SELECT * FROM (SELECT pursuing_course.student_id,pursuing_course.course_id AS CID,student_info.St_Name,student_info.regno,courses.course_name
-		FROM pursuing_course 
-		INNER JOIN student_info
-		ON pursuing_course.student_id = student_info.Student_Id
-		INNER JOIN courses
-		ON pursuing_course.course_id=courses.course_id
-		WHERE pursuing_course.course_id='$course' AND pursuing_course.current_status='PURSUING' AND pursuing_course.`session_code`='$session' 
-		)Q
- 		LEFT JOIN
-		(
-		SELECT student_info.St_Name,student_info.regno,A.* FROM 
-		(SELECT pursuing_course.session_code,temp.* 
-		 FROM
-		(SELECT `student_id` AS St_Id ,`course_id`,`date`,`receipt_no`, SUM(`payment_amt`) AS payment_amt FROM payment
-		 WHERE YEAR(payment.date)='$year' AND MONTH(payment.date)='$month'
-		GROUP BY `receipt_no`)temp
-		INNER JOIN pursuing_course
-		ON pursuing_course.student_id=temp.St_Id)A
-		INNER JOIN pursuing_course
-		ON pursuing_course.student_id=A.St_Id
-		INNER JOIN student_info
-		ON student_info.Student_Id=A.St_Id
-		WHERE pursuing_course.`course_id`='$course' AND pursuing_course.current_status='PURSUING' AND
-		A.session_code='$session'
-		)P
-		ON Q.student_id=P.St_Id 
-	";
+	
+	$franchise=trim($_POST['franchise']);
+	
+	
+	$sql="SELECT  `receipts`.`student_id`,  `receipts`.`course_id`, SUM(`receipts`.`payment_amt`) AS `payment`,
+		 `student_info`.`St_Name`,`courses`.`course_name`,`pursuing_course`.`regno`,`pursuing_course`.`course_fee`
+		  FROM `receipts`
+		  LEFT JOIN `student_info` ON `student_info`.`slno` =  `receipts`.`student_id`
+		  LEFT JOIN `courses` ON `courses`.`id` =  `receipts`.`course_id`
+		  LEFT JOIN `pursuing_course` ON `pursuing_course`.`student_id` =  `receipts`.`student_id`
+		  AND `pursuing_course`.`course_id` =  `receipts`.`course_id`
+		  WHERE  `receipts`.`franchise_id` = '$franchise' AND 
+		  `receipts`.`student_id` IN (
+			  SELECT `student_id` FROM `pursuing_course`
+		      WHERE `franchise_id` = '$franchise' AND `current_status`='PURSUING')
+			  GROUP BY `student_id`,`course_id` 
+	    ";
 		/* echo $sql; */
 	$res=mysqli_query($conn,  $sql);
 	if(mysqli_num_rows($res) > 0)
 	{$no=0;
-		while($row=mysql_fetch_array($res))
+		while($row = mysqli_fetch_assoc($res))
 		{
 			echo '
 				<tr>
 					<td style="text-align:center">'.++$no.'</td>
-					<td style="text-align:center">'.$row['student_id'].'</td>
-					<td style="text-align:center">'.$row[3].'</td>
+					<td style="text-align:center">'.$row['St_Name'].'</td>
+					<td style="text-align:center">'.$row['regno'].'</td>
 					<td style="text-align:center">'.$row['course_name'].'</td>
-					<td style="text-align:center">'.$row[2].'</td>
-					<td style="text-align:center">'.$row['receipt_no'].'</td>
-					<td style="text-align:center">'.printDate($row['date']).'</td>
-					<td style="text-align:center">'.dueCheck($row['payment_amt']).'</td>
+					<td style="text-align:center">'.$row['course_fee'].'</td>
+					<td style="text-align:center">'.$row['payment'].'</td>
+					<td style="text-align:center">'.($row['course_fee'] - $row['payment']).'</td>
 				</tr>
 			
 			';
@@ -108,19 +73,18 @@ function printDate($value)
 <div id="page-wrapper">
 	<div class="container-fluid">
 		<div class="row ">
-		 <h3 class="page-header">DUE INFORMATION</h3>
+		 <h3 class="page-header">Due Report</h3>
 		 
 		 <div class="col-md-12 col-sm-12 column" style="overflow-x:auto;">
 	         
 			
-					<table id="example" class="table table-sm table-bordered">
+					<table id="example" class="table table-sm table-condenssed">
 						<thead>
 							<th style="text-align:center;font-size:12px;">SL NO			</th>
-							<th style="text-align:center;font-size:12px;">STUDENT ID		</th>
+							<th style="text-align:center;font-size:12px;">STUDENT NAME 	</th>
 							<th style="text-align:center;font-size:12px;">REGISTRATION NO</th>
 							<th style="text-align:center;font-size:12px;">COURSE NAME 	</th>
-							<th style="text-align:center;font-size:12px;">STUDENT NAME 	</th>
-							<th style="text-align:center;font-size:12px;">RECEIPT NO	</th>
+							<th style="text-align:center;font-size:12px;">COURSE FEE	</th>
 							<th style="text-align:center;font-size:12px;">DATE	</th>
 							<th style="text-align:center;font-size:12px;">AMOUNT	</th>
 						</thead>

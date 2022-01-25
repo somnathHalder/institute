@@ -9,7 +9,7 @@ function getCourses()
 	{
 		while($row=mysqli_fetch_assoc($res))
 		{
-			$option.='<option value="'.$row['course_id'].'">'.$row['course_name'].'-'.$row['description'].'</option>';
+			$option.='<option value="'.$row['id'].'">'.$row['course_name'].'-'.$row['description'].'</option>';
 		}
 		echo $option;
 	}
@@ -23,9 +23,21 @@ function getSession()
 	{
 		while($row=mysqli_fetch_assoc($res))
 		{
-			echo '<option value="'.$row['session_code'].'">'.$row['session_code']."-".$row['description'].'</option>';
+			echo '<option value="'.$row['slno'].'">'.$row['session_code']."-".$row['description'].'</option>';
 		}
 	}
+}
+
+function  getFranchise()
+{
+	include('include/dbconfig.php');
+	$option = '';
+	$sql = "SELECT * FROM `franchises`";
+	$res = mysqli_query($conn, $sql);
+	while ($row = mysqli_fetch_assoc($res)) {
+		$option .= '<option value="' . $row['id'] . '">' . $row['franchise_name'] . '</option>';
+	}
+	echo $option;
 }
 
 
@@ -38,6 +50,13 @@ function getSession()
 			<div class="col-md-6 col-sm-6 col-md-offset-3">
 	          <h3 class="page-header">Sessionwise Admission</h3>
 				<form method="post" id="createTeacherForm" action="sessionwisereport.php" enctype="multipart/form-data">
+					<div class="form-group">
+						<label for="product" class="control-label">Franchise Name<span class="required"></span></label>
+						<select name="franchise" id="franchise" class="selectpicker form-control" data-live-search="true" required>
+							<option value="">Select Franchise</option>
+							<?php getFranchise(); ?>
+						</select>
+					</div>
 					<div class="form-group">
 							<label>Course Name</label>
 							<select class="form-control" name="coursename" id="coursename" required>
