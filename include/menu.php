@@ -313,6 +313,7 @@ include('include/check-login.php');
 									<li>
 										<a href="marks-entry.php">Marks Entry</a>
 										 <a href="marks-edit.php">Marks Edit</a>
+										 <a href="marks-tabulation.php">Marks Tabulation</a>
 									</li>
 									
 							</ul>
@@ -343,17 +344,12 @@ include('include/check-login.php');
 
 								</li>
 
-								<li>
-
+								<!-- <li>
 									<a href="notesInformation.php">Notes Information</a>
-
 								</li>
-
 								<li>
-
 									<a href="cancelPayment.php">Delete Receipt </a>
-
-								</li>
+								</li> -->
 
 							 </ul>
 

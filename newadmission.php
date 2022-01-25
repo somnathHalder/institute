@@ -75,10 +75,10 @@ $toyear			=trim($_POST['toyear']); */
 	$imagename		= $_FILES['fileToUpload']['name'];
 	$targetPath 	= "Student_images/" . $_FILES['fileToUpload']['name'];
 	move_uploaded_file($sourcePath, $targetPath);
-	$sql    		= "INSERT INTO `student_info`(franchises_id,`Student_Id`, `St_Name`, `Fathers_Name`, `DOB`, `Gender`, `Cust`, `Religion`, 
+	$sql    		= "INSERT INTO `student_info`(franchise_id,`Student_Id`, `St_Name`, `Fathers_Name`, `DOB`, `Gender`, `Cust`, `Religion`, 
 				 `Mother_Trong`, `Session1`,`session_month`,`session_code`, `Roll`, `DOA`, `Mothers_Name`, `adminslno`, `Vill`, `Post`, `PS`, `Dist`, `Pin`, 
-				 `Contact_no`,`contact2`,`aadhar`, `qualification`,`image_name`,`previous_course`,`ref_name`,`admission_type`,note)
-				  VALUES ('{$_SESSION['franchises_id']}','$stid','$sname','$fname','$dob','$gender','$caste','$religion','','$session','','$sessioncode','',
+				 `Contact_no`,`contact2`,`aadhar`, `qualification`,`image_name`,`previous_course`,`ref_name`,`admission_type`,`note`)
+				  VALUES ('{$_SESSION['franchise_id']}','$stid','$sname','$fname','$dob','$gender','$caste','$religion','','$session','','$sessioncode','',
 				 '$date','$mname','','$address','$po','$ps','$district','$pin','$contact','$contact1','$aadhar',
 				 '$qualification','$imagename','$prevcourse','$refname','$admissionType','$note')";
 
@@ -94,7 +94,7 @@ $toyear			=trim($_POST['toyear']); */
 
 	} else {
 
-		$error_msg = 'Error : Unable To Save ! ';
+		$error_msg = mysqli_error($conn);
 	}
 	$_SESSION['formid'] = md5(rand(0, 10000000));
 } else {

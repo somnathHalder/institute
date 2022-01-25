@@ -71,13 +71,14 @@ function findStudentRegistraionNo($sessioncode,$coursecode)
 	$course_code=$row2['course_id'];
 
 
-	$sql3="SELECT * FROM franchises WHERE id='{$_SESSION['franchises_id']}'  ";
+	$sql3="SELECT * FROM franchises WHERE id='{$_SESSION['franchise_id']}'  ";
 	$res3=mysqli_query($conn,$sql3);
 	$row3=mysqli_fetch_assoc($res3);
 	$institutecode =$row3['code'];
 		
-	$sql 		="SELECT MAX(`serial_no`) AS `slno` FROM `pursuing_course` WHERE `course_code`='$course_code' AND `session_code`='$sessioncode' AND franchises_id='{$_SESSION['franchises_id']}'";
+	$sql 		="SELECT MAX(`serial_no`) AS `slno` FROM `pursuing_course` WHERE `course_code`='$course_code' AND `session_code`='$sessioncode' AND franchise_id='{$_SESSION['franchise_id']}'";
 	$res 		=mysqli_query($conn,  $sql);
+	// echo mysqli_error($conn);
 	$row 		=mysqli_fetch_assoc($res);
 	if($row['slno']!=null)
 	{

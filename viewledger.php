@@ -6,9 +6,10 @@ include('include/dbconfig.php');
 function fetchRecords()
 {
 	include   'include/dbconfig.php';	
-	$from		=trim($_POST['from']);
-	$to			=trim($_POST['to']);
-	$sql		="SELECT St_Name,regno,P.*,courses.course_name FROM student_info
+	$from		= trim(mysqli_real_escape_string($conn, $_GET['from']));
+	$to			= trim(mysqli_real_escape_string($conn, $_GET['to']));
+	$franchise	= trim(mysqli_real_escape_string($conn, $_GET['franchise']));
+	/* $sql		="SELECT St_Name,regno,P.*,courses.course_name FROM student_info
 				INNER JOIN
 				(SELECT `date`,`receipt_no`,`course_id`,`student_id`,collect_by,
 				SUM(CASE WHEN TRIM(`payment_type`) = 'Admission' THEN `payment_amt` ELSE 0 END) AS 'ADMISSION',
@@ -24,7 +25,24 @@ function fetchRecords()
 				INNER JOIN courses
 				ON courses.course_id=P.`course_id`
 				ORDER BY receipt_no
-				";
+				"; 
+	*/
+	$sql 		= 	"SELECT `payment`.`receipt_id`,`receipts`.`receipt_no`,`receipts`.`collected_by`,`receipts`.`receipt_date`,
+					`courses`.`course_name`,`student_info`.`St_Name`,`pursuing_course`.`regno`,
+					SUM(CASE WHEN TRIM(`payment_type`) = 'Admission' THEN `payment`.`payment_amt` ELSE 0 END) AS 'ADMISSION',
+					SUM(CASE WHEN TRIM(`payment_type`) = 'Installment' THEN `payment`.`payment_amt` ELSE 0 END) AS 'INSTALLMENT',
+					SUM(CASE WHEN TRIM(`payment_type`) = 'Fine' THEN `payment`.`payment_amt` ELSE 0 END) AS 'FINE',
+					SUM(CASE WHEN TRIM(`payment_type`) = 'Prospectus' THEN `payment`.`payment_amt` ELSE 0 END) AS 'PROSPECTUS',
+					SUM(CASE WHEN TRIM(`payment_type`) = 'Exam Fees' THEN `payment`.`payment_amt` ELSE 0 END) AS 'EXAM FEES',
+					SUM(`payment`.`payment_amt`) AS TOTAL
+					FROM payment 
+					INNER JOIN `receipts` ON `receipts`.`id`= `payment`.`receipt_id`
+					LEFT JOIN `courses` ON `courses`.`id` = `receipts`.`course_id`
+					LEFT JOIN `student_info` ON `student_info`.`slno` = `receipts`.`student_id`
+					LEFT JOIN `pursuing_course` ON `pursuing_course`.`student_id` = `receipts`.`student_id`
+					AND `pursuing_course`.`course_id` = `receipts`.`course_id`
+					WHERE `payment`.`receipt_id` IN (SELECT `id` FROM `receipts` WHERE `franchise_id`='$franchise' AND `receipt_date`  BETWEEN '$from' AND '$to')
+					GROUP BY `receipt_id`";
 	/* ECHO $sql; */
 	$res	   = mysqli_query($conn,  $sql);
 	if(mysqli_num_rows($res) > 0)
@@ -40,7 +58,7 @@ function fetchRecords()
 	{
 		echo '<tr>
 				<td style="text-align:center;">'.$row['receipt_no'].'</td>
-				<td style="text-align:center;">'.date('d/m/Y',strtotime($row['date'])).'</td>
+				<td style="text-align:center;">'.date('d/m/Y',strtotime($row['receipt_date'])).'</td>
 				<td style="text-align:center;">'.$row['regno'].'</td>
 				<td style="text-align:center;">'.$row['St_Name'].'</td>
 				<td style="text-align:center;">'.$row['course_name'].'</td>
@@ -50,14 +68,14 @@ function fetchRecords()
 				<td style="text-align:center;">'.printIt($row['PROSPECTUS']).'</td>
 				<td style="text-align:center;">'.printIt($row['EXAM FEES']).'</td>
 				<td style="text-align:center;">'.printIt($row['TOTAL']).'</td>
-				<td style="text-align:center;">'.$row['collect_by'].'</td>
+				<td style="text-align:center;">'.$row['collected_by'].'</td>
 			</tr>';
-			$admission += $row['ADMISSION'];
-			$fine += $row['FINE'];
+			$admission   += $row['ADMISSION'];
+			$fine 	     += $row['FINE'];
 			$installment += $row['INSTALLMENT'];
-			$prospectus += $row['PROSPECTUS'];
-			$exam += $row['EXAM FEES'];
-			$total += $row['TOTAL'] ;
+			$prospectus  += $row['PROSPECTUS'];
+			$exam 		 += $row['EXAM FEES'];
+			$total 	     += $row['TOTAL'] ;
 	}
 	echo '<tr>
 				<td style="text-align:center;"></td>

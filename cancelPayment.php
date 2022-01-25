@@ -3,13 +3,26 @@ session_start();
 include('include/no-cache.php');
 include('include/dbconfig.php'); 
 include('include/check-login.php');
+function  getFranchise()
+{
+	include('include/dbconfig.php');
+	$option = '';
+	$sql = "SELECT * FROM `franchises`";
+	$res = mysqli_query($conn, $sql);
+	while ($row = mysqli_fetch_assoc($res)) {
+		$option .= '<option value="' . $row['id'] . '">' . $row['franchise_name'] . '</option>';
+	}
+	echo $option;
+}
 if(isset($_POST['submit']))
 {
-extract($_POST);
+	extract($_POST);
+
+	$sql1 = "DELETE FROM `receipts` WHERE `id`='$recpt_no'";
+	$sql2 = "DELETE FROM `payment`  WHERE `receipt_id`='$recpt_no'";
+	$sql3 = "DELETE FROM `daybook`  WHERE `receipt_id`='$recpt_no'";
 	
-	$sql1= "DELETE FROM `payment` WHERE `receipt_no`='$recpt_no'";
-	$sql2= "DELETE FROM `daybook` WHERE `receipt_no`='$recpt_no'";
-	$sql3= "DELETE FROM `note_info` WHERE `recpt_no`='$recpt_no'";
+	
 	$res1 = mysqli_query($conn,  $sql1);
 	
 	if($res1)
@@ -34,18 +47,7 @@ extract($_POST);
 		echo '<script>alert("ERROR-1 : OPERATION FAILED !") </script>';
 	}
 }
-function  getReceipts()
-{
-	include('include/dbconfig.php'); 
-	$option='';
-	$sql="SELECT * FROM `payment` GROUP BY `receipt_no`";
-	$res=mysqli_query($conn,  $sql)        ;
-	while($row=mysqli_fetch_assoc($res))
-	{
-		$option.='<option value="'.$row['receipt_no'].'">'.$row['receipt_no'].'</option>';
-	}
-	echo $option;
-}
+
 ?>
 <?php include('include/menu.php');?>
 <!-- Page Content -->
@@ -56,10 +58,17 @@ function  getReceipts()
 	          <h3 class="page-header">Cancel Payment</h3>
 				<form method="POST" id="createTeacherForm" action="<?php echo $_SERVER['PHP_SELF'];?>" enctype="multipart/form-data">
 					<div class="form-group">
+						<label for="product" class="control-label">Franchise Name<span class="required"></span></label>
+						<select name="franchise" id="franchise" class="selectpicker form-control" data-live-search="true" required>
+							<option value="">Select Franchise</option>
+							<?php getFranchise(); ?>
+						</select>
+					</div>
+					<div class="form-group">
 						<label for="product" class="control-label">Receipt No<span class="required"></span></label>
 						<select name="recpt_no"  id="recpt_no" class="selectpicker form-control"  data-live-search="true" required>
 							<option value="">--Select--</option>
-							<?php getReceipts();?>
+							
 						</select>
 					</div>
 					<div class="form-group">
@@ -81,16 +90,24 @@ function  getReceipts()
 </html>
 <script type="text/javascript">
 $(document).ready(function(e){
-	$('#studentid').on('change',function(e)
+	$('#franchise').on('change',function(e)
 	{
-		var studentid = $(this).val();
+		var franchiseId = $(this).val();
 		$.ajax({
-			url:"loadCourse.php",
+			url:"fetchReceiptByFranchise.php",
 			method:"post",
-			data:{'studentid':studentid},
-			success:function(data)
-			{
-				$('#pursuingcourse').html(data);
+			data:{'franchiseId':franchiseId},
+			dataType:"json",
+			success:function(response)
+			{ let option ='<option value="">-- Select --</option>';
+				if(response.success){
+					for( let i =0; i< response.records.length ; i++){
+						option += '<option value="'+response.records[i].id+'">'+response.records[i].receipt_no+'</option>';
+					}
+ 					
+				}
+				 $('#recpt_no').html(option);
+				 $('#recpt_no').selectpicker('refresh');
 			}
 			
 		});
