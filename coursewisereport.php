@@ -7,27 +7,27 @@ include "include/check-login.php";
 function findAdmissionReord()
 {
 	include "include/dbconfig.php" ;
-	$from=trim($_POST['date1']);
-	$to=trim($_POST['date2']);
-	$course=trim($_POST['coursename']);
+	extract($_POST);
 	if($course=="ALL")
 	{
-		$sql="SELECT COUNT(*) as NO_OF_ADMISSION,date, courses.* FROM `pursuing_course`
+		$sql="SELECT COUNT(*) as NO_OF_ADMISSION,`date`, `courses`.* FROM `pursuing_course`
 			INNER JOIN courses
-			ON courses.course_id=pursuing_course.course_id
-			WHERE pursuing_course.date
-			BETWEEN '$from' AND '$to' 
+			ON `courses`.`id`=`pursuing_course`.`course_id`
+			WHERE `pursuing_course`.`date`
+			BETWEEN '$from' AND '$to'  AND `pursuing_course`.`current_status` = 'PURSUING'
+			AND `pursuing_course`.`franchise_id` = '$franchise'
 			GROUP BY pursuing_course.`course_id` 
 			" ;
 		
 	}
 	else{
-			$sql="SELECT COUNT(*) as NO_OF_ADMISSION,date, courses.* FROM `pursuing_course`
+			$sql="SELECT COUNT(*) as NO_OF_ADMISSION, `date`, `courses`.* FROM `pursuing_course`
 			INNER JOIN courses
-			ON courses.course_id=pursuing_course.course_id
-			WHERE pursuing_course.date
-			BETWEEN '$from' AND '$to' AND pursuing_course.course_id='$course'
-			GROUP BY pursuing_course.`course_id` 
+			ON `courses`.`id`=`pursuing_course`.`course_id`
+			WHERE `pursuing_course`.`date`
+			BETWEEN '$from' AND '$to' AND `pursuing_course`.`course_id`='$course' AND `pursuing_course`.`current_status` = 'PURSUING'
+			AND `pursuing_course`.`franchise_id` = '$franchise'
+			GROUP BY `pursuing_course`.`course_id` 
 			" ;
 	}
 	/* echo $sql; */

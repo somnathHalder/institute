@@ -64,9 +64,11 @@ if (isset($_POST['formid']) && isset($_SESSION['formid']) && $_POST['formid'] ==
 
 	//$payby			= strtoupper(trim($_POST['payby']));
 	/* $frommonth		=trim($_POST['frommonth']);
-$tomonth		=trim($_POST['tomonth']);
-$toyear			=trim($_POST['toyear']); */
-	$sessioncode	= trim($_POST['sessionCode']);
+		$tomonth		=trim($_POST['tomonth']);
+		$toyear			=trim($_POST['toyear']); */
+	$session        = sessionById($_POST['sessionCode']);
+	$sessioncode	= $session['session_code'];
+	$sessionId	    = $session['slno'];
 	$coursecode		= $course;
 	$serialno		= findSerialNo($sessioncode, $coursecode);
 	$regno			= findStudentRegistraionNo($sessioncode, $coursecode);
@@ -83,13 +85,13 @@ $toyear			=trim($_POST['toyear']); */
 				 '$qualification','$imagename','$prevcourse','$refname','$admissionType','$note')";
 
 	$res			= mysqli_query($conn,  $sql);
-	$std_id=mysqli_insert_id($conn);
+	$std_id			= mysqli_insert_id($conn);
 	$slno			= mysqli_insert_id($conn);
 	if ($res) {
 		$sql3 = "SELECT * FROM courses WHERE id='$course'";
 		$res = $conn->query($sql3);
 		$coursecode = $res->fetch_assoc();
-		$pursuing_id = addStudentToPursuingTable($course, $std_id, $session, $fees, $date, $sessioncode, $coursecode['course_id'], $serialno, $courseday, $time,$regno);
+		$pursuing_id = addStudentToPursuingTable($course, $std_id, $session, $fees, $date, $sessioncode, $sessionId, $coursecode['course_id'], $serialno, $courseday, $time,$regno);
 		$success_msg = 'Addmission Successfull. Student Unique ID Is : <b>' . $stid . '</b> And Registration Number  : <b>' . $regno . '</b> </div>';
 
 	} else {
@@ -147,7 +149,7 @@ function getAddress()
 // 		echo $option;
 // 	}
 // }
-function addStudentToPursuingTable($course, $studentID, $session, $fees, $date, $sessioncode, $coursecode, $serialno, $courseday, $time,$regno)
+function addStudentToPursuingTable($course, $studentID, $session, $fees, $date, $sessioncode, $sessionId, $coursecode, $serialno, $courseday, $time,$regno)
 {
 	include "include/dbconfig.php";
 
@@ -158,9 +160,9 @@ function addStudentToPursuingTable($course, $studentID, $session, $fees, $date, 
 
 
 	$courseday		= implode(',', $courseday);
-	$sql = "INSERT INTO `pursuing_course`(`session`,`date`,`student_id`, `course_id`,`course_code`, `session_code`, `serial_no`, `course_fee`, `course_days` ,`time`
+	$sql = "INSERT INTO `pursuing_course`(`session`,`date`,`student_id`, `course_id`,`course_code`, `session_code`, `session_id`, `serial_no`, `course_fee`, `course_days` ,`time`
 		 ,`starting_year`, `starting_month`, `complete_year`, `complete_month`,regno )
-		  VALUES ('$session','$date','$studentID','$course','$coursecode','$sessioncode','$serialno','$fees','$courseday','$time','$session','','','','$regno')";
+		  VALUES ('$session','$date','$studentID','$course','$coursecode','$sessioncode', '$sessionId', '$serialno','$fees','$courseday','$time','$session','','','','$regno')";
 	$res = mysqli_query($conn,  $sql);
 	$pursuing_id = mysqli_insert_id($conn);
 	if ($res) {
@@ -187,7 +189,7 @@ function getSession()
 	$res = mysqli_query($conn,  $sql);
 	if (mysqli_num_rows($res) > 0) {
 		while ($row = mysqli_fetch_assoc($res)) {
-			echo '<option value="' . $row['session_code'] . '">' . $row['session_code'] . "-" . $row['description'] . '</option>';
+			echo '<option value="' . $row['slno'] . '">' . $row['session_code'] . "-" . $row['description'] . '</option>';
 		}
 	}
 }

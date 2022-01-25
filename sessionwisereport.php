@@ -8,29 +8,31 @@ function findAdmissionReord()
 {
 	include "include/dbconfig.php" ;
 	
-	$session=trim($_POST['session']);
-	$course =trim($_POST['coursename']);
+	$session   = trim($_POST['session']);
+	$course    = trim($_POST['coursename']);
+	$franchise = trim($_POST['franchise']);
 	if($course=="ALL")
 	{
-		$sql="SELECT COUNT(*) as NO_OF_ADMISSION,date,session, courses.*,pursuing_course.session_code,session.description FROM `pursuing_course`
-			INNER JOIN courses
-			ON courses.course_id=pursuing_course.course_id
-			INNER JOIN session
-			ON session.session_code=pursuing_course.session_code
-			WHERE pursuing_course.session_code='$session'
-			GROUP BY pursuing_course.`course_id` 
+		$sql="SELECT COUNT(*) as NO_OF_ADMISSION,date,session, `courses`.*,pursuing_course.`session_code`,session.description FROM `pursuing_course`
+			LEFT JOIN `courses`
+			ON `courses`.`id` = `pursuing_course`.`course_id`
+			LEFT JOIN `session`
+			ON `session`.`slno` = `pursuing_course`.`session_id`
+			WHERE `pursuing_course`.`session_id` = '$session' 
+			AND `pursuing_course`.`franchise_id` = '$franchise'
+			GROUP BY `pursuing_course`.`course_id` 
 			" ;
 		
 	}
 	else{
-			$sql="SELECT COUNT(*) as NO_OF_ADMISSION,date,session, courses.*,pursuing_course.session_code,session.description FROM `pursuing_course`
-			INNER JOIN courses
-			ON courses.course_id=pursuing_course.course_id
-			INNER JOIN session
-			ON session.session_code=pursuing_course.session_code
-			WHERE pursuing_course.session_code='$session' AND 
-			pursuing_course.course_id='$course'
-			GROUP BY pursuing_course.`course_id` 
+			$sql = "SELECT COUNT(*) as NO_OF_ADMISSION,date,session, courses.*,pursuing_course.session_code, `session`.`description` FROM `pursuing_course`
+				LEFT JOIN courses
+				ON `courses`.`id` = `pursuing_course`.`course_id`
+				LEFT JOIN `session`
+				ON `session`.`slno` = `pursuing_course`.`session_id`
+				WHERE `pursuing_course`.`session_id` = '$session' AND 
+				`pursuing_course`.`course_id` = '$course' AND `pursuing_course`.`franchise_id` = '$franchise'
+				GROUP BY `pursuing_course`.`course_id` 
 			" ;
 	}
 	/* echo $sql; */
