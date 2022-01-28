@@ -10,175 +10,175 @@ include('include/check-login.php');
 
 <head>
 
-    <meta charset="utf-8">
+	<meta charset="utf-8">
 
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <meta name="description" content="">
+	<meta name="description" content="">
 
-    <meta name="author" content="">
+	<meta name="author" content="">
 
-    <title>Niharika Software</title>
+	<title>Niharika Software</title>
 
-    <!-- Bootstrap Core CSS -->
+	<!-- Bootstrap Core CSS -->
 
-	
 
- 
 
- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 
- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.1/css/bootstrap-select.css" />
 
-<link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1/themes/smoothness/jquery-ui.css">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 
- <link rel="stylesheet" href="http://jquery.malsup.com/block/block.css?v3">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.1/css/bootstrap-select.css" />
 
-    <!-- MetisMenu CSS -->
+	<link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1/themes/smoothness/jquery-ui.css">
 
-    <link href="vendor/metisMenu/metisMenu.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="http://jquery.malsup.com/block/block.css?v3">
 
-    <!-- DataTables CSS -->
+	<!-- MetisMenu CSS -->
 
-    <link href="vendor/datatables-plugins/dataTables.bootstrap.css" rel="stylesheet">
+	<link href="vendor/metisMenu/metisMenu.min.css" rel="stylesheet">
 
-    <!-- DataTables Responsive CSS -->
+	<!-- DataTables CSS -->
 
-    <link href="vendor/datatables-responsive/dataTables.responsive.css" rel="stylesheet">
+	<link href="vendor/datatables-plugins/dataTables.bootstrap.css" rel="stylesheet">
 
-    <!-- Custom CSS -->
+	<!-- DataTables Responsive CSS -->
 
-    <link href="dist/css/sb-admin-2.css" rel="stylesheet">
+	<link href="vendor/datatables-responsive/dataTables.responsive.css" rel="stylesheet">
 
-    <!-- Custom Fonts -->
+	<!-- Custom CSS -->
 
-    <link href="vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+	<link href="dist/css/sb-admin-2.css" rel="stylesheet">
 
-		<!-- Datepick -->
+	<!-- Custom Fonts -->
 
-    <link href="datepick_api/css_date/bootstrap-datetimepicker.min.css" rel="stylesheet" media="screen">
+	<link href="vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+	<!-- Datepick -->
+
+	<link href="datepick_api/css_date/bootstrap-datetimepicker.min.css" rel="stylesheet" media="screen">
 
 	<!--MultiSelect -->
 
 	<link rel="stylesheet" href="docs/css/bootstrap-example.css" type="text/css">
 
-    <link rel="stylesheet" href="docs/css/prettify.css" type="text/css">
+	<link rel="stylesheet" href="docs/css/prettify.css" type="text/css">
 
-    <link rel="stylesheet" href="dist/css/bootstrap-multiselect.css" type="text/css">
+	<link rel="stylesheet" href="dist/css/bootstrap-multiselect.css" type="text/css">
 
-	</head>
-
-
-
-<body >
+</head>
 
 
 
-    <div id="wrapper" >
+<body>
 
 
 
-        <!-- Navigation -->
-
-<nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0;">
-
-            <div class="navbar-header">
-
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-
-                    <span class="sr-only">Toggle navigation</span>
-
-                    <span class="icon-bar"></span>
-
-                    <span class="icon-bar"></span>
-
-                    <span class="icon-bar"></span>
-
-                </button>
-
-                <a class="navbar-brand" href="">Administrator Portal</a>
-
-            </div>
-
-            <!-- /.navbar-header -->
+	<div id="wrapper">
 
 
 
-            <ul class="nav navbar-top-links navbar-right">
+		<!-- Navigation -->
 
-              
+		<nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0;">
 
-                  
+			<div class="navbar-header">
 
-                    <!-- /.dropdown-alerts -->
+				<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
 
-                </li>
+					<span class="sr-only">Toggle navigation</span>
 
-                <!-- /.dropdown -->
+					<span class="icon-bar"></span>
 
-                <li class="dropdown">
+					<span class="icon-bar"></span>
 
-                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+					<span class="icon-bar"></span>
 
-                        <i class="fa fa-user fa-fw"></i> ADMIN <i class="fa fa-caret-down"></i>
+				</button>
 
-                    </a>
+				<a class="navbar-brand" href="">Administrator Portal</a>
 
-                    <ul class="dropdown-menu dropdown-message">
+			</div>
+
+			<!-- /.navbar-header -->
+
+
+
+			<ul class="nav navbar-top-links navbar-right">
+
+
+
+
+
+				<!-- /.dropdown-alerts -->
+
+				</li>
+
+				<!-- /.dropdown -->
+
+				<li class="dropdown">
+
+					<a class="dropdown-toggle" data-toggle="dropdown" href="#">
+
+						<i class="fa fa-user fa-fw"></i> ADMIN <i class="fa fa-caret-down"></i>
+
+					</a>
+
+					<ul class="dropdown-menu dropdown-message">
 
 						<li><a href="changepassword.php"><i class="fa fa-shield fa-fw"></i> Change Password</a>
 
-                        </li>
+						</li>
 
-                        <li class="divider"></li>
+						<li class="divider"></li>
 
-                        <li><a href="logout.php"><i class="fa fa-power-off fa-fw"></i> Logout</a>
+						<li><a href="logout.php"><i class="fa fa-power-off fa-fw"></i> Logout</a>
 
-                        </li>
+						</li>
 
-                    </ul>
+					</ul>
 
-                    <!-- /.dropdown-user -->
+					<!-- /.dropdown-user -->
 
-                </li>
+				</li>
 
-                <!-- /.dropdown -->
+				<!-- /.dropdown -->
 
-            </ul>
+			</ul>
 
-            <!-- /.navbar-top-links -->
+			<!-- /.navbar-top-links -->
 
 
 
-            <div class="navbar-default sidebar" role="navigation" >
+			<div class="navbar-default sidebar" role="navigation">
 
-                <div class="sidebar-nav navbar-collapse">
+				<div class="sidebar-nav navbar-collapse">
 
-                    <ul class="nav" id="side-menu" >
+					<ul class="nav" id="side-menu">
 
 						<li>
 
-                            <a href="home.php"><i class="fa fa-dashboard fa-fw"></i> Dashbord</a>
+							<a href="home.php"><i class="fa fa-dashboard fa-fw"></i> Dashbord</a>
 
-                        </li>
+						</li>
 
 						<li>
 
 							<a href="#"><i class="fa fa-bookmark"></i> Session Creator<span class="fa arrow"></span></a>
 
-							 <ul class="nav nav-second-level">
+							<ul class="nav nav-second-level">
 
-									<li>
+								<li>
 
-										 <a href="session.php">Manage Session</a>
+									<a href="session.php">Manage Session</a>
 
-									</li>
+								</li>
 
-																		
 
-							 </ul>
+
+							</ul>
 
 						</li>
 
@@ -186,77 +186,77 @@ include('include/check-login.php');
 
 							<a href="#"><i class="fa fa-users"></i> Manage User<span class="fa arrow"></span></a>
 
-							 <ul class="nav nav-second-level">
+							<ul class="nav nav-second-level">
 
-									<li>
+								<li>
 
-										 <a href="user.php">User Management</a>
+									<a href="user.php">User Management</a>
 
-									</li>
+								</li>
 
-																		
 
-							 </ul>
+
+							</ul>
 
 						</li>
 
-                        <li>
+						<li>
 
 							<a href="#"><i class="fa fa-plus-circle"></i> Registration Section<span class="fa arrow"></span></a>
 
-							 <ul class="nav nav-second-level">
+							<ul class="nav nav-second-level">
 
-									<li>
+								<li>
 
-										 <a href="newadmission.php">New Registration</a>
+									<a href="newadmission.php">New Registration</a>
 
-									</li>
+								</li>
 
-									<li>
+								<li>
 
-										 <a href="admissionformprint.php">Print Admission-Form</a>
+									<a href="admissionformprint.php">Print Admission-Form</a>
 
-									</li>
+								</li>
 
-									<li>
+								<li>
 
-										 <a href="cancelAdmission.php">Cancel Registration</a>
+									<a href="cancelAdmission.php">Cancel Registration</a>
 
-									</li>
+								</li>
 
-									<li>
+								<li>
 
-										 <a href="courseconvert.php">Course Convert</a>
+									<a href="courseconvert.php">Course Convert</a>
 
-									</li>
+								</li>
 
-									
 
-							 </ul>
+
+							</ul>
 
 						</li>
 
-						 <li>
+						<li>
 
 							<a href="#"><i class="fa fa-plus-circle"></i> Notice<span class="fa arrow"></span></a>
 
-							 <ul class="nav nav-second-level">
+							<ul class="nav nav-second-level">
 
-									<li>
+								<li>
 
-										 <a href="newnotice.php">New Notice</a>
+									<a href="newnotice.php">New Notice</a>
 
-									</li>
+								</li>
 
-									<li>
+								<li>
 
-										 <a href="notices.php">Manage Notice</a>
+									<a href="notices.php">Manage Notice</a>
 
-									</li>
+								</li>
 
-																	
 
-							 </ul>
+
+							</ul>
 
 						</li>
 
@@ -264,23 +264,23 @@ include('include/check-login.php');
 
 							<a href="#"><i class="fa fa-th-list"></i> Course Creator<span class="fa arrow"></span></a>
 
-							 <ul class="nav nav-second-level">
+							<ul class="nav nav-second-level">
 
-									<li>
+								<li>
 
-										 <a href="newcourses.php">Add New Course</a>
+									<a href="newcourses.php">Add New Course</a>
 
-									</li>
+								</li>
 
-									<li>
+								<li>
 
-										 <a href="viewcourses.php">View Course</a>
+									<a href="viewcourses.php">View Course</a>
 
-									</li>
+								</li>
 
-									
 
-							 </ul>
+
+							</ul>
 
 						</li>
 
@@ -288,49 +288,49 @@ include('include/check-login.php');
 
 							<a href="#"><i class="fa fa-th-list"></i> Subjects <span class="fa arrow"></span></a>
 
-							 <ul class="nav nav-second-level">
+							<ul class="nav nav-second-level">
 
-									<li>
+								<li>
 
-										 <a href="newsubject.php">Add New Subject</a>
+									<a href="newsubject.php">Add New Subject</a>
 
-									</li>
+								</li>
 
-									<li>
+								<li>
 
-										 <a href="viewsubject.php">View Subject</a>
+									<a href="viewsubject.php">View Subject</a>
 
-									</li>
+								</li>
 
-									
 
-							 </ul>
+
+							</ul>
 
 						</li>
 						<li>
 							<a href="#"><i class="fa fa-th-list"></i> Marks Section <span class="fa arrow"></span></a>
 							<ul class="nav nav-second-level">
-									<li>
-										<a href="marks-entry.php">Marks Entry</a>
-										 <a href="marks-edit.php">Marks Edit</a>
-										 <a href="marks-tabulation.php">Marks Tabulation</a>
-									</li>
-									
+								<li>
+									<a href="marks-entry.php">Marks Entry</a>
+									<a href="marks-edit.php">Marks Edit</a>
+									<a href="marks-tabulation.php">Marks Tabulation</a>
+								</li>
+
 							</ul>
-							</li>
+						</li>
 						<li>
 							<a href="#"><i class="fa fa-rupee "></i> Franchise<span class="fa arrow"></span></a>
-							 <ul class="nav nav-second-level">
+							<ul class="nav nav-second-level">
 								<li>
 									<a href="franchise.php">Manage Franchise</a>
 								</li>
-							 </ul>
+							</ul>
 						</li>
 						<li>
 
 							<a href="#"><i class="fa fa-rupee "></i> Payment<span class="fa arrow"></span></a>
 
-							 <ul class="nav nav-second-level">
+							<ul class="nav nav-second-level">
 
 								<li>
 
@@ -351,29 +351,29 @@ include('include/check-login.php');
 									<a href="cancelPayment.php">Delete Receipt </a>
 								</li> -->
 
-							 </ul>
+							</ul>
 
 						</li>
 
 						<li>
 
-							<a href="#"><i class="fa fa-barcode"></i>  Address Book<span class="fa arrow"></span></a>
+							<a href="#"><i class="fa fa-barcode"></i> Address Book<span class="fa arrow"></span></a>
 
-							 <ul class="nav nav-second-level">
+							<ul class="nav nav-second-level">
 
 								<li>
 
-									 <a href="addressbook.php">New Entry</a>
+									<a href="addressbook.php">New Entry</a>
 
 								</li>
 
 								<li>
 
-									 <a href="viewaddress.php">View Address</a>
+									<a href="viewaddress.php">View Address</a>
 
 								</li>
 
-							 </ul>
+							</ul>
 
 						</li>
 
@@ -381,87 +381,87 @@ include('include/check-login.php');
 
 							<a href="#"><i class="fa fa-book   "></i> Day Book<span class="fa arrow"></span></a>
 
-							 <ul class="nav nav-second-level">
+							<ul class="nav nav-second-level">
 
 								<li>
 
-									 <a href="daybookform.php">View Day Book</a>
+									<a href="daybookform.php">View Day Book</a>
 
 								</li>
 
 								<li>
 
-									 <a href="depositcash.php">Deposit Cash</a>
+									<a href="depositcash.php">Deposit Cash</a>
 
 								</li>
 
 								<li>
 
-									 <a href="withdrawcash.php">Withdrawl Cash</a>
+									<a href="withdrawcash.php">Withdrawl Cash</a>
 
 								</li>
 
 								<li>
 
-									 <a href="expenseentry.php">Expense Entry</a>
+									<a href="expenseentry.php">Expense Entry</a>
 
 								</li>
 
 								<li>
 
-									 <a href="expensedelete.php">Expense Delete</a>
+									<a href="expensedelete.php">Expense Delete</a>
 
 								</li>
 
-							 </ul>
+							</ul>
 
 						</li>
 
 						<li>
 
-							<a href="#"><i class="fa fa-navicon"></i>  Reports<span class="fa arrow"></span></a>
+							<a href="#"><i class="fa fa-navicon"></i> Reports<span class="fa arrow"></span></a>
 
-							 <ul class="nav nav-second-level">
+							<ul class="nav nav-second-level">
 
 								<li>
 
-									 <a href="studentsinfo.php">All Student Information</a>
+									<a href="studentsinfo.php">All Student Information</a>
 
 								</li>
 
 								<li>
 
-									 <a href="studentqueryform.php">Student Query By Month,Course </a>
+									<a href="studentqueryform.php">Student Query By Month,Course </a>
 
 								</li>
 
 								<li>
 
-									 <a href="feesqueryform.php">Due Report</a>
+									<a href="feesqueryform.php">Due Report</a>
 
 								</li>
 
 								<li>
 
-									 <a href="discountList.php">Discount List</a>
+									<a href="discountList.php">Discount List</a>
 
 								</li>
 
 								<li>
 
-									 <a href="batchwisequery.php">Batch Wise Query</a>
+									<a href="batchwisequery.php">Batch Wise Query</a>
 
 								</li>
 
 								<li>
 
-									 <a href="newadmissionform.php">New Admission Course wise</a>
+									<a href="newadmissionform.php">New Admission Course wise</a>
 
 								</li>
 
 								<li>
 
-									 <a href="sesionwiseAdmissionForm.php">New Admission Session wise</a>
+									<a href="sesionwiseAdmissionForm.php">New Admission Session wise</a>
 
 								</li>
 
@@ -472,7 +472,7 @@ include('include/check-login.php');
 									 <a href="duelistform.php">Due List Month Wise</a>
 								</li>-->
 
-							 </ul>
+							</ul>
 
 						</li>
 
@@ -480,17 +480,17 @@ include('include/check-login.php');
 
 							<a href="#"><i class="fa fa-graduation-cap"></i> I-Card<span class="fa arrow"></span></a>
 
-							 <ul class="nav nav-second-level">
+							<ul class="nav nav-second-level">
 
 								<li>
 
-									 <a href="icardform.php">Print I-Card</a>
+									<a href="icardform.php">Print I-Card</a>
 
 								</li>
 
-								
 
-							 </ul>
+
+							</ul>
 
 						</li>
 
@@ -551,26 +551,26 @@ include('include/check-login.php');
 							 </ul>
 						</li> -->
 
-						</ul>
+					</ul>
 
-                            
 
-                            </ul>
 
-                            <!-- /.nav-second-level -->
+					</ul>
 
-                        </li>
+					<!-- /.nav-second-level -->
 
-                    </ul>
+					</li>
 
-                    </ul>
+					</ul>
 
-                </div>
+					</ul>
 
-                <!-- /.sidebar-collapse -->
+				</div>
 
-            </div>
+				<!-- /.sidebar-collapse -->
 
-            <!-- /.navbar-static-side -->
+			</div>
 
-        </nav>
+			<!-- /.navbar-static-side -->
+
+		</nav>

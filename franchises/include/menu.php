@@ -35,7 +35,7 @@ include('include/check-login.php');
 	<link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1/themes/smoothness/jquery-ui.css">
 
 	<link rel="stylesheet" href="http://jquery.malsup.com/block/block.css?v3">
-	
+
 	<!-- modal -->
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
 
@@ -112,12 +112,7 @@ include('include/check-login.php');
 			<ul class="nav navbar-top-links navbar-right">
 
 
-
-
-
 				<!-- /.dropdown-alerts -->
-
-				</li>
 
 				<!-- /.dropdown -->
 
@@ -125,7 +120,7 @@ include('include/check-login.php');
 
 					<a class="dropdown-toggle" data-toggle="dropdown" href="#">
 
-						<i class="fa fa-user fa-fw"></i> ADMIN <i class="fa fa-caret-down"></i>
+						<i class="fa fa-user fa-fw"></i> <?php echo $_SESSION['franchise_name']; ?> <i class="fa fa-caret-down"></i>
 
 					</a>
 
@@ -176,7 +171,7 @@ include('include/check-login.php');
 
 						<li>
 
-							<a href="#"><i class="fa fa-rupee "></i> Payment<span class="fa arrow"></span></a>
+							<a href="#"><i class="fa fa-rupee"></i> Payment<span class="fa arrow"></span></a>
 
 							<ul class="nav nav-second-level">
 
@@ -194,15 +189,15 @@ include('include/check-login.php');
 
 								<li>
 
-									<a href="duelistform.php">Due Report</a>
+									<a href="duelist.php">Due Report</a>
 
 								</li>
 
-								<li>
+								<!-- <li>
 
 									<a href="cancelPayment.php">Delete Receipt </a>
 
-								</li>
+								</li> -->
 
 							</ul>
 
@@ -230,7 +225,7 @@ include('include/check-login.php');
 
 								</li>
 
-								 
+
 							</ul>
 
 						</li>
@@ -271,16 +266,9 @@ include('include/check-login.php');
 
 
 
-
-					</ul>
-
 					<!-- /.nav-second-level -->
 
-					</li>
 
-					</ul>
-
-					</ul>
 
 				</div>
 

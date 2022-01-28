@@ -10,7 +10,13 @@
 	$query = mysqli_query($conn,  $q);
 	$row=mysqli_fetch_assoc($query);
 	if(mysqli_num_rows($query)>0){
+
+		$sql2="SELECT franchise_name from franchises WHERE id='{$row['member_id']}'";
+		$res2=mysqli_query($conn,$sql2);
+		$row2=mysqli_fetch_assoc($res2);
+		
         $_SESSION['franchise_id']=$row['member_id'];
+		$_SESSION['franchise_name']=$row2['franchise_name'];
 		$_SESSION['franchise_userid'] = $userid;
 		$_SESSION['franchise_password'] = $password;
 		$_SESSION['franchise_session_id'] = session_id(); 

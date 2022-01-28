@@ -1,14 +1,15 @@
 <?php
 session_start();
-include "include/menu.php";
 include "include/dbconfig.php";
 include "../functions.php";
 $franchises =  json_decode(getFranchises(), true);
 $courses    =  json_decode(getCourses(), true);
 $sessions   =  json_decode(getSessions(), true);
+error_reporting(0);
 
 ?>
 
+<?php include "include/menu.php"; ?>
 <div id="page-wrapper">
     <div class="container-fluid">
         <div class="row">
@@ -17,7 +18,7 @@ $sessions   =  json_decode(getSessions(), true);
                    <div class="x_content"> -->
             <h3 class="page-header">Marks Tabulation</h3>
 
-            <!-- <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST"> -->
+            <!-- <form action="<?php //echo $_SERVER['PHP_SELF']; ?>" method="POST"> -->
             <div class="form-group">
 
                 <div class="col-md-3 col-sm-3 col-xs-12">
@@ -36,8 +37,8 @@ $sessions   =  json_decode(getSessions(), true);
                 </div>
                 <!-- <div class="col-md-3 col-sm-3 col-xs-12"> -->
 
-                    <!-- <label>Franchise</label> -->
-                    <!-- <select name="franchise" id="franchise" class="form-control">
+                <!-- <label>Franchise</label> -->
+                <!-- <select name="franchise" id="franchise" class="form-control">
                         <option value="">Select Franchise</option>
                         <?php
                         // if (count($franchises['records']) > 0) {
@@ -93,7 +94,7 @@ $sessions   =  json_decode(getSessions(), true);
                         <strong>Success:</strong> <?php echo $successMsg; ?>
                     </div>
                 <?php } ?>
-                <input type="hidden" name="formid" id="formid" value="<?php echo htmlspecialchars($_SESSION['formid']); ?>">
+                <!-- <input type="hidden" name="formid" id="formid" value="<?php //echo htmlspecialchars($_SESSION['formid']); ?>"> -->
 
                 <table id="example" class="table table-stripped table-condensed">
 
@@ -163,6 +164,7 @@ $sessions   =  json_decode(getSessions(), true);
         </div>
 
     </div>
+
     <div class="modal fade" tabindex="-1" role="dialog" id="removeMemberModal">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -182,55 +184,22 @@ $sessions   =  json_decode(getSessions(), true);
     </div>
 
 </div>
+</div>
 <!-- /#page-wrapper -->
 
+<?php include('include/footer.php'); ?>
+</body>
+
+</html>
 
 
-<!-- jQuery -->
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 
-<!-- Bootstrap Core JavaScript -->
-<script src="vendor/bootstrap/js/bootstrap.min.js"></script>
-
-<!-- Metis Menu Plugin JavaScript -->
-<script src="vendor/metisMenu/metisMenu.min.js"></script>
-
-<!-- Custom Theme JavaScript -->
-<script src="dist/js/sb-admin-2.js"></script>
-<script src="vendor/datatables/js/jquery.dataTables.min.js"></script>
-<script src="vendor/datatables-plugins/dataTables.bootstrap.min.js"></script>
-<script src="vendor/datatables-responsive/dataTables.responsive.js"></script>
-<script type="text/javascript" language="javascript" src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js">
-</script>
-<script type="text/javascript" language="javascript" src="https://cdn.datatables.net/1.10.16/js/dataTables.bootstrap.min.js">
-</script>
-<script type="text/javascript" language="javascript" src="https://cdn.datatables.net/buttons/1.5.1/js/dataTables.buttons.min.js">
-</script>
-<script type="text/javascript" language="javascript" src="https://cdn.datatables.net/buttons/1.5.1/js/buttons.bootstrap.min.js">
-</script>
-<script type="text/javascript" language="javascript" src="//cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js">
-</script>
-<script type="text/javascript" language="javascript" src="//cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.32/pdfmake.min.js">
-</script>
-<script type="text/javascript" language="javascript" src="//cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.32/vfs_fonts.js">
-</script>
-<script type="text/javascript" language="javascript" src="//cdn.datatables.net/buttons/1.5.1/js/buttons.html5.min.js">
-</script>
-<script type="text/javascript" language="javascript" src="//cdn.datatables.net/buttons/1.5.1/js/buttons.print.min.js">
-</script>
-<script type="text/javascript" language="javascript" src="//cdn.datatables.net/buttons/1.5.1/js/buttons.colVis.min.js">
-</script>
-<!--MultiSelect -->
-<script type="text/javascript" src="docs/js/prettify.js"></script>
-<script type="text/javascript" src="dist/js/bootstrap-multiselect.js"></script>
-<!-- CK Editor -->
-<script src="ckeditor/ckeditor.js"></script>
 
 <!-- Page-Level Demo Scripts - Notifications - Use for reference -->
 <script type="text/javascript">
     $(document).ready(function() {
 
-        
+
         $('#updateMemberForm').on('submit', function(e) {
             e.preventDefault();
             marksDetailId = $('#editMarksDetailId').val();
@@ -314,7 +283,7 @@ $sessions   =  json_decode(getSessions(), true);
 
 
 
-    
+
     function showModal(marksDetailId) {
         //alert(marksDetailId);
         $('#editObtainedMarks').val($('#obtainedMarks' + marksDetailId).val());

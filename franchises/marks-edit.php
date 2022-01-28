@@ -1,6 +1,5 @@
 <?php
 session_start();
-include "include/menu.php";
 include "include/dbconfig.php";
 include "../functions.php";
 $franchises =  json_decode(getFranchises(), true);
@@ -90,6 +89,7 @@ function getObtainedMarks($marksId)
 }
 ?>
 
+<?php include "include/menu.php"; ?>
 <div id="page-wrapper">
     <div class="container-fluid">
         <div class="row">
@@ -185,37 +185,38 @@ function getObtainedMarks($marksId)
     </div>
 
 </div>
+
 <!-- /#page-wrapper -->
 
 
-   <!-- Modal -->
-    <div class="modal fade" id="myModal" role="dialog">
-        <div class="modal-dialog modal-md">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3 class=" modal-title p-2">Update Marks</h3>
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                </div>
-                <div class="modal-body">
-                    <form class="col-sm" id="myform">
-                        <div>
-                            <input type="hidden" class="form-control" id="m-id" style="display: none;" />
-                            <input type="hidden" class="form-control" id="m-marks_id" style="display: none;" />
-                            <label for="m-obtained_marks" class="form-label">Name</label>
-                            <input type="number" class="form-control" id="m-obtained_marks" />
-                        </div>
+<!-- Modal -->
+<div class="modal fade" id="myModal" role="dialog">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class=" modal-title p-2">Update Marks</h3>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form class="col-sm" id="myform">
+                    <div>
+                        <input type="hidden" class="form-control" id="m-id" style="display: none;" />
+                        <input type="hidden" class="form-control" id="m-marks_id" style="display: none;" />
+                        <label for="m-obtained_marks" class="form-label">Name</label>
+                        <input type="number" class="form-control" id="m-obtained_marks" />
+                    </div>
 
 
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-success myWish" id="m-btnadd" data-dismiss="modal">Update</button>
-                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-                </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success myWish" id="m-btnadd" data-dismiss="modal">Update</button>
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
             </div>
         </div>
     </div>
-    <!-- end Modal -->
+</div>
+<!-- end Modal -->
 
 
 
@@ -265,30 +266,27 @@ function getObtainedMarks($marksId)
 
 <!-- Page-Level Demo Scripts - Notifications - Use for reference -->
 <script type="text/javascript">
-     
-
     $(document).ready(function() {
 
-        $('#m-btnadd').on('click',function() {
+        $('#m-btnadd').on('click', function() {
             id = $('#m-id').val();
             marks_id = $('#m-marks_id').val();
             obtained_marks = $('#m-obtained_marks').val();
-            
+
             $.ajax({
                 url: 'obtainMarksEdit.php',
                 type: 'POST',
                 dataType: 'json',
-                data:{
-                    'id':id,
-                    'marks_id':marks_id,
-                    'obtained_marks':obtained_marks,
-                    'chk':''
+                data: {
+                    'id': id,
+                    'marks_id': marks_id,
+                    'obtained_marks': obtained_marks,
+                    'chk': ''
                 },
-                success:function(data)
-                {
+                success: function(data) {
                     alert('Update Marks Successfully');
                     $('#tbody').html("");
-                    
+
                 }
             })
 

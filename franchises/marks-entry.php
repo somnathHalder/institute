@@ -1,6 +1,5 @@
 <?php
 session_start();
-include "include/menu.php";
 include "include/dbconfig.php";
 include "../functions.php";
 $franchises =  json_decode(getFranchises(), true);
@@ -90,6 +89,7 @@ function getObtainedMarks($marksId)
 }
 ?>
 
+<?php include "include/menu.php"; ?>
 <div id="page-wrapper">
     <div class="container-fluid">
         <div class="row">
@@ -187,7 +187,8 @@ function getObtainedMarks($marksId)
 
                         </tbody>
                     </table>
-                    <button type="submit" name="submit" id="submit" class="btn btn-success form-control">Save</button>
+                </div>
+                <button type="submit" name="submit" id="submit" class="btn btn-success form-control">Save</button>
             </form>
 
             <!-- /panel -->
@@ -198,8 +199,10 @@ function getObtainedMarks($marksId)
 
     </div>
 </div>
+</div>
 
 
+<!-- modal -->
 <div id="editMemberModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="editMemberModal" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -231,6 +234,7 @@ function getObtainedMarks($marksId)
     </div>
 
 </div>
+
 <div class="modal fade" tabindex="-1" role="dialog" id="removeMemberModal">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -249,50 +253,16 @@ function getObtainedMarks($marksId)
     </div><!-- /.modal-dialog -->
 </div>
 
-</div>
+<?php include('include/footer.php'); ?>
+</body>
+
+</html>
+
+
 <!-- /#page-wrapper -->
 
 
 
-<!-- jQuery -->
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-
-<!-- Bootstrap Core JavaScript -->
-<script src="vendor/bootstrap/js/bootstrap.min.js"></script>
-
-<!-- Metis Menu Plugin JavaScript -->
-<script src="vendor/metisMenu/metisMenu.min.js"></script>
-
-<!-- Custom Theme JavaScript -->
-<script src="dist/js/sb-admin-2.js"></script>
-<script src="vendor/datatables/js/jquery.dataTables.min.js"></script>
-<script src="vendor/datatables-plugins/dataTables.bootstrap.min.js"></script>
-<script src="vendor/datatables-responsive/dataTables.responsive.js"></script>
-<script type="text/javascript" language="javascript" src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js">
-</script>
-<script type="text/javascript" language="javascript" src="https://cdn.datatables.net/1.10.16/js/dataTables.bootstrap.min.js">
-</script>
-<script type="text/javascript" language="javascript" src="https://cdn.datatables.net/buttons/1.5.1/js/dataTables.buttons.min.js">
-</script>
-<script type="text/javascript" language="javascript" src="https://cdn.datatables.net/buttons/1.5.1/js/buttons.bootstrap.min.js">
-</script>
-<script type="text/javascript" language="javascript" src="//cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js">
-</script>
-<script type="text/javascript" language="javascript" src="//cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.32/pdfmake.min.js">
-</script>
-<script type="text/javascript" language="javascript" src="//cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.32/vfs_fonts.js">
-</script>
-<script type="text/javascript" language="javascript" src="//cdn.datatables.net/buttons/1.5.1/js/buttons.html5.min.js">
-</script>
-<script type="text/javascript" language="javascript" src="//cdn.datatables.net/buttons/1.5.1/js/buttons.print.min.js">
-</script>
-<script type="text/javascript" language="javascript" src="//cdn.datatables.net/buttons/1.5.1/js/buttons.colVis.min.js">
-</script>
-<!--MultiSelect -->
-<script type="text/javascript" src="docs/js/prettify.js"></script>
-<script type="text/javascript" src="dist/js/bootstrap-multiselect.js"></script>
-<!-- CK Editor -->
-<script src="ckeditor/ckeditor.js"></script>
 
 <!-- Page-Level Demo Scripts - Notifications - Use for reference -->
 <script type="text/javascript">
